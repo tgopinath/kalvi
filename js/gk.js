@@ -23,7 +23,7 @@
     tfStep: ['Read it again slowly. If any part of it is wrong, the whole sentence is false.', 'மெதுவாக மீண்டும் படி. அதில் ஏதேனும் ஒரு பகுதி தவறு என்றால் முழு வாக்கியமும் தவறு.'],
     firstStep: ['“{x}” was {w}, so it was not first.', '“{x}”: {w}. எனவே அது முதலில் வரவில்லை.'],
     answerIs: ['The answer is “{x}”.', 'விடை: “{x}”.'],
-    oddNote: ['Which one does not belong?', 'இவற்றில் பொருந்தாதது எது?'],
+    trafficLight: ['A traffic light with the red lamp lit', 'சிவப்பு விளக்கு எரியும் போக்குவரத்து விளக்கு'],
     topic: {
       india: { title: ['India', 'இந்தியா'], blurb: ['National symbols, festivals, states and languages, and famous monuments.', 'தேசியச் சின்னங்கள், பண்டிகைகள், மாநிலங்கள், மொழிகள், புகழ்பெற்ற நினைவுச் சின்னங்கள்.'] },
       tamilnadu: { title: ['Tamil Nadu', 'தமிழ்நாடு'], blurb: ['Thiruvalluvar, the Big Temple, Mamallapuram, dance, kolam and food.', 'திருவள்ளுவர், பெரிய கோயில், மாமல்லபுரம், நடனம், கோலம், உணவு.'] },
@@ -54,7 +54,7 @@
   // a calm traffic light on the dark board (red lit)
   function trafficVis() {
     const lamp = (cy, on, c) => `<circle cx="60" cy="${cy}" r="21" fill="${on ? c : '#1d2230'}" stroke="#0b0d13" stroke-width="3"/>${on ? `<circle cx="53" cy="${cy - 7}" r="5" fill="#fff" opacity=".35"/>` : ''}`;
-    return `<svg viewBox="0 0 120 230" width="120" height="230" role="img" aria-label="${esc(L(['A traffic light', 'ஒரு போக்குவரத்து விளக்கு']))}"><rect x="56" y="196" width="8" height="34" fill="#3a4152"/><rect x="24" y="8" width="72" height="190" rx="14" fill="#2b3142" stroke="#4a5266" stroke-width="2"/>${lamp(46, true, '#e5484d')}${lamp(102, false)}${lamp(158, false)}</svg>`;
+    return `<svg viewBox="0 0 120 230" width="120" height="230" role="img" aria-label="${t('gk.trafficLight')}"><rect x="56" y="196" width="8" height="34" fill="#3a4152"/><rect x="24" y="8" width="72" height="190" rx="14" fill="#2b3142" stroke="#4a5266" stroke-width="2"/>${lamp(46, true, '#e5484d')}${lamp(102, false)}${lamp(158, false)}</svg>`;
   }
   const VIS = { traffic: trafficVis };
 
@@ -78,7 +78,7 @@
       });
       answer = right; answerName = opts[right];
     }
-    // prompt: optional Tamil quote (a kural), the question, and for odd-one-out a quiet reminder
+    // prompt: optional Tamil quote (a kural), then the question
     const quote = raw.quote ? `<span class="gk-quote" lang="ta">${esc(raw.quote).replace(/\n/g, '<br>')}</span>` : '';
     const prompt = quote + (tf ? t('gk.tf', { s: esc(it.q) }) : esc(it.q));
     const ph = photo(raw.photo);
