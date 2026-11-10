@@ -2,7 +2,7 @@
 @font-face { font-family: Lato; font-weight: 400; font-display: swap; src: url(fonts/lato-400.woff2) format('woff2'); }
 @font-face { font-family: Lato; font-weight: 700; font-display: swap; src: url(fonts/lato-700.woff2) format('woff2'); }
 @font-face { font-family: Lato; font-weight: 900; font-display: swap; src: url(fonts/lato-900.woff2) format('woff2'); }
-@font-face { font-family: "Noto Sans Tamil"; font-weight: 400 700; font-display: swap; src: url(fonts/noto-sans-tamil.woff2) format('woff2'); unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC; }
+@font-face { font-family: "Noto Sans Tamil"; font-weight: 100 900; font-display: swap; src: url(fonts/noto-sans-tamil.woff2) format('woff2'); unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC; }
 
 :root {
   /* subject accents (AA with their on-colours in both themes) */

@@ -240,19 +240,58 @@
     0: ['C3,5,3,5,-90,-450'], 1: ['1,2 3,0 3,10'], 2: ['C3,3,3,3,-165,35 0,10 6.5,10'], 3: ['C3,2.6,3,2.6,-150,90 C3,7.5,3.2,2.5,-90,150'],
     4: ['4.5,0 0,7 7,7', '5,0 5,10'], 5: ['1,0 0.8,4.6 C3.2,7,3,3,-140,140', '1,0 6,0'], 6: ['C5.5,6,5,6,-100,-180 C3.2,7.2,2.8,2.8,180,-180'],
     7: ['0,0 6.5,0 2,10'], 8: ['C3,2.5,2.5,2.5,-90,-270 C3,7.4,2.7,2.6,-90,270 C3,2.5,2.5,2.5,90,-90'], 9: ['C3,3,3,3,0,-360 6,10'],
-    a: ['C2.5,7.5,2.5,2.5,0,-360', '5,5 5,10'], b: ['0,0 0,10', 'C2.5,7.5,2.5,2.5,180,540'], c: ['C2.7,7.5,2.7,2.5,-40,-320'], d: ['C2.5,7.5,2.5,2.5,0,-360', '5,0 5,10'],
-    e: ['0.2,7.5 5.1,7.5 C2.6,7.5,2.5,2.5,0,-320'], f: ['C4.2,2,2,2,-20,-180 2.2,10', '0.5,5 4.5,5'], g: ['C2.5,7.5,2.5,2.5,0,-360', '5,5 5,12 C2.6,12,2.4,2,0,160'],
+    a: ['C2.5,7.5,2.5,2.5,-30,-390', '5,5 5,10'], b: ['0,0 0,10', 'C2.5,7.5,2.5,2.5,180,540'], c: ['C2.7,7.5,2.7,2.5,-40,-320'], d: ['C2.5,7.5,2.5,2.5,-30,-390', '5,0 5,10'],
+    e: ['0.2,7.5 5.1,7.5 C2.6,7.5,2.5,2.5,0,-320'], f: ['C4.2,2,2,2,-20,-180 2.2,10', '0.5,5 4.5,5'], g: ['C2.5,7.5,2.5,2.5,-30,-390', '5,5 5,12 C2.6,12,2.4,2,0,160'],
     h: ['0,0 0,10', '0,7.5 C2.5,7.5,2.5,2.5,180,360 5,10'], i: ['1,5 1,10', '1,2.6'], j: ['3,5 3,12 C1.5,12,1.5,2,0,160', '3,2.6'], k: ['0,0 0,10', '4.5,5 0,7.5 4.5,10'],
     l: ['1,0 1,10'], m: ['0,5 0,10', '0,7.5 C2,7.5,2,2.5,180,360 4,10', '4,7.5 C6,7.5,2,2.5,180,360 8,10'], n: ['0,5 0,10', '0,7.5 C2.5,7.5,2.5,2.5,180,360 5,10'],
-    o: ['C2.6,7.5,2.6,2.5,-90,-450'], p: ['0,5 0,14', 'C2.5,7.5,2.5,2.5,180,540'], q: ['C2.5,7.5,2.5,2.5,0,-360', '5,5 5,14'], r: ['0,5 0,10', '0,7.5 C2.5,7.5,2.5,2.5,180,310'],
+    o: ['C2.6,7.5,2.6,2.5,-90,-450'], p: ['0,5 0,14', 'C2.5,7.5,2.5,2.5,180,540'], q: ['C2.5,7.5,2.5,2.5,-30,-390', '5,5 5,14'], r: ['0,5 0,10', '0,7.5 C2.5,7.5,2.5,2.5,180,310'],
     s: ['C2.5,6.2,2.2,1.2,-20,-270 C2.5,8.75,2.4,1.25,-90,150'], t: ['2,1.5 2,10', '0,5 4,5'], u: ['0,5 0,7.5 C2.5,7.5,2.5,2.5,180,0', '5,5 5,10'], v: ['0,5 2.5,10 5,5'],
     w: ['0,5 1.75,10 3.5,6 5.25,10 7,5'], x: ['0,5 5,10', '5,5 0,10'], y: ['0,5 2.6,10', '5.2,5 1.2,14'], z: ['0,5 5,5 0,10 5,10'],
   };
+  // Tamil uyir letters, traced over Noto Sans Tamil in its own frame (அ is 10 units tall, sitting on y = 10);
+  // glyph() shrinks them to fit the pad. "~" before a stroke = a smooth curve through the points.
+  // Tamil Nadu school order: one continuous stroke from the small loop, then added parts (stem, ா tail, ள part, dots).
+  const TA_A = '6.7,1 7.2,2.3 6.8,3.6 6,4.2 4.8,3.9 4.1,2.5 4.6,1 6,0.5 7.8,0.7 9.4,1.8 10.3,3.7 10.3,5.8 9.4,7.6 7.6,9 5,9.7 2.5,9.6 0.8,8.8 0.6,7.4 1.6,6.4 3.5,6.1 5,6.1';
+  const TA_U = '3.2,1 3.6,2.2 3.1,3.5 2.2,3.9 1.1,3.4 0.7,2.2 1.3,0.8 2.8,0.3 4.6,0.6 6,1.8 6.3,3.4 5.5,4.8 3.5,5.5 1.5,5.9 0.6,6.6 0.8,7.4 2,7.8 4,7.8';
+  const TA_E = '~1.1,4.9 2.5,4.3 3.8,4.8 4.3,6 3.9,7.3 2.7,7.9 1.4,7.4 0.7,6 0.8,4 1.6,2.4 3,1.4 5,1.1 6,1.1 10,1.1';
+  const TA_O = '~1.2,4.6 2.5,4 3.8,4.6 4.2,5.8 3.7,7 2.5,7.5 1.2,7 0.6,5.5 0.9,3.6 2,2 4,0.9 6.3,0.5 8.5,0.7 10.5,1.7 11.6,3.4 11.6,5.2 10.7,6.4 9.6,6.6 8.6,6.1 8.2,4.8 8.4,3.4 7.9,3.1 6.7,4 5.9,5.5 6,7.2 7,8.3 8.6,8.8 9.6,8.8 11.3,8.8';
+  const TA_HOOK = '~8.3,9.3 7.3,11 5.6,12.1 4,12.2 2.9,11.4 2.6,9.9 3.6,8.2';
+  Object.assign(GL, {
+    'அ': ['~' + TA_A + ' 12.9,6.1', '13.4,0.2 13.4,10'],
+    'ஆ': ['~' + TA_A + ' 12.8,6.1', '13.3,0.2 13.3,9.5', '~13.7,7.6 15.3,7.1 16.6,7.7 17.3,9 16.9,10.5 15.3,11.6 13,12.1 11,11.9 9.9,11 10,9.8 11,9 12,9'],
+    'இ': ['~6.4,1.1 6.9,2.3 6.3,3.6 5.6,4.1 4.3,3.7 3.7,2.4 4.3,1 5.8,0.4 7.6,0.8 9,2 9.6,4 9.3,6.5 8.4,8.6 7,10.2 5.9,10.8 4.5,11.4 3,11.8 1.5,11.6 0.5,10.6 0.6,9.3 1.5,8 3,7.3 6,6.8 8.5,7.2 10.3,8.3 11.1,10 10.6,11.4 9,11.9 7.5,11.6 6,10.9 4.5,10 3,8.5 1.8,7 1,5 0.8,2 1.4,-0.5 3,-2.3 5,-3.1 7,-3.3 9.5,-2.7 11.4,-1 12.5,1.5 12.8,4 12.8,7.8'],
+    'ஈ': ['0.6,7.8 0.6,0.7 8.2,0.7', '4.9,0.7 4.9,7.8', '2.75,4', '7,4'],
+    'உ': ['~' + TA_U + ' 13.7,7.8'],
+    'ஊ': ['~' + TA_U + ' 19.9,7.8', '~10,3.5 11.2,3.2 12.2,3.9 12.4,5 11.6,6 10.4,6 9.5,4.9 9.5,3.2 10.4,1.6 12,0.7 13.5,0.8 14.7,1.8 14.7,3 14.7,5.8', '14.7,0.6 19.9,0.6', '17.7,0.6 17.7,5.8'],
+    'எ': [TA_E, '7.3,1.1 7.3,7.8'],
+    'ஏ': [TA_E, '7.4,1.1 7.4,7.6 4.6,10.4'],
+    'ஐ': ['~1.8,1.7 3,1.9 4,2.7 4,3.8 3,4.6 1.8,4.6 0.8,3.7 0.6,2.3 1.5,0.8 3,0.1 4.5,0.2 5.6,0.9 6.3,2.1 6.6,3.5 6.6,5', '~6.8,1.7 8,0.3 9.3,0.2 10.6,0.8 11.5,2.5 11.3,4.5 10.2,5.7 8,6.3 5,6.5 2.5,6.8 0.9,8 0.7,10 1.8,11.5 4,12 5.6,11.4 6.4,10 6.6,8.2', '~6.6,8.2 6.7,10 7.4,11.4 9.4,12 10.8,11.4 11.6,9.8 11.4,8.3 11,7.6'],
+    'ஒ': [TA_O, TA_HOOK],
+    'ஓ': [TA_O, '~8.5,9.2 7.6,10.7 6.3,11.8 4.6,12.2 3,12 1.9,11 2,9.6 3,8.7 4.3,8.7 5.3,9.6 5.3,10.8 4.4,11.6'],
+    'ஔ': [TA_O, TA_HOOK, '~14.9,5 16.4,4.4 17.8,5.1 18.3,6.6 17.6,8 16.3,8.6 14.8,8 14,6.3 14.1,4 15,2 16.6,0.9 18.4,0.7 20,1.2 21.2,2.4 21.2,4 21.2,7.9', '21.2,0.6 27.4,0.6', '25,0.6 25,7.9'],
+  });
   const SETS = {
     upper: ['EFHILT', 'AKMNVWXYZ', 'BCDGJOPQRSU'], lower: ['iltvwxzk', 'acdegoqs', 'bfhjmnpruy'], digit: ['0147', '2357', '689'],
   };
   const UYIR = ['அ', 'ஆ', 'இ', 'ஈ', 'உ', 'ஊ', 'எ', 'ஏ', 'ஐ', 'ஒ', 'ஓ', 'ஔ'];
+  // Catmull-Rom curve through the points of a "~" stroke
+  function smooth(P) { if (P.length < 3) return P.slice(); const o = []; for (let i = 0; i < P.length - 1; i++) { const a = P[Math.max(0, i - 1)], b = P[i], c = P[i + 1], d = P[Math.min(P.length - 1, i + 2)]; for (let k = 0; k < 6; k++) { const u = k / 6, u2 = u * u, u3 = u2 * u; o.push([0, 1].map(j => .5 * (2 * b[j] + (c[j] - a[j]) * u + (2 * a[j] - 5 * b[j] + 4 * c[j] - d[j]) * u2 + (3 * b[j] - a[j] - 3 * c[j] + d[j]) * u3))); } } o.push(P.at(-1).slice()); return o; }
+  // words for a smooth stroke: "round" if it turns a lot, then its last straight run
+  // words for a smooth stroke: runs that keep turning one way are "round", the rest are straight moves
+  function smoothSegs(C) {
+    const ang = i => Math.atan2(C[i][1] - C[i - 1][1], C[i][0] - C[i - 1][0]), segs = []; let run = null;
+    const flush = () => { if (!run) return; if (Math.abs(run.turn) > 1.3) segs.push({ k: 'arc', cw: run.turn > 0 }); else run.lines.forEach(l => segs.push(l)); run = null; };
+    for (let i = 1; i < C.length; i++) {
+      let d = i > 1 ? ang(i) - ang(i - 1) : 0; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+      const sg = Math.abs(d) < .15 ? 0 : Math.sign(d), line = { k: 'line', a: C[i - 1], b: C[i] };
+      if (run && sg && run.sg && sg !== run.sg) flush();
+      if (!run) run = { sg, turn: 0, lines: [] };
+      if (sg && !run.sg) run.sg = sg; run.turn += d; run.lines.push(line);
+    }
+    flush(); return segs;
+  }
   function parseStroke(str) {
+    if (str[0] === '~') { const C = str.slice(1).trim().split(/\s+/).map(tok => tok.split(',').map(Number)); return { pts: smooth(C), segs: smoothSegs(C) }; }
     const pts = [], segs = []; let last = null;
     str.trim().split(/\s+/).forEach(tok => {
       if (tok[0] === 'C') {
@@ -266,16 +305,21 @@
   const GCACHE = {};
   function glyph(ch) {
     if (GCACHE[ch]) return GCACHE[ch];
-    const parsed = GL[ch].map(parseStroke), strokes = parsed.map(s => s.pts), bb = bbox(strokes.flat());
+    const parsed = GL[ch].map(parseStroke), ta = UYIR.includes(ch);
+    let strokes = parsed.map(s => s.pts), bb = bbox(strokes.flat()), ts = 1;
+    if (ta) { // shrink about the base line so the whole letter (and its tail) fits on the pad
+      ts = Math.min(.72, 13.8 / bb.w); const tf = p => [p[0] * ts, 10 + (p[1] - 10) * ts];
+      strokes = strokes.map(P => P.map(tf)); parsed.forEach(s => s.segs.forEach(q => { if (q.a) { q.a = tf(q.a); q.b = tf(q.b); } })); bb = bbox(strokes.flat());
+    }
     const ox = L / 2 - bb.cx * U;
-    const g = { ch, strokes, segs: parsed.map(s => s.segs), dot: strokes.map(P => P.length === 1), bb, desc: bb.y1 > 10.6, lower: /[a-z]/.test(ch) };
+    const g = { ch, strokes, segs: parsed.map(s => s.segs), dot: strokes.map(P => P.length === 1), bb, desc: bb.y1 > 10.6, lower: /[a-z]/.test(ch), ta, ts, ox };
     g.log = strokes.map(P => P.map(p => [ox + p[0] * U, OY + p[1] * U]));
     g.ref = g.log.map((P, i) => g.dot[i] ? P.slice(0, 1) : resample(P, 40));
     return GCACHE[ch] = g;
   }
   function dirKey(a, b) { const dx = b[0] - a[0], dy = b[1] - a[1], ax = Math.abs(dx), ay = Math.abs(dy); if (ay > 3.2 * ax) return dy > 0 ? 'down' : 'up'; if (ax > 3.2 * ay) return dx > 0 ? 'right' : 'left'; return dy > 0 ? (dx < 0 ? 'downL' : 'downR') : (dx > 0 ? 'upR' : 'upL'); }
   function pathWords(g, i) { if (g.dot[i]) return t('draw.path.dot'); const w = []; g.segs[i].forEach(s => { const k = s.k === 'arc' ? (s.cw ? 'roundR' : 'roundL') : dirKey(s.a, s.b); if (w.at(-1) !== k) w.push(k); }); return w.slice(0, 3).map(k => t('draw.path.' + k)).join(t('draw.path.then')); }
-  function posKey(g, i) { const y = g.strokes[i][0][1], top = g.lower ? Math.min(5, g.bb.y0) : 0; return y <= top + 1.1 ? 'top' : y >= 9 ? 'bottom' : 'middle'; }
+  function posKey(g, i) { const y = g.strokes[i][0][1]; if (g.ta) { const f = (y - g.bb.y0) / (g.bb.h || 1); return f <= .22 ? 'top' : f >= .75 ? 'bottom' : 'middle'; } const top = g.lower ? Math.min(5, g.bb.y0) : 0; return y <= top + 1.1 ? 'top' : y >= 9 ? 'bottom' : 'middle'; }
   function strokeDesc(g, i) { return g.dot[i] ? t('draw.d.dot', { n: i + 1, path: pathWords(g, i) }) : t('draw.d.stroke', { n: i + 1, pos: t('draw.pos.' + posKey(g, i)), path: pathWords(g, i) }); }
   function atFrac(P, f) { const tot = plen(P) * f; let acc = 0; for (let i = 1; i < P.length; i++) { const d = d2(P[i - 1], P[i]); if (acc + d >= tot && d > 0) { const k = (tot - acc) / d; return { p: [P[i - 1][0] + k * (P[i][0] - P[i - 1][0]), P[i - 1][1] + k * (P[i][1] - P[i - 1][1])], a: Math.atan2(P[i][1] - P[i - 1][1], P[i][0] - P[i - 1][0]) }; } acc += d; } return { p: P.at(-1), a: 0 }; }
   // a start badge sits just behind the stroke's first point, so strokes that share a start do not hide each other
@@ -399,10 +443,13 @@
   // ======================= trace & write: letters and numbers =======================
   function letterQ(ch, kind, ctx, subject) {
     const g = glyph(ch), young = ctx.band === 'young', n = g.strokes.length, acc = ACC[subject];
-    const cap = { upper: 'Upper', lower: 'Lower', digit: 'Digit' }[kind], key = 'draw.q.' + (young ? 'trace' : 'write') + cap;
+    const ta = kind === 'uyir', lng = ta ? 'ta' : 'en';
+    const cap = { upper: 'Upper', lower: 'Lower', digit: 'Digit', uyir: 'Ta' }[kind], key = 'draw.q.' + (young ? 'trace' : 'write') + cap;
     const descs = g.strokes.map((_, i) => strokeDesc(g, i)), full = glyphSVG(g, { label: ch });
-    const say = I18N.lang === 'en' ? [{ text: t(key, { c: ch }), lang: 'en' }] : [{ text: t('draw.say.' + { upper: 'capital', lower: 'small', digit: 'number' }[kind]), lang: 'ta' }, { text: ch, lang: 'en' }, { text: t('draw.say.' + (young ? 'trace' : 'write')), lang: 'ta' }];
-    const st = { pad: null, wrong: 0, res: null };
+    const say = ta ? [{ text: t(key, { c: ch }), lang: I18N.lang === 'ta' ? 'ta' : 'en' }].concat(I18N.lang === 'ta' ? [] : [{ text: ch, lang: 'ta' }])
+      : I18N.lang === 'en' ? [{ text: t(key, { c: ch }), lang: 'en' }] : [{ text: t('draw.say.' + { upper: 'capital', lower: 'small', digit: 'number' }[kind]), lang: 'ta' }, { text: ch, lang: 'en' }, { text: t('draw.say.' + (young ? 'trace' : 'write')), lang: 'ta' }];
+    const st = { pad: null, wrong: 0, res: null, face: null };
+    const cov = ta ? taCoverage(ch, young) : null; // Tamil fallback: how much of the real letter the ink covers
     const okCount = () => st.pad ? st.pad.strokes.filter(s => s.ok).length : 0;
     // one stroke against reference stroke i: closeness to the path, then direction
     const judge = (pts, i) => {
@@ -431,15 +478,17 @@
       if (ib.h < .7 * tb.h) tips.push(t('draw.y.tipSmall'));
       return { ok: sc < .085, sc, tips, given: t('draw.given.match', { p: Math.max(0, Math.round(100 - sc * 500)) }) };
     };
-    const why = { steps: [{ text: t(n > 1 ? 'draw.y.strokes' : 'draw.y.strokes1', { c: `<b lang="en">${ch}</b>`, n }), vis: full }, ...descs.map(d => ({ text: d }))], rule: t(young ? 'draw.y.ruleTrace' : 'draw.y.ruleWrite') };
-    return { kind: 'custom', prompt: t(key, { c: `<b class="dr-ch" lang="en">${ch}</b>` }), promptText: t(key, { c: ch }), say, autoSay: young,
+    const why = { steps: [{ text: t(n > 1 ? 'draw.y.strokes' : 'draw.y.strokes1', { c: `<b lang="${lng}">${ch}</b>`, n }), vis: full }, ...(ta ? [{ text: t('draw.y.ta', { c: `<b lang="ta">${ch}</b>`, w: t('draw.ta.w' + UYIR.indexOf(ch)) }) }] : []), ...descs.map(d => ({ text: d }))], rule: t(ta ? 'draw.y.taRule' : young ? 'draw.y.ruleTrace' : 'draw.y.ruleWrite') };
+    return { kind: 'custom', prompt: t(key, { c: `<b class="dr-ch" lang="${lng}">${ch}</b>` }), promptText: t(key, { c: ch }), say, autoSay: young,
       hints: ladder(young ? t('draw.h.t1') : t(g.lower ? 'draw.h.w1Lower' : 'draw.h.w1'), { text: descs[0], vis: glyphSVG(g, { upto: 1, hi: 0 }) }, { text: t('draw.h.all', { n }) + ' ' + descs.join(' '), vis: full }), hintRevealsAnswer: true,
-      answerText: `<span class="dr-ans" lang="en">${ch}</span>`, why,
+      answerText: `<span class="dr-ans" lang="${lng}">${ch}</span>`, why,
       whyFor() { const w = { ...why, steps: why.steps.slice() }; if (st.res?.tips?.length) w.steps.splice(1, 0, { text: st.res.tips.join(' ') }); return w; },
       mount(el, api) {
         const ui = stage(el, { cls: 'paper', tools: ['show', 'undo', 'clear'], model: young ? '' : `<div class="dr-model board small" aria-hidden="true">${glyphSVG(g, { plain: true })}</div>` });
         let anim = null, demo = false;
-        const base = k => lines(k, g.desc);
+        // Tamil: the real letter (Noto Sans Tamil) sits faintly under the dotted strokes
+        const face = k => { if (!ta || !young || !st.face) return; k.save(); k.font = taFont(st.face.fs); k.fillStyle = '#ebe4d2'; k.fillText(ch, st.face.x, st.face.y); k.restore(); };
+        const base = k => { lines(k, g.desc); face(k); };
         const guide = k => {
           base(k); if (demo) return;
           if (!young) return;
@@ -465,12 +514,15 @@
         ui.btn('clear').onclick = () => { pad.clear(); pad.drawGuide(); if (young) ui.say(descs[0]); };
         keyPath(pad, api, ui);
         ui.say(young ? descs[0] : '');
+        if (ta) { const fit = () => { st.face = taFace(g); pad.drawGuide(); }; (document.fonts?.load ? document.fonts.load(taFont(100), ch) : Promise.resolve()).then(fit, fit); }
         if (young) setTimeout(play, 250);
       },
       check() {
         const pad = st.pad; if (!pad) return { correct: false, given: t('draw.given.nothing') };
         if (young) { const k = okCount(); return { correct: k === n && st.wrong <= Math.max(2, n), given: t('draw.given.strokes', { a: k, b: n }) }; }
-        st.res = freehand(pad.ink()); return { correct: st.res.ok, given: st.res.given };
+        st.res = freehand(pad.ink());
+        if (ta && !st.res.ok && pad.ink().length) { const c = cov(pad.ink()); if (c.ok) st.res = { ok: true, given: t('draw.given.covered', { p: Math.round(Math.min(1, c.cov) * 100) }) }; }
+        return { correct: st.res.ok, given: st.res.given };
       } };
   }
 
@@ -486,6 +538,27 @@
     return { fs, x: L / 2 - (rgt - lft) / 2 * s, y: (OY + OY + 10 * U) / 2 - (des - asc) / 2 * s, box: { x0: L / 2 - (lft + rgt) / 2 * s, x1: L / 2 + (lft + rgt) / 2 * s, y0: (OY + OY + 10 * U) / 2 - (asc + des) / 2 * s, y1: (OY + OY + 10 * U) / 2 + (asc + des) / 2 * s } };
   }
   const taFont = fs => `400 ${fs.toFixed(1)}px "Noto Sans Tamil", sans-serif`;
+  // where to draw the real Tamil letter so it lines up with its stroke data (same frame as GL: அ is 10 units tall on y = 10)
+  function taFace(g) {
+    const k = document.createElement('canvas').getContext('2d'); k.font = taFont(100);
+    const A = k.measureText('அ'), sc = 10 / ((A.actualBoundingBoxAscent + A.actualBoundingBoxDescent) || 70), fs = 100 * sc * g.ts * U;
+    k.font = taFont(fs); const m = k.measureText(g.ch);
+    return { fs, x: g.ox + (m.actualBoundingBoxLeft || 0), y: OY + (10 - (A.actualBoundingBoxDescent || 0) * sc * g.ts) * U };
+  }
+  // coverage score of free writing against the real letter (fallback check for Tamil writing)
+  function taCoverage(ch, young) {
+    let lay = null, mask = null;
+    return ink => {
+      if (!mask) { lay = taLayout(ch); mask = rasterize(k => { k.font = taFont(lay.fs); k.fillStyle = '#000'; k.fillText(ch, lay.x, lay.y); }); }
+      const ib = bbox(ink.flat()), gb = lay.box, s = Math.sqrt(((gb.x1 - gb.x0) * (gb.y1 - gb.y0)) / Math.max(1, Math.max(ib.w, 8) * Math.max(ib.h, 8)));
+      const pts = ink.map(P => P.map(p => [(gb.x0 + gb.x1) / 2 + (p[0] - ib.cx) * s, (gb.y0 + gb.y1) / 2 + (p[1] - ib.cy) * s]));
+      const im = rasterize(k => { k.strokeStyle = '#000'; k.lineWidth = 12; k.lineCap = k.lineJoin = 'round'; pts.forEach(P => { k.beginPath(); P.forEach((p, i) => i ? k.lineTo(p[0], p[1]) : k.moveTo(p[0], p[1])); if (P.length === 1) k.lineTo(P[0][0] + .1, P[0][1]); k.stroke(); }); });
+      const di = dilate(im, 1), dg = dilate(mask, 2); let hit = 0, inside = 0;
+      for (let i = 0; i < im.length; i++) { if (mask[i] && di[i]) hit++; if (im[i] && dg[i]) inside++; }
+      const c = hit / Math.max(1, count(mask)), pr = inside / Math.max(1, count(im));
+      return { cov: c, prec: pr, ok: young ? c >= .6 && pr >= .7 : c >= .45 && pr >= .6 };
+    };
+  }
   function tamilQ(ch, ctx) {
     const young = ctx.band === 'young', idx = UYIR.indexOf(ch), word = t('draw.ta.w' + idx), key = young ? 'draw.q.traceTa' : 'draw.q.writeTa';
     const st = { pad: null, lay: null, mask: null, res: null };
@@ -670,7 +743,7 @@
   // ---------- English letters ----------
   skill({ id: 'dr.upper', subject: 'english', topic: 'draw', name: 'draw.skill.upper', bands: { young: [1, 3], older: [1, 3] }, gen(l, r, ctx) { return letterQ(r.pick([...SETS.upper[l - 1]]), 'upper', ctx, 'english'); } });
   skill({ id: 'dr.lower', subject: 'english', topic: 'draw', name: 'draw.skill.lower', bands: { young: [1, 3], older: [1, 3] }, gen(l, r, ctx) { return letterQ(r.pick([...SETS.lower[l - 1]]), 'lower', ctx, 'english'); } });
-  skill({ id: 'dr.uyir', subject: 'english', topic: 'draw', name: 'draw.skill.uyir', bands: { young: [1, 3], older: [1, 3] }, gen(l, r, ctx) { return tamilQ(r.pick(UYIR.slice((l - 1) * 4, l * 4)), ctx); } });
+  skill({ id: 'dr.uyir', subject: 'english', topic: 'draw', name: 'draw.skill.uyir', bands: { young: [1, 3], older: [1, 3] }, gen(l, r, ctx) { const ch = r.pick(UYIR.slice((l - 1) * 4, l * 4)); return GL[ch] ? letterQ(ch, 'uyir', ctx, 'english') : tamilQ(ch, ctx); } });
 
   // ======================= science: draw & label =======================
   const txt = (x, y, s, anchor = 'middle') => `<text x="${x}" y="${y}" font-family="Lato, Noto Sans Tamil, sans-serif" font-size="12" font-weight="700" fill="#9aa1b2" text-anchor="${anchor}">${esc(s)}</text>`;

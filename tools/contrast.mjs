@@ -1,0 +1,5 @@
+// WCAG contrast for the Kalvi Play theme pairs. node tools/contrast.mjs
+const L = h => { const c = h.match(/\w\w/g).map(x => parseInt(x, 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+const cr = (a, b) => { const [x, y] = [L(a), L(b)].sort((m, n) => n - m); return (x + .05) / (y + .05); };
+const pairs = [['16131f', 'c9c4fb', 'ink on lavender'], ['16131f', 'fbf7ee', 'ink on cream'], ['2e2a3d', 'c9c4fb', 'ink-2 on lavender'], ['4b4560', 'fbf7ee', 'muted on cream'], ['4b4560', 'ffffff', 'muted on white'], ['ffffff', '5a4ae0', 'white on purple'], ['16131f', 'ff8fd8', 'ink on pink'], ['16131f', 'ffc531', 'ink on yellow'], ['16131f', '5fd39a', 'ink on mint'], ['16131f', '9b90fa', 'ink on science'], ['137a4b', 'ffffff', 'success on white'], ['8a4b00', 'fff7e3', 'warning on amber card'], ['5c5672', 'e7e3f5', 'disabled'], ['4a3bcc', 'ffffff', 'link purple on white']];
+let bad = 0; for (const [f, b, n] of pairs) { const r = cr(f, b); if (r < 4.5) bad++; console.log(`${r.toFixed(2).padStart(5)}  ${r >= 4.5 ? 'AA ' : 'LOW'}  ${n}`); } process.exit(bad ? 1 : 0);

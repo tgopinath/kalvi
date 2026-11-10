@@ -160,6 +160,7 @@
     main.querySelectorAll('.numpad,.kbd-note,.tilebank').forEach(x => x.hidden = true);
     main.querySelector('.qactions').hidden = true;
     main.querySelector('.qcard').classList.add(ok ? 'was-right' : 'was-wrong');
+    if (window.PLAY) { PLAY.sfx(ok ? 'correct' : 'wrong'); PLAY.buzz(ok ? 20 : [10, 40, 10]); if (ok) { const b = (main.querySelector('.choice.is-right') || main.querySelector('.qcard')).getBoundingClientRect(); PLAY.burst(b.left + b.width / 2, b.top + Math.min(b.height / 2, 60)); } }
     lessonCard(main.querySelector('#lesson'), q, ok, giv);
   }
   // ---------- the lesson card after every answer ----------
@@ -168,7 +169,7 @@
     const steps = q.why?.steps || [];
     el.innerHTML = `<article class="lessoncard ${ok ? 'ok' : 'miss'}" tabindex="-1">
       <header class="lc-head"><span class="lc-mark" aria-hidden="true"><svg class="k-icon"><use href="#${ok ? 'i-check' : 'i-dot'}"/></svg></span>
-        <div><p class="lc-status">${ok ? t('pr.right') : t('pr.wrong')}</p><p class="lc-answer">${t('pr.answerIs', { a: `<strong>${ansTxt}</strong>` }).replace(/\.(<\/strong>)\.$/, '.$1').replace(/([.?])(<\/span><\/strong>)\.$/, '$1$2')}${!ok && giv != null && giv !== '' && q.kind === 'num' ? ` <span class="muted">${t('pr.youSaid', { a: q.unit === '₹' ? '₹' + giv : giv })}</span>` : ''}</p></div>
+        <div><p class="lc-status">${window.PLAY ? PLAY.cheer(ok) : ok ? t('pr.right') : t('pr.wrong')}</p><p class="lc-answer">${t('pr.answerIs', { a: `<strong>${ansTxt}</strong>` }).replace(/\.(<\/strong>)\.$/, '.$1').replace(/([.?])(<\/span><\/strong>)\.$/, '$1$2')}${!ok && giv != null && giv !== '' && q.kind === 'num' ? ` <span class="muted">${t('pr.youSaid', { a: q.unit === '₹' ? '₹' + giv : giv })}</span>` : ''}</p></div>
         ${listenBtn('lclisten')}</header>
       ${q.why?.photo ? `<figure class="lc-photo"><img src="${q.why.photo.src}" alt="${esc(q.why.photo.alt || '')}" loading="lazy" onerror="this.closest('figure').classList.add('noimg')"><figcaption>${t('common.credit')}: <a href="${q.why.photo.href}" target="_blank" rel="noopener">${esc(q.why.photo.credit)}</a></figcaption></figure>` : ''}
       <p class="eyebrow">${t('pr.whyTitle')}</p>
@@ -206,10 +207,11 @@
     const s = R.summary;
     main.innerHTML = `<section class="summary k-card"><p class="eyebrow">${esc(R.title)}</p><h1>${t('pr.summary')}</h1>
       <div class="sum-meter">${R.results.map(r => `<i class="${r?.ok ? 'ok' : r ? 'miss' : ''}"></i>`).join('')}</div>
-      <p class="sum-score">${t('pr.score', { a: s.right, b: s.n })}</p>
+      <div class="jarwrap" id="jar"></div><p class="sum-score">${t('pr.score', { a: s.right, b: s.n })}</p>
       ${s.miss ? `<p class="muted">${t('pr.toReview', { n: s.miss })}</p>` : ''}
       ${s.ups.map(u => `<p class="sum-up"><svg class="k-icon"><use href="#i-up"/></svg>${t('pr.levelUp', { n: u.lvl, skill: esc(u.skill) })}</p>`).join('')}
       <div class="row-actions"><button class="k-btn k-btn-outline pill again">${t('pr.again')}</button><a class="k-btn k-btn-primary" href="${R.back}">${t('common.continue')}</a></div></section>`;
+    const nStars = s.n ? Math.max(1, Math.round(3 * s.right / s.n)) : 0; window.PLAY?.starsToJar(main.querySelector('#jar'), nStars); if (s.ups.length) setTimeout(() => window.PLAY?.sfx('levelup'), 900);
     const again = R.again;
     main.querySelector('.again').onclick = () => again ? again() : (location.hash = R.back);
   }

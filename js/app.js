@@ -4,7 +4,7 @@
   const esc = Engine.esc, main = $('#main');
   const SUBJ = {
     maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.PUZZLES?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
-    english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
+    english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.TYPING?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
     science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
     world: { icon: 'i-globe', topics: [...(window.GK?.TOPICS || []), { id: 'geo', subject: 'world', title: 'w.geo.title', blurb: 'w.geo.blurb', icon: 'i-map', skills: window.GEO?.skills || [], page: el => { el.innerHTML = `<article class="k-card practice-card"><div><p class="eyebrow">${t('games.title')}</p><h2>${t('w.geo.title')}</h2><p class="muted">${t('w.geo.body')}</p></div><a class="k-btn k-btn-primary k-btn-lg" href="#/geo">${t('common.open')}</a></article>`; } }],
       games: () => [window.GK?.game, window.GK?.dailyGame, window.GEO?.game].filter(Boolean) },
@@ -21,6 +21,7 @@
     $('.skip').textContent = I18N.lang === 'ta' ? 'உள்ளடக்கத்திற்குச் செல்' : 'Skip to content';
     document.title = `${t('app.name')} · ${t('nav.maths')}, ${t('nav.english')}, ${t('nav.science')}`;
   }
+  $('#soundBtn').onclick = () => PLAY.setSound(!PLAY.soundOn);
   $$('#langToggle button').forEach(b => b.onclick = () => {
     const l = b.dataset.l; const p = Store.current();
     try { localStorage.setItem('kalvi.lang', l); } catch {}
@@ -39,7 +40,7 @@
     const h = location.hash || '#/';
     $('#nav').setAttribute('aria-label', t('nav.main'));
     $('#nav').innerHTML = p ? items.map(([href, ic, k]) => { const on = href === '#/' ? (h === '#/' || h === '#') : h.startsWith(href) || (href.startsWith('#/s/') && h.startsWith('#/t/' + href.slice(4) + '/')); return `<a href="${href}" class="${href === '#/parent' ? 'nav-parent' : ''}" ${on ? 'aria-current="page"' : ''}><svg class="k-icon"><use href="#${ic}"/></svg><span>${t(k)}</span></a>`; }).join('') : '';
-    document.body.classList.toggle('no-profile', !p);
+    document.body.classList.toggle('no-profile', !p); document.body.classList.toggle('band-young', p?.band === 'young'); PLAY.paintToggle();
   }
   $('#whoBtn').onclick = () => {
     const db = Store.db;
@@ -102,29 +103,44 @@
 
   // ---------- screens ----------
   function greet(p) { const h = new Date().getHours(); return t(h < 12 ? 'greet.morning' : h < 17 ? 'greet.afternoon' : 'greet.evening', { name: esc(p.name) }); }
+  // ---------- icons (Fluent Emoji 3D, MIT) ----------
+  const ICON = { maths: 'abacus', english: 'ABC', science: 'atom', world: 'map',
+    't:maths': { count: 'abacus', place: 'numbers', add: 'brick', sub: 'ice', mul: 'dice', div: 'plate', frac: 'pie', shapes: 'triruler', measure: 'clock' },
+    't:english': { sounds: 'ABC', blend: 'puzzle', sight: 'openbook', vocab: 'mango', spell: 'pencil', read: 'books', grammar: 'memo' },
+    't:science': { forces: 'rocket', light: 'rainbow', sound: 'music', magnets: 'magnet', electricity: 'bolt', matter: 'ice', water: 'droplet', weather: 'sun', space: 'moon', machines: 'gear', living: 'seedling' },
+    't:world': { india: 'flag', tamilnadu: 'classical', scientists: 'microscope', space: 'satellite', wonders: 'trophy', safety: 'bulb', nature: 'elephant', geo: 'map' },
+    g: { 'pz.title': 'puzzle', 'mem.title': 'star', 'draw': 'palette', 'music': 'music', 'stories': 'books', 'bee.title': 'ABC', 'wp.title': 'puzzle', 'home.quizTitle': 'microscope', 'lab.title': 'testtube', 'geo.title': 'compass', 'gk.title': 'trophy', 'gk.dailyTitle': 'glowstar', 'typing.title': 'keyboard', 'coding.title': 'gear', 'videos.title': 'film', 'mq.title': 'numbers' } };
+  const icon = (k, alt = '') => `<img src="img/icons/${k}.webp" alt="${alt}" loading="lazy" draggable="false">`;
+  const gameIcon = g => ICON.g[g.title] || ICON.g[String(g.title).split('.')[0]] || 'star';
+  const STK = ['pink', 'yellow', 'mint', 'purple'];
+  const deco = () => `<svg class="deco" style="right:6%;top:6px;width:64px;transform:rotate(12deg)" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 10 11-4 1 12 12 3-7 10 7 10-12 3-1 12-11-4-6 10-6-10-11 4-1-12-12-3 7-10-7-10 12-3 1-12 11 4z" fill="#ff8fd8" stroke="#16131f" stroke-width="2"/></svg><svg class="deco" style="right:22%;top:48px;width:40px;transform:rotate(-10deg)" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 0c2 12 8 18 20 20-12 2-18 8-20 20-2-12-8-18-20-20 12-2 18-8 20-20z" fill="#5fd39a" stroke="#16131f" stroke-width="2"/></svg><svg class="deco" style="right:2%;bottom:0;width:60px" viewBox="0 0 70 50" aria-hidden="true"><path d="M8 30c-8-14 10-28 24-22 10-10 34-4 30 14 10 8 0 26-14 20-10 10-32 6-34-6-6 0-8-2-6-6z" fill="#ffc531" stroke="#16131f" stroke-width="2"/></svg>`;
+  function greet(p) { const h = new Date().getHours(); return t(h < 12 ? 'play.hi.morning' : h < 17 ? 'play.hi.afternoon' : 'play.hi.evening', { name: esc(p.name) }); }
+  function lastTopic(p) { const s = p.sessions.find(x => x.subject && SUBJ[x.subject] && SUBJ[x.subject].topics.some(tp => tp.id === x.topic)); return s ? [s.subject, SUBJ[s.subject].topics.find(tp => tp.id === s.topic)] : null; }
   function home() {
-    const p = Store.current(); const streak = Store.streak(p), dueN = dueAll(p).length, todayN = p.days[Store.today()] || 0, warmDone = p.warmup === Store.today();
+    const p = Store.current(); const streak = Store.streak(p), warmDone = p.warmup === Store.today(), dueN = dueAll(p).length;
+    const totalStars = Store.SUBJECTS.reduce((a, s) => a + SUBJ[s].topics.reduce((b, tp) => b + PLAY.starsFor(p, tp), 0), 0), goal = 5, done = PLAY.todayCount(p);
+    const lt = lastTopic(p), stickers = (p.extras?.stickers || 0);
     main.innerHTML = `<section class="page home">
-      <p class="eyebrow">${t('home.eyebrow')} · ${new Date().toLocaleDateString(I18N.lang === 'ta' ? 'ta-IN' : 'en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-      <h1>${greet(p)}</h1>
-      <div class="stats"><div class="k-stat"><span class="k-stat-label">${t('home.streak')}</span><span class="k-stat-value">${streak}</span></div><div class="k-stat"><span class="k-stat-label">${t('home.answered')}</span><span class="k-stat-value">${todayN}</span></div><div class="k-stat"><span class="k-stat-label">${t('home.dueLabel')}</span><span class="k-stat-value">${dueN}</span></div></div>
-      <div class="cards2">
-        <article class="k-card feature"><div class="feat-art">${warmArt()}</div><div><p class="eyebrow">${t('home.warmTitle')}</p><h2>${warmDone ? t('home.warmDone') : t('home.warmBody')}</h2><button class="k-btn ${warmDone ? 'k-btn-outline pill' : 'k-btn-primary'} k-btn-lg" id="warmBtn">${warmDone ? t('home.warmAgain') : t('common.start')}</button></div></article>
-        <article class="k-card"><p class="eyebrow"><svg class="k-icon sm"><use href="#i-review"/></svg>${t('home.reviewTitle')}</p><p>${dueN ? t('home.reviewBody', { n: dueN }) : t('home.reviewNone')}</p>${dueN ? `<button class="k-btn k-btn-outline pill" id="revBtn">${t('common.start')}</button>` : ''}</article>
-      </div>
-      <h2 class="section">${t('home.upNext')}</h2>
-      <div class="subjects">${Store.SUBJECTS.filter(s => SUBJ[s].topics.length).map(s => { const tp = nextTopic(p, s), sm = subjectMastery(p, s); return `<a class="subjcard" data-subject="${s}" href="#/t/${s}/${tp.id}"><span class="subj-ic"><svg class="k-icon"><use href="#${SUBJ[s].icon}"/></svg></span><span class="eyebrow">${t('subj.' + s + '.title')}</span><b>${t(tp.title)}</b>${bar(sm.m)}<span class="small muted">${t('prog.skillsMastered', { a: sm.mastered, b: sm.total })}</span></a>`; }).join('')}</div>
-      <h2 class="section">${t('games.title')}</h2>
-      <div class="games">${gameCards(p, ['maths', 'english', 'science', 'world'], 1)}</div>
+      <div class="hero">${deco()}<div class="hello">${avatar(p, 72)}<div><p class="eyebrow">${new Date().toLocaleDateString(I18N.lang === 'ta' ? 'ta-IN' : 'en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p><h1>${greet(p)} <span class="stk pink" style="--r:-8deg">${t('play.play')}</span></h1></div></div></div>
+      <div class="stattiles"><div class="stattile pink"><b>${totalStars}</b><span>${t('play.stars', { n: '' }).trim()}</span></div><div class="stattile yellow">${PLAY.kolam(streak)}<span>${t('home.streak')}: ${streak}</span></div><div class="stattile mint">${PLAY.ring(done, goal)}<span>${t('play.goal', { a: done, b: goal })}</span></div></div>
+      <article class="playcard"><div><span class="stk purple" style="--r:-4deg">${t('home.warmTitle')}</span><h2>${warmDone ? t('home.warmAgain') : t('play.startToday')}</h2><p>${warmDone ? t('home.warmDone') : t('play.startTodayBody')}</p><button class="k-btn k-btn-primary k-btn-lg" id="warmBtn">${t('common.start')}</button>${dueN ? ` <button class="k-btn k-btn-outline k-btn-lg" id="revBtn">${t('home.reviewTitle')} · ${dueN}</button>` : ''}</div>${icon('rocket')}</article>
+      ${lt ? `<a class="continuecard" data-subject="${lt[0]}" href="#/t/${lt[0]}/${lt[1].id}">${icon(ICON['t:' + lt[0]][lt[1].id] || ICON[lt[0]])}<span><span class="eyebrow">${t('play.continue')}</span><b>${t(lt[1].title)}</b></span></a>` : ''}
+      <div class="carousel-ctrl" style="margin-top:22px"><h2 class="section" style="margin:0;flex:1">${t('play.subjects')}</h2><button class="k-iconbtn" data-car="-1" aria-label="${t('common.back')}"><svg class="k-icon"><use href="#i-back"/></svg></button><button class="k-iconbtn" data-car="1" aria-label="${t('common.next')}"><svg class="k-icon"><use href="#i-next"/></svg></button></div>
+      <div class="carousel"><div class="carousel-track" id="subjTrack">${Store.SUBJECTS.filter(s => SUBJ[s].topics.length).map((s, i) => `<a class="subjcard2" data-subject="${s}" href="#/s/${s}"><span class="num">0${i + 1}</span><div class="blobart">${icon(ICON[s])}</div><h3>${t('subj.' + s + '.title')}</h3><p>${t('subj.' + s + '.blurb')}</p></a>`).join('')}</div><div class="dots" aria-hidden="true">${Store.SUBJECTS.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div></div>
+      <div class="marquee" aria-hidden="true"><div class="marquee-track">${[0, 1].map(() => [...Store.SUBJECTS.map((s, i) => `<span class="stk ${STK[i]}">${icon(ICON[s])}${t('subj.' + s + '.title')}</span>`), `<span class="stk yellow">${icon('star')}${t('play.stars', { n: totalStars })}</span>`, `<a class="stk pink" href="#/stickers">${icon('trophy')}${t('play.stickers')} · ${stickers}</a>`].join('')).join('')}</div></div>
+      <h2 class="section">${t('play.shelf')}</h2>
+      <div class="games">${gameCards(p, ['maths', 'english', 'science', 'world'], 2)}</div>
+      <p class="small"><a href="#/stickers">${t('play.stickers')}</a> · <a href="#/credits">${t('credits.title')}</a></p>
     </section>`;
     $('#warmBtn').onclick = warmup; $('#revBtn') && ($('#revBtn').onclick = review);
-    bindGames();
+    const tr = $('#subjTrack'), dots = $$('.dots i');
+    $$('[data-car]').forEach(b => b.onclick = () => tr.scrollBy({ left: +b.dataset.car * tr.clientWidth * .8, behavior: 'smooth' }));
+    tr.onscroll = () => { const i = Math.round(tr.scrollLeft / (tr.scrollWidth - tr.clientWidth || 1) * (dots.length - 1)); dots.forEach((d, k) => d.classList.toggle('on', k === i)); };
+    bindGames(); PLAY.guide('home'); PLAY.revealSticker(PLAY.checkStickers(p));
   }
-  function warmArt() { return VIS.towers([2, 4, 3], ''); }
   function gameCards(p, subjects, perSubject = 99) {
     const gs = subjects.flatMap(s => SUBJ[s].games().slice(0, perSubject).map(g => ({ ...g, s })));
-    return gs.map((g, i) => `<button type="button" class="gamecard" data-subject="${g.s}" data-g="${i}"><span class="subj-ic"><svg class="k-icon"><use href="#${g.icon}"/></svg></span><span><span class="eyebrow">${t('subj.' + g.s + '.title')}</span><b>${t(g.title)}</b><span class="small muted">${t(g.blurb)}</span></span></button>`).join('');
-    // bound in bindGames
+    return gs.map((g, i) => `<button type="button" class="gamecard" data-subject="${g.s}" data-g="${i}">${icon(gameIcon(g)).replace('<img ', '<img class="gico" ')}<span><span class="eyebrow">${t('subj.' + g.s + '.title')}</span><b>${t(g.title)}</b><span class="small muted">${t(g.blurb)}</span></span></button>`).join('');
   }
   function bindGames() {
     const p = Store.current();
@@ -132,14 +148,14 @@
   }
   function subject(s) {
     const p = Store.current(), S = SUBJ[s]; if (!S) return notFound();
-    const tps = S.topics, sm = subjectMastery(p, s), next = nextTopic(p, s);
+    const tps = S.topics, next = nextTopic(p, s), stars = tps.reduce((a, tp) => a + PLAY.starsFor(p, tp), 0);
     main.innerHTML = `<section class="page subject" data-subject="${s}">
-      <p class="eyebrow">${t('subj.path')}</p><h1>${t('subj.' + s + '.title')}</h1><p class="lede">${t('subj.' + s + '.blurb')}</p>
-      <div class="subj-sum">${bar(sm.m)}<span class="small muted">${t('prog.skillsMastered', { a: sm.mastered, b: sm.total })}</span></div>
-      <ol class="path">${tps.map((tp, i) => { const m = topicMastery(p, tp), st = m >= 0.85 ? 'mastered' : m > 0.01 ? 'practising' : p.subjects[s].lessons[tp.id] ? 'learning' : 'new'; const isNext = tp === next; return `<li class="path-item ${st} ${isNext ? 'next' : ''} ${forBand(tp, p) ? '' : 'later'}"><span class="path-n" aria-hidden="true">${st === 'mastered' ? '<svg class="k-icon"><use href="#i-check"/></svg>' : i + 1}</span><a href="#/t/${s}/${tp.id}"><span class="path-ic"><svg class="k-icon"><use href="#${tp.icon}"/></svg></span><span class="path-txt"><b>${t(tp.title)}</b><span class="small muted">${t(tp.blurb)}</span>${bar(m)}</span><span class="path-st">${isNext ? `<span class="k-badge k-badge-primary k-badge-pill">${t('status.upNext')}</span>` : `<span class="small muted">${t('status.' + st)}</span>`}</span></a></li>`; }).join('')}</ol>
-      <h2 class="section">${t('games.title')}</h2><div class="games">${gameCards(p, [s])}</div>
+      <div class="hero sbanner">${deco()}<p class="eyebrow">${t('subj.path')}</p><h1>${t('subj.' + s + '.title')} <span class="stk ${STK[Store.SUBJECTS.indexOf(s)]}">${t('play.starsOf', { a: stars, b: tps.length * 3 })}</span></h1><p class="lede">${t('subj.' + s + '.blurb')}</p>${Engine.listenBtn('slisten')}</div>
+      <div class="journey">${tps.map((tp, i) => { const st = PLAY.starsFor(p, tp), isNext = tp === next, later = !forBand(tp, p); return `<a class="stop ${isNext ? 'next' : ''} ${later ? 'later' : ''}" href="#/t/${s}/${tp.id}" title="${esc(t(tp.blurb))}" aria-label="${esc(t(tp.title))}. ${t('play.starsOf', { a: st, b: 3 })}"><span class="num">${String(i + 1).padStart(2, '0')}</span><div class="blobart">${icon(ICON['t:' + s]?.[tp.id] || ICON[s])}</div><h3 class="stop-title stop-name">${t(tp.title)}</h3>${PLAY.starRow(st)}${isNext ? `<span class="k-btn k-btn-primary playbtn">${t('play.play')}</span>` : ''}</a>`; }).join('')}</div>
+      <h2 class="section">${t('play.shelf')}</h2><div class="games">${gameCards(p, [s])}</div>
     </section>`;
-    bindGames();
+    Engine.bindListen($('.slisten'), () => [{ text: t('subj.' + s + '.blurb') + '. ' + tps.map(tp => t(tp.title)).join(', '), lang: I18N.lang }]);
+    bindGames(); PLAY.guide(s);
   }
   function topic(s, id) {
     const p = Store.current(), tp = SUBJ[s]?.topics.find(x => x.id === id); if (!tp) return notFound();
@@ -152,6 +168,7 @@
       <ul class="skills">${tp.skills.filter(id => Engine.SK[id]).map(id => { const sk = Engine.SK[id], st = Store.skill(p, s, id), lv = st.lvl ?? sk.start(p.band); return `<li><span class="sk-name">${t(sk.name)}</span><span class="small muted">${t('topic.level', { n: lv })} · ${t('status.' + Store.status(st))}</span>${bar(st.m)}</li>`; }).join('')}</ul>
     </section>`;
     if (tp.page) tp.page($('#lessonArea'), tp); else lessonSteps($('#lessonArea'), tp);
+    PLAY.guide('topic');
     $('#prBtn').onclick = () => practiceTopic(tp);
   }
   // Steps pattern: numbered step rail, one step open at a time, Listen on each
@@ -294,6 +311,7 @@
     else if (r === 'parent') parent();
     else if (r === 'profile') profileForm(parts[1]);
     else notFound();
+    if (!['', undefined, 's', 't'].includes(r)) document.getElementById('guide')?.remove();
     if (r !== 'round') { main.focus({ preventScroll: true }); scrollTo(0, 0); }
   }
   addEventListener('hashchange', route);
