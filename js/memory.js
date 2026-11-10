@@ -42,8 +42,9 @@
   function sciencePair(id) {
     const S = tx('mem.sci'), [kind, k] = id.split(':'), code = 500000 + SCI_KEYS().indexOf(id);
     if (kind === 'home') { const p = window.PICS?.[k]; return { id, code, label: S.animal[k], a: p ? img(p.src, S.animal[k], I18N.lang) : txt(S.animal[k]), b: txt(S.home[k]), why: t('mem.why.home', { a: S.animal[k], b: S.home[k] }) }; }
-    if (kind === 'part') return { id, code, label: S.part[k], a: (window.PHOTOS?.[k] || window.PICS?.[k]) ? img((PHOTOS[k] || PICS[k]).src, S.part[k], I18N.lang) : txt(S.part[k]), b: txt(S.partJob[k]), why: t('mem.why.job', { a: S.part[k], b: S.partJob[k] }) };
-    const ph = window.PHOTOS?.[k === 'eyes' ? 'eye' : k] ? PHOTOS[k === 'eyes' ? 'eye' : k].src : ['lungs', 'brain', 'stomach'].includes(k) ? `img/body/${k}.jpg` : null;
+    const PK = { root: 'root', leaf: 'leaf', flower: 'flower2', stem: 'stem2', seed: 'greengram', fruit: 'mango' }[k]; const pp = window.PHOTOS?.[PK] || window.PICS?.[PK];
+    if (kind === 'part') return { id, code, label: S.part[k], a: pp ? img(pp.src, S.part[k], I18N.lang) : txt(S.part[k]), b: txt(S.partJob[k]), why: t('mem.why.job', { a: S.part[k], b: S.partJob[k] }) };
+    const ok2 = { eyes: 'eye', ears: 'ear' }[k] || k; const ph = window.PHOTOS?.[ok2] ? PHOTOS[ok2].src : ['lungs', 'brain', 'stomach'].includes(k) ? `img/body/${k}.jpg` : null;
     return { id, code, label: S.organ[k], a: ph ? img(ph, S.organ[k], I18N.lang) : txt(S.organ[k]), b: txt(S.organJob[k]), why: t('mem.why.job', { a: S.organ[k], b: S.organJob[k] }) };
   }
   function decode(code) {

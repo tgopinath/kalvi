@@ -15,3 +15,5 @@
 .lab-chart { width: 100%; max-width: 420px; color: var(--ink); }
 .lab-tank .tok { transition: transform 1.4s ease-in-out; }
 @media (prefers-reduced-motion: reduce) { .lab-bar, .lab-tank .tok { transition: none; } }
+.lab-tok { display: inline-flex; align-items: center; gap: 6px; } .lab-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid #16131f; }
+.ptable .lab-img { margin-right: 6px; vertical-align: middle; } .lab-hero img { max-height: 200px; }

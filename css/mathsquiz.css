@@ -1,0 +1,34 @@
+/* Maths quiz: only what the shared round UI does not already cover. */
+.mq-pics { display: grid; gap: 6px; justify-items: center; }
+.mq-pics .mq-row { display: flex; gap: 6px; }
+.mq-pics img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; background: var(--surface-sunken); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
+.mq-pics.sm img { width: 30px; height: 30px; border-radius: 7px; }
+.mq-pics.sm, .mq-pics.sm .mq-row { gap: 4px; }
+@media (min-width: 560px) { .mq-pics img { width: 60px; height: 60px; } .mq-pics.sm img { width: 36px; height: 36px; } }
+.choice .cvis .mq-pics { padding: 6px 0; }
+.mq-plus { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; }
+.mq-plus > b { font-size: 36px; line-height: 1; color: var(--board-ink); }
+.mq-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; align-items: end; }
+.mq-eqn { margin: 0; letter-spacing: .02em; }
+.qprompt .mq-sub { display: block; font-size: .7em; font-weight: 700; color: var(--ink-muted, var(--ink)); margin-top: 4px; }
+.mq-tficon .k-icon { width: 28px; height: 28px; }
+.choices .mq-tficon + span { font-size: 20px; }
+
+/* Beat your best: a quiet countdown ring in the corner of the board */
+.mq-timed { position: relative; width: 100%; display: grid; place-items: center; }
+.mq-timed.solo { min-height: 56px; }
+.mq-ring { position: absolute; top: -6px; right: -6px; width: 40px; height: 40px; transform: rotate(-90deg); z-index: 1; }
+.mq-timed.solo .mq-ring { position: static; transform: rotate(-90deg); width: 48px; height: 48px; }
+.mq-ring circle { fill: none; stroke-width: 4; }
+.mq-ring .bg { stroke: rgba(255, 255, 255, .14); }
+.board.light .mq-ring .bg { stroke: var(--line); }
+.mq-ring .fg { stroke: var(--acc, #16a39c); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 0; animation: mq-ring linear forwards; }
+@keyframes mq-ring { to { stroke-dashoffset: 100; } }
+@media (prefers-reduced-motion: reduce) { .mq-ring .fg { animation-timing-function: steps(10, end); } }
+.was-right .mq-ring .fg, .was-wrong .mq-ring .fg { animation-play-state: paused; }
+.mq-timeup { margin: 8px 0 0; color: var(--ink-muted, var(--ink)); }
+.mq-best { font-weight: 700; }
+
+.mq-modes { display: grid; gap: 10px; margin: 12px 0; }
+.mq-mode { display: grid; gap: 4px; text-align: left; padding: 14px 16px; min-height: 64px; border: 1px solid var(--line-strong, var(--line)); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.mq-mode:hover, .mq-mode:focus-visible { border-color: var(--ink); }

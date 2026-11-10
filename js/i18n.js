@@ -589,3 +589,6 @@ I18N.add({
 });
 I18N.add({ credits: { title: ['Credits and sources', 'நன்றியும் மூலங்களும்'], body: ['Every picture in Kalvi comes from a free, openly licensed source. Tap a credit to see the original.', 'கல்வியில் உள்ள ஒவ்வொரு படமும் இலவச, திறந்த உரிமம் பெற்ற மூலங்களிலிருந்து வந்தது. மூலத்தைப் பார்க்க ஒரு நன்றிக் குறிப்பைத் தட்டு.'], photos: ['Photos', 'படங்கள்'], data: ['Data and maps', 'தரவும் வரைபடங்களும்'], fonts: ['Fonts', 'எழுத்துருக்கள்'], link: ['Credits', 'நன்றி'] } });
 I18N.add({ prof: { age: ['Age', 'வயது'], ageIs: ['Age {n}', '{n} வயது'], ageErr: ['Kalvi is for ages 3 and up. Add an age to continue.', 'கல்வி 3 வயதும் அதற்கு மேலும் உள்ளவர்களுக்கு. தொடர வயதைச் சேர்க்கவும்.'] } });
+I18N.add({ m: { fruit: { mango: ['mangoes', 'மாம்பழங்கள்'], apple: ['apples', 'ஆப்பிள்கள்'], orange: ['oranges', 'ஆரஞ்சுகள்'], banana: ['bananas', 'வாழைப்பழங்கள்'], coconut: ['coconuts', 'தேங்காய்கள்'], lemon: ['lemons', 'எலுமிச்சைகள்'] },
+  q: { countFruit: ['How many {f}?', 'எத்தனை {f}?'] }, h: { countTouch: ['Touch each one as you count. Say the numbers out loud.', 'எண்ணும்போது ஒவ்வொன்றையும் தொடு. எண்களைச் சத்தமாகச் சொல்.'] },
+  y: { fruitRow: ['Move the {f} into a ten-frame, one in each box: {n} boxes are full.', '{f} ஒவ்வொன்றையும் பத்துச் சட்டத்தின் ஒரு கட்டத்தில் வை: {n} கட்டங்கள் நிறைந்தன.'] } } });

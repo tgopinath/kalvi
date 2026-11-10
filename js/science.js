@@ -8,6 +8,7 @@
   const LINKS = { vanam: 'https://vanam-app.vercel.app', kaadu: 'https://kaadu-plants.vercel.app', udambu: 'https://udambu.vercel.app' };
   function photo(key) {
     if (!key) return null;
+    if (key.startsWith('body:') && window.PHOTOS?.[key.slice(5)]) { const q = PHOTOS[key.slice(5)]; return { src: q.src, credit: q.credit, href: q.page, alt: key.slice(5) }; }
     if (key.startsWith('body:')) { const k = key.slice(5), b = BODY[k]; return b ? { src: `img/body/${k}.jpg`, credit: `3D model by ${b.by} on Sketchfab (${b.lic}), from Udambu`, href: b.href, alt: k } : null; }
     const p = window.PHOTOS?.[key] || window.PICS?.[key]; return p ? { src: p.src, credit: p.credit, href: p.page, alt: key } : null;
   }
@@ -17,7 +18,7 @@
     let choices, answer;
     if (tf) { choices = [{ v: true, html: t('common.true') }, { v: false, html: t('common.false') }]; answer = it.a; }
     else { const idx = r.shuffle(it.o.map((_, i) => i)); choices = idx.map(i => ({ v: i, html: esc(it.o[i]) })); answer = it.a; }
-    const TOPIC_PHOTO = { light: 'rainbow', water: 'clouds', weather: 'lightning', matter: 'glass', magnets: 'iron', forces: 'wood', living: 'seed', plants: 'leaf' };
+    const TOPIC_PHOTO = { light: 'prism', water: 'clouds', weather: 'lightning', matter: 'ice', magnets: 'magnet', forces: 'toycar', electricity: 'bulb', space: 'earth', sound: 'stringphone', living: 'greengram', plants: 'leaf', animals: 'nest2', body: 'lungs', seasons: 'winter' };
     const ph = photo(it.photo || (!it.snap && TOPIC_PHOTO[topicKey]));
     const snap = it.snap ? SIMS.snap(it.snap.sim, it.snap.s) : null;
     const prompt = tf ? t('s.ui.tfPrompt', { s: esc(it.q) }) : esc(it.q);

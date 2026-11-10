@@ -497,3 +497,5 @@ main:focus, main:focus-visible { outline: none; }
 .seg button { min-height: 48px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: var(--surface); }
 .seg button:hover { background: var(--surface-sunken); }
 .board .seg button, .demo-ctrls .seg button { background: var(--surface); }
+.fruitrow { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 520px; }
+.fruitrow img { width: 76px; height: 76px; object-fit: cover; border-radius: 50%; border: 2px solid #16131f; box-shadow: 2px 2px 0 #16131f; }

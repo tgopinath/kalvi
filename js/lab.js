@@ -110,7 +110,7 @@
     S.max = Math.max(S.max || 0, S.i);
     const el = main.querySelector('#labPanel'); let say = '';
     const nav = (ok = true) => `<div class="lesson-nav"><button class="k-btn k-btn-ghost" data-go="-1" ${S.i ? '' : 'disabled'}>${t('lab.back')}</button><button class="k-btn k-btn-primary" data-go="1" ${ok ? '' : 'disabled'}>${t('lab.next')}</button></div>`;
-    if (st === 'q') { say = L(x.q) + ' ' + t('lab.hyp'); el.innerHTML = `<p class="eyebrow">${t('lab.step.q')}</p><h2>${esc(L(x.q))}</h2><p class="muted">${t('lab.hyp')}</p>${bench(x, items, false)}${nav()}`; }
+    if (st === 'q') { say = L(x.q) + ' ' + t('lab.hyp'); el.innerHTML = `${heroPhoto(x) ? `<figure class="lc-photo lab-hero"><img src="${heroPhoto(x).src}" alt=""><figcaption>${t('common.credit')}: <a href="${heroPhoto(x).href}" target="_blank" rel="noopener">${esc(heroPhoto(x).credit)}</a></figcaption></figure>` : ''}<p class="eyebrow">${t('lab.step.q')}</p><h2>${esc(L(x.q))}</h2><p class="muted">${t('lab.hyp')}</p>${bench(x, items, false)}${nav()}`; }
     if (st === 'predict') {
       say = t(x.kind === 'cat' ? 'lab.pickEach' : 'lab.pickOne');
       el.innerHTML = `<p class="eyebrow">${t('lab.step.predict')}</p><h2>${esc(L(x.q))}</h2><p class="muted">${say}</p>` + (x.kind === 'cat'
@@ -136,7 +136,7 @@
       const best = x.kind === 'num' ? items.slice().sort((a, b) => x.low ? a.v - b.v : b.v - a.v)[0].k : null;
       S.score = x.kind === 'cat' ? [right, items.length] : [S.pred.one === best ? 1 : 0, 1];
       say = x.kind === 'cat' ? t('lab.score', { a: right, b: items.length }) : (S.pred.one === best ? t('lab.right') : t('lab.wrongP'));
-      el.innerHTML = `<p class="eyebrow">${t('lab.step.record')}</p><table class="ptable"><thead><tr><th>${t('lab.item')}</th><th>${t('lab.guess')}</th><th>${t('lab.result')}</th></tr></thead><tbody>${items.map(it => `<tr><td>${esc(it.label)}</td><td>${x.kind === 'cat' ? esc(L(C[S.pred[it.k]] || ['–', '–'])) : (S.pred.one === it.k ? '✓' : '')}</td><td><b>${x.kind === 'cat' ? esc(L(C[it.v])) : it.v + ' ' + esc(x.unit)}</b></td></tr>`).join('')}</tbody></table>
+      el.innerHTML = `<p class="eyebrow">${t('lab.step.record')}</p><table class="ptable"><thead><tr><th>${t('lab.item')}</th><th>${t('lab.guess')}</th><th>${t('lab.result')}</th></tr></thead><tbody>${items.map(it => `<tr><td>${ph(it.k)}${esc(it.label)}</td><td>${x.kind === 'cat' ? esc(L(C[S.pred[it.k]] || ['–', '–'])) : (S.pred.one === it.k ? '✓' : '')}</td><td><b>${x.kind === 'cat' ? esc(L(C[it.v])) : it.v + ' ' + esc(x.unit)}</b></td></tr>`).join('')}</tbody></table>
         ${x.kind === 'num' && p.band === 'older' ? `<p class="eyebrow">${t('lab.chart')}</p><svg class="lab-chart" viewBox="0 0 320 ${items.length * 34 + 10}" role="img" aria-label="${t('lab.chart')}">${items.map((it, k) => `<text x="0" y="${k * 34 + 22}" font-size="11" fill="currentColor">${esc(it.label.slice(0, 22))}</text><rect x="130" y="${k * 34 + 8}" width="${Math.max(2, it.v / max * 160)}" height="20" rx="3" fill="var(--acc)"/><text x="${136 + it.v / max * 160}" y="${k * 34 + 23}" font-size="11" fill="currentColor">${it.v}</text>`).join('')}</svg>` : ''}
         <p class="lc-rule">${say}</p>${nav()}`;
     }
@@ -150,7 +150,7 @@
         Store.record(p, 'science', sk, { key: `lab.conclude|${x.lvl}|${seed}`, lvl: x.lvl, seed }, ok);
         const h = x.home;
         el.querySelector('#labCard').innerHTML = `<article class="lessoncard ${ok ? 'ok' : 'miss'}" tabindex="-1"><header class="lc-head"><span class="lc-mark"><svg class="k-icon"><use href="#${ok ? 'i-check' : 'i-dot'}"/></svg></span><div><p class="lc-status">${ok ? t('pr.right') : t('pr.wrong')}</p><p class="lc-answer">${t('pr.answerIs', { a: `<strong>${esc(L(x.conclude.o[0]))}</strong>` })}</p></div></header>
-          <p class="eyebrow">${t('pr.whyTitle')}</p>${L(x.conclude.why).map(w => `<p>${esc(w)}</p>`).join('')}
+          ${heroPhoto(x) ? `<figure class="lc-photo"><img src="${heroPhoto(x).src}" alt="" loading="lazy"><figcaption>${t('common.credit')}: <a href="${heroPhoto(x).href}" target="_blank" rel="noopener">${esc(heroPhoto(x).credit)}</a></figcaption></figure>` : ''}<p class="eyebrow">${t('pr.whyTitle')}</p>${L(x.conclude.why).map(w => `<p>${esc(w)}</p>`).join('')}
           <div class="athome"><p class="eyebrow">${t('topic.atHome')}</p><div class="kid-cols"><div><h3>${t('topic.need')}</h3><ul>${h.need.map(n => `<li>${esc(L(n))}</li>`).join('')}</ul></div><div><h3>${t('topic.steps')}</h3><ol>${h.steps.map(n => `<li>${esc(L(n))}</li>`).join('')}</ol></div></div><p class="grownup"><b>${t('topic.grownup')}:</b> ${esc(L(h.note))}</p></div>
           <div class="row-actions"><a class="k-btn k-btn-primary" href="#/lab">${t('common.done')}</a></div></article>`;
         p.extras = p.extras || {}; p.extras.lab = [{ id: x.id, title: L(x.title), date: Store.today(), prediction: S.pred, summary: S.score ? `${S.score[0]}/${S.score[1]}` : '', right: ok }, ...(p.extras.lab || [])].slice(0, 30);
@@ -162,13 +162,17 @@
     main.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { S.i = Math.max(0, Math.min(5, S.i + +b.dataset.go)); exp(main, id); scrollTo(0, 0); });
     main.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { S.i = +b.dataset.k; exp(main, id); });
   }
+  const IMGK = { wood: 'wood', coin: 'coin', leaf: 'leaf', stone: 'stone', bottle: 'bottle', apple: 'apple', sugar: 'sugar', sand: 'sand', oil: 'oil', nail: 'iron', clip: 'clip', spoon: 'iron', foil: 'foil', eraser: 'rubber', stick: 'wood', copper: 'copperwire', rubber: 'rubber', lead: 'pencil', sun: 'sunpic', shade: 'forest', salt: 'sugar', cloth: 'towel', tile: 'glass', mat: 'cotton', towel: 'towel', all: 'greengram', dark: 'greengram', cotton: 'cotton', taut: 'stringphone', d20: 'torch', ry: 'flower2' };
+  const ph = k => { const q = window.PHOTOS?.[IMGK[k] || k] || window.PICS?.[IMGK[k] || k]; return q ? `<img class="lab-img" src="${q.src}" alt="" loading="lazy">` : ''; };
+  const HERO = { float: 'bottle', dissolve: 'sugar', magnet: 'magnet', circuit: 'bulb', seed: 'greengram', ice: 'ice', shadow: 'torch', ramp: 'toycar', colours: 'prism', evap: 'towel', phone: 'stringphone' };
+  const heroPhoto = x => { const q = window.PHOTOS?.[HERO[x.id]]; return q ? { src: q.src, credit: q.credit, href: q.page } : null; };
   // the bench: a dark board; cat experiments sort tokens into columns, num experiments grow bars, some reuse a sim snapshot
   function bench(x, items, shown, animate) {
     if (x.sim && x.id === 'circuit' && shown) return `<div class="board">${SIMS.snap('circuit', { mat: 'lead', bat: 1, on: true })}</div>`;
     if (x.sim && !shown) { const tries = SIMS.SIMS[x.sim]?.tries; return `<div class="board">${SIMS.snap(x.sim, tries ? tries[0] : {})}</div>`; }
     if (x.kind === 'cat') {
       if (x.id === 'float') return `<div class="board"><svg class="r3 lab-tank ${animate ? 'go' : ''}" viewBox="0 0 600 260" role="img" aria-label="${esc(L(x.title))}"><rect x="20" y="40" width="560" height="200" rx="8" fill="#1d3d57" stroke="#5fb3e6"/><rect x="20" y="40" width="560" height="14" fill="#5fb3e6" opacity=".35"/>${items.map((it, k) => { const cx = 70 + k * 92, y = shown ? (it.v === 'float' ? 46 : 214) : 20; return `<g class="tok" style="--y:${y}px"><rect x="${cx - 36}" y="${y - 12}" width="72" height="24" rx="12" fill="#e9e6dc"/><text x="${cx}" y="${y + 4}" font-size="11" text-anchor="middle" font-family="Lato" font-weight="700" fill="#1f2433">${esc(it.label.slice(0, 12))}</text></g>`; }).join('')}</svg></div>`;
-      return `<div class="board"><div class="lab-cols">${x.cats.map(c => `<div><p class="eyebrow" style="color:#cfd4de">${esc(L(C[c]))}</p>${shown ? items.filter(it => it.v === c).map(it => `<span class="lab-tok">${esc(it.label)}</span>`).join('') : ''}</div>`).join('')}</div>${shown ? '' : `<div class="lab-cols">${items.map(it => `<span class="lab-tok">${esc(it.label)}</span>`).join('')}</div>`}</div>`;
+      return `<div class="board"><div class="lab-cols">${x.cats.map(c => `<div><p class="eyebrow" style="color:#cfd4de">${esc(L(C[c]))}</p>${shown ? items.filter(it => it.v === c).map(it => `<span class="lab-tok">${ph(it.k)}${esc(it.label)}</span>`).join('') : ''}</div>`).join('')}</div>${shown ? '' : `<div class="lab-cols">${items.map(it => `<span class="lab-tok">${ph(it.k)}${esc(it.label)}</span>`).join('')}</div>`}</div>`;
     }
     const max = Math.max(...items.map(i => i.v), 1);
     return `<div class="board"><div class="lab-bars">${items.map(it => `<div><span class="lab-bar" style="height:${shown ? Math.max(4, it.v / max * 140) : 4}px"></span><b>${shown ? it.v + ' ' + esc(x.unit) : '?'}</b><small>${esc(it.label)}</small></div>`).join('')}</div></div>`;
