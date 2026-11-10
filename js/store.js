@@ -6,24 +6,26 @@
   const SUBJECTS = ['maths', 'english', 'science', 'world'];
   const today = (d = new Date()) => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
   const addDays = (iso, n) => { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return today(d); };
+  const AV_COLORS = ['#0c7777', '#a15c00', '#4338ca', '#b8236f', '#2f6f4f', '#3a4152'];   // AA with white initials
   const blank = () => ({ profiles: [], current: null, updated: Date.now() });
   let db;
   try { db = JSON.parse(localStorage.getItem(KEY)) || blank(); } catch { db = blank(); }
+  // age drives the band: 3–6 → young, 7+ → older. Profiles from before ages get 5 (young) or 8 (older).
+  function normAge(p) { if (!(p.age >= 3)) p.age = p.band === 'older' ? 8 : 5; p.age = Math.max(3, Math.min(12, Math.round(p.age))); p.band = p.age >= 7 ? 'older' : 'young'; return p; }
   // migrate: every profile has every subject
-  (db.profiles || []).forEach(p => { p.subjects = p.subjects || {}; SUBJECTS.forEach(s => { p.subjects[s] ??= { skills: {}, review: {}, lessons: {} }; }); p.days ??= {}; p.sessions ??= []; p.settings ??= { rate: 0.9 }; });
+  (db.profiles || []).forEach(p => { p.subjects = p.subjects || {}; SUBJECTS.forEach(s => { p.subjects[s] ??= { skills: {}, review: {}, lessons: {} }; }); p.days ??= {}; p.sessions ??= []; p.settings ??= { rate: 0.9 }; normAge(p); delete p.lang; delete p.avatar; if (!AV_COLORS.includes(p.color)) p.color = AV_COLORS[Math.abs([...p.id].reduce((a, c) => a + c.charCodeAt(0), 0)) % AV_COLORS.length]; });
   const listeners = new Set();
   function save() { db.updated = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(db)); } catch {} listeners.forEach(f => f()); }
 
   const AVATARS = ['cube', 'sphere', 'cone', 'cylinder', 'pyramid', 'prism', 'ring', 'star'];
-  const AV_COLORS = ['#16a39c', '#e2a336', '#3b82c4', '#d04b86', '#6d6ad8', '#2f9e6b'];
-  function newProfile({ name, band = 'young', avatar = 'cube', color = AV_COLORS[0], lang = 'en' }) {
-    const p = { id: 'c' + Math.random().toString(36).slice(2, 9), name: name.trim(), band, avatar, color, lang, created: Date.now(), updated: Date.now(),
+  function newProfile({ name, age = 5, color = AV_COLORS[0] }) {
+    const p = { id: 'c' + Math.random().toString(36).slice(2, 9), name: name.trim(), age, band: age >= 7 ? 'older' : 'young', color, created: Date.now(), updated: Date.now(),
       subjects: Object.fromEntries(SUBJECTS.map(s => [s, { skills: {}, review: {}, lessons: {} }])), days: {}, sessions: [], warmup: null, settings: { rate: 0.9 } };
-    db.profiles.push(p); db.current = p.id; save(); return p;
+    normAge(p); db.profiles.push(p); db.current = p.id; save(); return p;
   }
   const current = () => db.profiles.find(p => p.id === db.current) || null;
   function select(id) { db.current = id; save(); }
-  function update(id, patch) { const p = db.profiles.find(x => x.id === id); if (p) { Object.assign(p, patch); p.updated = Date.now(); save(); } return p; }
+  function update(id, patch) { const p = db.profiles.find(x => x.id === id); if (p) { Object.assign(p, patch); if ('age' in patch) { p.band = null; } normAge(p); p.updated = Date.now(); save(); } return p; }
   function remove(id) { db.profiles = db.profiles.filter(p => p.id !== id); if (db.current === id) db.current = db.profiles[0]?.id ?? null; save(); }
 
   // ----- skills: level (adaptive) + mastery (exponentially weighted accuracy) -----
@@ -31,9 +33,11 @@
     const s = p.subjects[subject].skills;
     return s[id] ??= { lvl: null, m: 0, n: 0, ok: 0, run: 0, miss: 0, last: null };
   }
+  // exact age fine-tunes the start inside the band: 9+ starts one level up where the band allows
+  function startLvl(p, sk) { const b = p.band, lo = sk.start(b), hi = sk.max(b); return p.age >= 9 ? Math.min(hi, lo + 1) : lo; }
   function record(p, subject, sk, item, correct, meta = {}) {
     const st = skill(p, subject, sk.id);
-    if (st.lvl == null) st.lvl = sk.start(p.band);
+    if (st.lvl == null) st.lvl = startLvl(p, sk);
     st.n++; if (correct) st.ok++;
     const w = 0.25 + 0.1 * (st.lvl - 1);           // harder levels move mastery further
     st.m = Math.min(1, Math.max(0, st.m + w * ((correct ? 1 : 0) - st.m)));
@@ -82,11 +86,11 @@
       if (i < 0) { db.profiles.push(op); changed = true; }
       else if ((op.updated || 0) > (db.profiles[i].updated || 0)) { db.profiles[i] = op; changed = true; }
     }
-    db.profiles.forEach(p => SUBJECTS.forEach(s => { p.subjects[s] ??= { skills: {}, review: {}, lessons: {} }; }));
+    db.profiles.forEach(p => { SUBJECTS.forEach(s => { p.subjects ??= {}; p.subjects[s] ??= { skills: {}, review: {}, lessons: {} }; }); normAge(p); });
     if (!db.current && db.profiles.length) db.current = db.profiles[0].id;
     if (changed) save();
     return changed;
   }
 
-  window.Store = { KEY, BOX_DAYS, SUBJECTS, AVATARS, AV_COLORS, today, addDays, get db() { return db; }, newProfile, current, select, update, remove, skill, record, flagReview, due, trouble, lessonDone, logSession, streak, status, exportAll, mergeIn, save, on: f => listeners.add(f) };
+  window.Store = { KEY, BOX_DAYS, SUBJECTS, AVATARS, AV_COLORS, today, addDays, get db() { return db; }, newProfile, current, select, update, remove, skill, record, flagReview, due, trouble, lessonDone, logSession, streak, status, exportAll, mergeIn, save, startLvl, normAge, on: f => listeners.add(f) };
 })();

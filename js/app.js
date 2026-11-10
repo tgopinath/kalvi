@@ -13,7 +13,7 @@
   const forBand = (tp, p) => !tp.bands || tp.bands.includes(p.band);
 
   // ---------- language ----------
-  function langNow() { const p = Store.current(); return p?.lang || (() => { try { return localStorage.getItem('kalvi.lang'); } catch { return null; } })() || 'en'; }
+  function langNow() { return (() => { try { return localStorage.getItem('kalvi.lang'); } catch { return null; } })() || 'en'; }
   function applyLang() {
     I18N.lang = langNow(); document.documentElement.lang = I18N.lang; document.body.classList.toggle('lang-ta', I18N.lang === 'ta');
     $$('#langToggle button').forEach(b => b.setAttribute('aria-pressed', b.dataset.l === I18N.lang));
@@ -23,29 +23,18 @@
   }
   $$('#langToggle button').forEach(b => b.onclick = () => {
     const l = b.dataset.l; const p = Store.current();
-    if (p) Store.update(p.id, { lang: l }); try { localStorage.setItem('kalvi.lang', l); } catch {}
+    try { localStorage.setItem('kalvi.lang', l); } catch {}
     Voice.stop(); applyLang(); route();
   });
 
   // ---------- avatars: rendered solids ----------
-  function avatar(kind, color, size = 40) {
-    const S = R3.Scene({ yaw: -32, pitch: 24, scale: 20 }); S.group(0).shadow(0, 0, 0, 1.3, 1.3); S.group(1);
-    if (kind === 'cube') S.box(-0.9, -0.9, 0, 1.8, 1.8, 1.8, color);
-    if (kind === 'sphere') S.sphere(0, 0, 1.05, 1.05, color, { matte: true });
-    if (kind === 'cone') S.cone(0, 0, 0, 1.05, 2.2, color, { n: 40 });
-    if (kind === 'cylinder') S.cylinder(0, 0, 0, 0.95, 1.9, color, { n: 40 });
-    if (kind === 'pyramid') S.pyramid([[-1, -1], [1, -1], [1, 1], [-1, 1]], 0, 1.9, color);
-    if (kind === 'prism') { const a = [[-1.2, -0.9, 0], [-1.2, 0.9, 0], [-1.2, 0, 1.5]], b = [[1.2, -0.9, 0], [1.2, 0.9, 0], [1.2, 0, 1.5]]; S.face([a[0], a[2], a[1]], color).face([b[0], b[1], b[2]], color).face([a[0], b[0], b[2], a[2]], color).face([a[1], a[2], b[2], b[1]], color).face([a[0], a[1], b[1], b[0]], color); }
-    if (kind === 'ring') { const out = [], inn = []; for (let i = 0; i < 40; i++) { const a = i / 40 * Math.PI * 2; out.push([Math.cos(a) * 1.15, Math.sin(a) * 1.15]); } S.cylinder(0, 0, 0, 1.15, 0.5, color, { n: 48 }); S.cylinder(0, 0, 0.5, 0.55, 0.01, R3.shade(color, -0.55), { n: 40, flat: true }); }
-    if (kind === 'star') { const pts = []; for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 0.5 : 1.25; pts.push([Math.cos(a) * r, Math.sin(a) * r]); } S.prism(pts, 0, 0.5, color); }
-    return `<span class="avatar" style="--s:${size}px">${S.svg('')}</span>`;
-  }
+  const avatar = (p, size = 40) => Photo.html(p, size);
 
   // ---------- header + nav ----------
   function header() {
     const p = Store.current(), who = $('#whoBtn');
     who.hidden = !p;
-    if (p) { who.innerHTML = `${avatar(p.avatar, p.color, 32)}<span class="who-name">${esc(p.name)}</span>`; who.setAttribute('aria-label', `${t('prof.switchTo')}: ${p.name}`); }
+    if (p) { who.innerHTML = `${avatar(p, 32)}<span class="who-name">${esc(p.name)}</span>`; who.setAttribute('aria-label', `${t('prof.switchTo')}: ${p.name}`); }
     const items = [['#/', 'i-home', 'nav.today'], ['#/s/maths', 'i-maths', 'nav.maths'], ['#/s/english', 'i-english', 'nav.english'], ['#/s/science', 'i-science', 'nav.science'], ['#/s/world', 'i-globe', 'nav.world'], ['#/progress', 'i-chart', 'nav.progress'], ['#/parent', 'i-lock', 'nav.grownups']];
     const h = location.hash || '#/';
     $('#nav').setAttribute('aria-label', t('nav.main'));
@@ -54,7 +43,7 @@
   }
   $('#whoBtn').onclick = () => {
     const db = Store.db;
-    dialog(`<h2 class="k-dialog-title">${t('prof.whoIs')}</h2><ul class="who-list">${db.profiles.map(p => `<li><button type="button" class="who-item" data-id="${p.id}" ${p.id === db.current ? 'aria-current="true"' : ''}>${avatar(p.avatar, p.color, 40)}<span><b>${esc(p.name)}</b><small>${t('band.' + p.band)}</small></span>${p.id === db.current ? `<span class="k-badge k-badge-pill">${t('prof.current')}</span>` : ''}</button></li>`).join('')}</ul><p class="muted small">${t('prof.manage')}</p><div class="k-dialog-actions"><a class="k-btn k-btn-ghost" href="#/parent" data-close>${t('nav.grownups')}</a><button class="k-btn k-btn-outline" data-close>${t('common.close')}</button></div>`,
+    dialog(`<h2 class="k-dialog-title">${t('prof.whoIs')}</h2><ul class="who-list">${db.profiles.map(p => `<li><button type="button" class="who-item" data-id="${p.id}" ${p.id === db.current ? 'aria-current="true"' : ''}>${avatar(p, 40)}<span><b>${esc(p.name)}</b><small>${t('prof.ageIs', { n: p.age })}</small></span>${p.id === db.current ? `<span class="k-badge k-badge-pill">${t('prof.current')}</span>` : ''}</button></li>`).join('')}</ul><p class="muted small">${t('prof.manage')}</p><div class="k-dialog-actions"><a class="k-btn k-btn-ghost" href="#/parent" data-close>${t('nav.grownups')}</a><button class="k-btn k-btn-outline" data-close>${t('common.close')}</button></div>`,
       d => $$('.who-item', d).forEach(b => b.onclick = () => { Store.select(b.dataset.id); closeDialog(); Voice.stop(); applyLang(); location.hash = '#/'; route(); }));
   };
   function dialog(html, bind) {
@@ -185,7 +174,7 @@
   }
   function progress() {
     const p = Store.current(); const days = [...Array(14)].map((_, i) => Store.addDays(Store.today(), i - 13));
-    main.innerHTML = `<section class="page progress"><p class="eyebrow">${esc(p.name)} · ${t('band.' + p.band)}</p><h1>${t('prog.title')}</h1>
+    main.innerHTML = `<section class="page progress"><p class="eyebrow">${esc(p.name)} · ${t('prof.ageIs', { n: p.age })}</p><h1>${t('prog.title')}</h1>
       <div class="stats"><div class="k-stat"><span class="k-stat-label">${t('home.streak')}</span><span class="k-stat-value">${Store.streak(p)}</span></div><div class="k-stat"><span class="k-stat-label">${t('home.dueLabel')}</span><span class="k-stat-value">${dueAll(p).length}</span></div></div>
       <h2 class="section">${t('prog.last14')}</h2><div class="cal" role="list">${days.map(d => `<span role="listitem" class="${p.days[d] ? 'on' : ''}" title="${d}: ${p.days[d] || 0}" aria-label="${d}: ${p.days[d] || 0}"><i style="--v:${Math.min(1, (p.days[d] || 0) / 20)}"></i><small>${+d.slice(8)}</small></span>`).join('')}</div>
       <h2 class="section">${t('prog.bySubject')}</h2>
@@ -205,13 +194,15 @@
       <div class="kids">${db.profiles.map(p => kidCard(p)).join('')}</div>
       <a class="k-btn k-btn-outline pill" href="#/profile/new"><svg class="k-icon"><use href="#i-plus"/></svg>${t('parent.add')}</a>
       <article class="k-card backup" id="backupCard"></article>
+      <article class="k-card"><label class="k-switch"><span><b>${t('photo.backupPhotos')}</b><br><span class="small muted">${t('photo.backupPhotosHelp')}</span></span><input type="checkbox" id="bkPhotos" ${Photo.backupPhotos() ? 'checked' : ''}></label></article>
       <article class="k-card"><p class="eyebrow">${t('parent.voice')}</p><div class="seg" role="group" aria-label="${t('parent.voice')}"><button type="button" data-rate=".72">${t('parent.slow')}</button><button type="button" data-rate=".9">${t('parent.normal')}</button></div></article>
     </section>`;
     $$('.kid-del').forEach(b => b.onclick = () => { const p = db.profiles.find(x => x.id === b.dataset.id);
       dialog(`<h2 class="k-dialog-title">${t('parent.delTitle', { name: esc(p.name) })}</h2><p class="k-dialog-body">${t('parent.delBody', { name: esc(p.name) })}</p><div class="k-dialog-actions"><button class="k-btn k-btn-outline" data-close>${t('common.cancel')}</button><button class="k-btn k-btn-danger" id="delYes">${t('parent.delYes')}</button></div>`,
-        d => $('#delYes', d).onclick = () => { Store.remove(p.id); closeDialog(); applyLang(); if (!Store.db.profiles.length) location.hash = '#/welcome'; else route(); }); });
+        d => $('#delYes', d).onclick = () => { Photo.put(p.id, null); Store.remove(p.id); closeDialog(); applyLang(); if (!Store.db.profiles.length) location.hash = '#/welcome'; else route(); }); });
     const cur = Store.current();
     $$('[data-rate]').forEach(b => { b.setAttribute('aria-pressed', String(Math.abs((cur?.settings?.rate ?? .9) - +b.dataset.rate) < .01)); b.onclick = () => { Store.db.profiles.forEach(p => p.settings = { ...p.settings, rate: +b.dataset.rate }); Store.save(); parent(); }; });
+    $('#bkPhotos').onchange = e => Photo.setBackupPhotos(e.target.checked);
     window.Backup?.render($('#backupCard'));
   }
   function kidCard(p) {
@@ -223,7 +214,7 @@
     const trouble = Store.SUBJECTS.flatMap(s => Store.trouble(p, s).filter(r => Engine.SK[r.skill] && r.miss).map(r => ({ ...r, s }))).sort((a, b) => b.miss - a.miss).slice(0, 5);
     const troubleTxt = trouble.map(r => { let q; try { q = Engine.build({ skill: r.skill, lvl: r.lvl, seed: r.seed }, p); } catch { return ''; } return `<li><span class="eyebrow">${t('subj.' + r.s + '.title')} · ${t(Engine.SK[r.skill].name)}</span><span>${(q.promptText || q.prompt).replace(/<(?!\/?span|\/?b)[^>]+>/g, '')}</span><span class="small muted">${t('parent.missed', { n: r.miss })}</span></li>`; }).join('');
     const sessions = p.sessions.slice(0, 5).map(x => `<li><span class="mono small">${x.date}</span> <span>${x.subject === 'mixed' ? t('pr.warmup') : t('subj.' + x.subject + '.title')}</span> <span class="muted small">${t('pr.score', { a: x.right, b: x.n })} · ${t('common.minutes', { n: Math.max(1, Math.round((x.ms || 0) / 60000)) })}</span></li>`).join('');
-    return `<article class="k-card kid"><header>${avatar(p.avatar, p.color, 48)}<div><h3>${esc(p.name)}</h3><span class="small muted">${t('band.' + p.band)} · ${p.lang === 'ta' ? 'தமிழ்' : 'English'} · ${t('parent.streak')}: ${Store.streak(p)}</span></div>
+    return `<article class="k-card kid"><header>${avatar(p, 48)}<div><h3>${esc(p.name)}</h3><span class="small muted">${t('prof.ageIs', { n: p.age })} · ${t('parent.streak')}: ${Store.streak(p)}</span></div>
       <div class="kid-actions"><a class="k-btn k-btn-ghost k-btn-sm" href="#/profile/${p.id}">${t('common.edit')}</a><button class="k-btn k-btn-ghost k-btn-sm kid-del" data-id="${p.id}">${t('common.delete')}</button></div></header>
       <table class="ptable"><thead><tr><th scope="col">${t('parent.perSubject')}</th><th scope="col">${t('subj.mastery')}</th><th scope="col">${t('parent.accuracy')}</th><th scope="col">${t('parent.minutes')}</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="kid-cols"><div><p class="eyebrow">${t('parent.trouble')}</p>${trouble.length ? `<ul class="trouble">${troubleTxt}</ul>` : `<p class="muted small">${t('parent.troubleNone')}</p>`}</div>
@@ -253,34 +244,31 @@
   function profileForm(id) {
     const isNew = id === 'new', first = !Store.db.profiles.length;
     if (!first && Date.now() - parentOpen > 10 * 60 * 1000) return gate();
-    const p = isNew ? { name: '', band: 'young', avatar: Store.AVATARS[Math.floor(Math.random() * 8)], color: Store.AV_COLORS[0], lang: I18N.lang } : Store.db.profiles.find(x => x.id === id);
+    const p = isNew ? { name: '', age: null, color: Store.AV_COLORS[Math.floor(Math.random() * Store.AV_COLORS.length)] } : Store.db.profiles.find(x => x.id === id);
     if (!p) return notFound();
     const st = { ...p };
     main.innerHTML = `<section class="page profile">${first ? `<p class="eyebrow"><span lang="en">Kalvi</span> · <span lang="ta">கல்வி</span></p><h1>${t('prof.welcome')}</h1><p class="lede">${t('prof.welcomeBody')}</p>` : `<a class="backlink" href="#/parent"><svg class="k-icon"><use href="#i-back"/></svg>${t('nav.grownups')}</a><h1>${isNew ? t('prof.newTitle') : t('prof.editTitle')}</h1>`}
       <form class="k-card pform" id="pform" novalidate>
-        <div class="pform-preview" aria-hidden="true"></div>
+        <div class="pform-preview"></div>
         <div class="k-field"><label class="k-label" for="pname">${t('prof.name')}</label><input class="k-input" id="pname" maxlength="24" autocomplete="off" placeholder="${t('prof.namePh')}" value="${esc(st.name)}"><p class="k-error" id="perr" hidden>${t('prof.nameErr')}</p></div>
-        <fieldset class="k-fieldset"><legend class="k-label">${t('band.label')}</legend><div class="seg">${['young', 'older'].map(b => `<button type="button" data-band="${b}">${t('band.' + b)}</button>`).join('')}</div><p class="k-help">${t('band.help')}</p></fieldset>
-        <fieldset class="k-fieldset"><legend class="k-label">${t('prof.avatar')}</legend><div class="avpick">${Store.AVATARS.map(a => `<button type="button" data-av="${a}" aria-label="${t('prof.av.' + a)}"></button>`).join('')}</div></fieldset>
+        <div class="k-field"><label class="k-label" for="page">${t('prof.age')}</label><input class="k-input" id="page" type="number" inputmode="numeric" min="3" max="12" autocomplete="off" value="${st.age ?? ''}" aria-describedby="pagehelp"><div class="agechips" role="group" aria-label="${t('prof.age')}">${[3, 4, 5, 6, 7, 8, 9, 10].map(n => `<button type="button" class="k-btn k-btn-outline pill" data-age="${n}">${n}</button>`).join('')}</div><p class="k-error" id="ageerr" hidden>${t('prof.ageErr')}</p><p class="k-help" id="pagehelp">${t('band.help')}</p></div>
         <fieldset class="k-fieldset"><legend class="k-label">${t('prof.color')}</legend><div class="swatches">${Store.AV_COLORS.map(c => `<button type="button" data-col="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('')}</div></fieldset>
-        <fieldset class="k-fieldset"><legend class="k-label">${t('prof.langPref')}</legend><div class="seg"><button type="button" data-lang="en" lang="en">English</button><button type="button" data-lang="ta" lang="ta">தமிழ்</button></div></fieldset>
         <div class="row-actions">${first ? '' : `<a class="k-btn k-btn-ghost" href="#/parent">${t('common.cancel')}</a>`}<button class="k-btn k-btn-primary k-btn-lg">${isNew ? t('prof.create') : t('common.save')}</button></div>
       </form></section>`;
     const draw = () => {
-      $$('[data-band]').forEach(b => b.setAttribute('aria-pressed', b.dataset.band === st.band));
-      $$('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === st.lang));
-      $$('[data-av]').forEach(b => { b.innerHTML = avatar(b.dataset.av, st.color, 44); b.setAttribute('aria-pressed', b.dataset.av === st.avatar); });
+      $$('[data-age]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.age === +st.age)));
       $$('[data-col]').forEach(b => b.setAttribute('aria-pressed', b.dataset.col === st.color));
-      $('.pform-preview').innerHTML = avatar(st.avatar, st.color, 88);
+      st.name = $('#pname').value; const pv = $('.pform-preview'); pv.innerHTML = Photo.slot(isNew ? { id: '_new' } : p, st); Photo.bind(pv, st, draw);
     };
-    $$('[data-band]').forEach(b => b.onclick = () => { st.band = b.dataset.band; draw(); });
-    $$('[data-av]').forEach(b => b.onclick = () => { st.avatar = b.dataset.av; draw(); });
+    $$('[data-age]').forEach(b => b.onclick = () => { st.age = +b.dataset.age; $('#page').value = st.age; $('#ageerr').hidden = true; draw(); });
+    $('#page').oninput = e => { const v = +e.target.value; st.age = e.target.value ? v : null; $('#ageerr').hidden = !(e.target.value && v < 3); draw(); };
     $$('[data-col]').forEach(b => b.onclick = () => { st.color = b.dataset.col; draw(); });
-    $$('[data-lang]').forEach(b => b.onclick = () => { st.lang = b.dataset.lang; if (first) { try { localStorage.setItem('kalvi.lang', st.lang); } catch {} st.name = $('#pname').value; applyLang(); profileForm(id); return; } draw(); });
     $('#pform').onsubmit = e => {
       e.preventDefault(); st.name = $('#pname').value.trim();
       if (!st.name) { $('#perr').hidden = false; $('#pname').focus(); return; }
-      if (isNew) Store.newProfile(st); else Store.update(p.id, { name: st.name, band: st.band, avatar: st.avatar, color: st.color, lang: st.lang });
+      st.age = +$('#page').value; if (!(st.age >= 3)) { $('#ageerr').hidden = false; $('#page').focus(); return; } st.age = Math.min(12, st.age);
+      const saved = isNew ? Store.newProfile(st) : null; if (saved && st.photo) Photo.put(saved.id, st.photo); if (!isNew && st.photo !== undefined) Photo.put(p.id, st.photo);
+      if (!isNew) Store.update(p.id, { name: st.name, age: st.age, color: st.color });
       applyLang(); location.hash = first ? '#/' : '#/parent';
     };
     draw();
@@ -311,6 +299,6 @@
   addEventListener('hashchange', route);
   addEventListener('keydown', e => { const v = document.body.dataset.view; if (v === 'round') Engine.keys(e); else window.ROUTES[v]?.keys?.(e); });
   window.App = { route, toast, dialog, closeDialog, avatar, applyLang, renderRound: () => { Engine.render(main); main.focus({ preventScroll: true }); scrollTo(0, 0); }, SUBJ, forBand, get parentOpen() { return parentOpen; } };
-  route();
+  Photo.ready.then(route);
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })();

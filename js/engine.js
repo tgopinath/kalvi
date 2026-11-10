@@ -22,7 +22,7 @@
   }
   function itemFor(p, skillId) {
     const sk = SK[skillId], st = Store.skill(p, sk.subject, skillId);
-    const lvl = Math.min(sk.max(p.band), Math.max(sk.min(p.band), st.lvl ?? sk.start(p.band)));
+    const lvl = Math.min(sk.max(p.band), Math.max(sk.min(p.band), st.lvl ?? Store.startLvl(p, sk)));
     return { skill: skillId, lvl, seed: newSeed() };
   }
   // pick skills weighted toward low mastery

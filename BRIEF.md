@@ -1,8 +1,8 @@
 # Kalvi (கல்வி) — brief
 
-**Problem.** Parents of 4–10-year-olds in Tamil Nadu juggle separate apps for maths drills, phonics and science videos. Most are loud, ad-driven or cartoonish, mark answers right or wrong without saying why, and are English only, so a parent who reads Tamil more easily can't follow along.
+**Problem.** Parents of 3–10-year-olds in Tamil Nadu juggle separate apps for maths drills, phonics and science videos. Most are loud, ad-driven or cartoonish, mark answers right or wrong without saying why, and are English only, so a parent who reads Tamil more easily can't follow along.
 
-**User.** A child aged 4–10 (two age bands: 4–6 and 7–10) using a shared family phone or a browser, with a parent who sets it up, checks progress and prefers Tamil or English.
+**User.** A child aged 3–10 (ages 3–6 and 7–10, set by the child’s age) using a shared family phone or a browser, with a parent who sets it up, checks progress and prefers Tamil or English.
 
 **Jobs to be done.**
 - Child: learn one idea at a time with something to touch and move, then practise it, and understand every mistake.

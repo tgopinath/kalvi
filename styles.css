@@ -480,3 +480,20 @@ body.no-profile .shell { display: block; }
 .credit-list img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; background: var(--surface-sunken); }
 .credit-list span { display: grid; gap: 2px; overflow-wrap: anywhere; }
 main:focus, main:focus-visible { outline: none; }
+.agechips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; max-width: 420px; }
+.agechips .k-btn { min-height: 48px; padding: 0; font-size: 17px; }
+@media (min-width: 560px) { .agechips { grid-template-columns: repeat(8, 1fr); max-width: 520px; } }
+.k-input[type=number] { -moz-appearance: textfield; } .k-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.avatar.initials { background: var(--c); color: #fff; font: 900 var(--fs)/1 var(--font-sans); letter-spacing: .02em; }
+.avatar.initials [lang="ta"] { font-family: "Noto Sans Tamil", var(--font-sans); font-weight: 700; }
+.avatar.photo img { width: 100%; height: 100%; object-fit: cover; }
+.photoslot { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+.photo-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; } .photo-actions p { width: 100%; margin: 0; }
+.photo-actions label.k-btn { cursor: pointer; }
+.crop { width: 260px; height: 260px; margin: 8px auto 12px; border-radius: 50%; overflow: hidden; position: relative; background: #111; touch-action: none; cursor: grab; outline-offset: 4px; }
+.crop img { position: absolute; left: 50%; top: 50%; max-width: none; user-select: none; pointer-events: none; }
+/* segmented choices: separate outline pills, like the age chips (no cramped full-width track) */
+.seg { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; border-radius: 0; }
+.seg button { min-height: 48px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: var(--surface); }
+.seg button:hover { background: var(--surface-sunken); }
+.board .seg button, .demo-ctrls .seg button { background: var(--surface); }

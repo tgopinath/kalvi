@@ -34,8 +34,12 @@
 .wp-len { font: 700 18px/1 var(--font-mono); letter-spacing: .1em; color: var(--ink-muted); }
 
 /* word search */
-.wp-search { display: grid; gap: 3px; grid-template-columns: repeat(var(--n), minmax(44px, 56px)); justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
-.wp-search .pz-cell { font-size: 22px; box-shadow: 0 2px 0 #a99d7c, 0 4px 8px #0004; }
+.wp-search { display: grid; gap: 3px; grid-template-columns: repeat(var(--n), minmax(48px, 56px)); justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
+/* narrow phones: 6x6 needs 6x48 + 5 gaps; tighten board padding and gaps, and if a very narrow screen
+   still runs short, scroll inside the board only (never the page) */
+.wp-board:has(> .wp-search) { overflow-x: auto; overscroll-behavior-x: contain; }
+@media (max-width: 480px) { .wp-board:has(> .wp-search) { padding: 4px; } .wp-search { gap: 2px; } }
+.wp-search .pz-cell { min-width: 48px; min-height: 48px; font-size: 22px; box-shadow: 0 2px 0 #a99d7c, 0 4px 8px #0004; }
 .pz-cell.wp-found { background: linear-gradient(#f9d58a, #e6a93c); color: #2a1700; box-shadow: 0 2px 0 #9a6a14, 0 4px 8px #0004; }
 .wp-search .pz-cell.sel { background: linear-gradient(#5fd3c9, #16a39c); color: #032a2a; outline: 0; box-shadow: 0 2px 0 #0d6e69, 0 4px 8px #0004; }
 .wp-words { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }

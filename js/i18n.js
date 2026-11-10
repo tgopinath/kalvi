@@ -31,7 +31,7 @@
 })();
 
 I18N.add({
-  app: { name: ['Kalvi', 'கல்வி'], tag: ['Maths, English, Science and World for ages 4 to 10', '4 முதல் 10 வயது வரை: கணக்கு, ஆங்கிலம், அறிவியல்'] },
+  app: { name: ['Kalvi', 'கல்வி'], tag: ['Maths, English, Science and World for ages 3 to 10', '3 முதல் 10 வயது வரை: கணக்கு, ஆங்கிலம், அறிவியல், உலகம்'] },
   nav: { today: ['Today', 'இன்று'], maths: ['Maths', 'கணக்கு'], english: ['English', 'ஆங்கிலம்'], science: ['Science', 'அறிவியல்'], progress: ['Progress', 'முன்னேற்றம்'], grownups: ['Grown-ups', 'பெற்றோர்'], main: ['Main', 'முதன்மை'] },
   lang: { label: ['Language', 'மொழி'], en: ['EN', 'EN'], ta: ['தமிழ்', 'தமிழ்'], switch: ['Switch language', 'மொழியை மாற்று'], noTamilVoice: ['This device has no Tamil voice, so only English lines are read aloud. You can add a Tamil voice in the phone’s speech settings.', 'இந்தச் சாதனத்தில் தமிழ்க் குரல் இல்லை. அதனால் ஆங்கில வரிகள் மட்டும் படிக்கப்படும். தொலைபேசியின் பேச்சு அமைப்புகளில் தமிழ்க் குரலைச் சேர்க்கலாம்.'] },
   common: {
@@ -44,7 +44,7 @@ I18N.add({
     offlineImg: ['Picture needs the internet', 'படத்திற்கு இணையம் தேவை'], credit: ['Picture', 'படம்'], source: ['Source', 'மூலம்'],
   },
   status: { new: ['Not started', 'தொடங்கவில்லை'], learning: ['Learning', 'கற்கிறது'], practising: ['Practising', 'பயிற்சியில்'], mastered: ['Mastered', 'தேர்ச்சி'], upNext: ['Up next', 'அடுத்தது'], lessonSeen: ['Lesson seen', 'பாடம் பார்த்தாயிற்று'] },
-  band: { young: ['Ages 4 to 6', '4 முதல் 6 வயது'], older: ['Ages 7 to 10', '7 முதல் 10 வயது'], label: ['Age group', 'வயதுப் பிரிவு'], help: ['Sets where each subject starts. Practice then moves up or down with the child.', 'ஒவ்வொரு பாடமும் எங்கிருந்து தொடங்கும் என்பதை இது முடிவு செய்கிறது. பிறகு பயிற்சி குழந்தையின் வேகத்திற்கு ஏற்ப மாறும்.'] },
+  band: { young: ['Ages 3 to 6', '3 முதல் 6 வயது'], older: ['Ages 7 to 10', '7 முதல் 10 வயது'], label: ['Age group', 'வயதுப் பிரிவு'], help: ['Sets where each subject starts. Practice then moves up or down with the child.', 'ஒவ்வொரு பாடமும் எங்கிருந்து தொடங்கும் என்பதை இது முடிவு செய்கிறது. பிறகு பயிற்சி குழந்தையின் வேகத்திற்கு ஏற்ப மாறும்.'] },
   greet: { morning: ['Good morning, {name}', 'காலை வணக்கம், {name}'], afternoon: ['Good afternoon, {name}', 'மதிய வணக்கம், {name}'], evening: ['Good evening, {name}', 'மாலை வணக்கம், {name}'] },
   home: {
     eyebrow: ['Today', 'இன்று'], streak: ['Day streak', 'தொடர் நாட்கள்'], streakNone: ['Start a streak today', 'இன்று ஒரு தொடரைத் தொடங்கு'],
@@ -588,3 +588,4 @@ I18N.add({
   w: { geo: { title: ['Earth and places', 'பூமியும் இடங்களும்'], blurb: ['Maps, the compass, Tamil Nadu, India and the world.', 'வரைபடங்கள், திசைகாட்டி, தமிழ்நாடு, இந்தியா, உலகம்.'], body: ['Read maps, find rivers and states, and learn where things grow.', 'வரைபடங்களைப் படி, ஆறுகளையும் மாநிலங்களையும் கண்டுபிடி, எது எங்கே விளைகிறது என்று அறி.'] } },
 });
 I18N.add({ credits: { title: ['Credits and sources', 'நன்றியும் மூலங்களும்'], body: ['Every picture in Kalvi comes from a free, openly licensed source. Tap a credit to see the original.', 'கல்வியில் உள்ள ஒவ்வொரு படமும் இலவச, திறந்த உரிமம் பெற்ற மூலங்களிலிருந்து வந்தது. மூலத்தைப் பார்க்க ஒரு நன்றிக் குறிப்பைத் தட்டு.'], photos: ['Photos', 'படங்கள்'], data: ['Data and maps', 'தரவும் வரைபடங்களும்'], fonts: ['Fonts', 'எழுத்துருக்கள்'], link: ['Credits', 'நன்றி'] } });
+I18N.add({ prof: { age: ['Age', 'வயது'], ageIs: ['Age {n}', '{n} வயது'], ageErr: ['Kalvi is for ages 3 and up. Add an age to continue.', 'கல்வி 3 வயதும் அதற்கு மேலும் உள்ளவர்களுக்கு. தொடர வயதைச் சேர்க்கவும்.'] } });

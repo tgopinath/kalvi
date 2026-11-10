@@ -1,6 +1,6 @@
 # Kalvi (கல்வி)
 
-Calm daily lessons in **Maths, English and Science** for children aged 4 to 10, with the whole app in **English or Tamil**. Built on the Kolam design system as a static PWA (plain HTML, CSS and JavaScript, no build step).
+Calm daily lessons in **Maths, English and Science** for children aged 3 to 10, with the whole app in **English or Tamil**. Built on the Kolam design system as a static PWA (plain HTML, CSS and JavaScript, no build step).
 
 - **Learning paths:** Maths (counting to fractions, shapes, time and ₹ money), English (letter sounds, blending, sight words, vocabulary with real photos and Tamil meanings, spelling, reading, grammar), Science (11 concept pages, each with a demo, try-this chips, a why chain, a try-at-home experiment and the questions children ask).
 - **Practice that teaches:** adaptive levels per skill, a three-step hint ladder, and a lesson card after every answer. Misses go into a Leitner review queue (0, 1, 2, 4, 8, 16 days). A daily warm-up mixes all three subjects.

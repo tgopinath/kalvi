@@ -174,7 +174,7 @@
       english: ['Each letter is a set of strokes in a fixed order. Watch the numbered guide, then follow it with your finger, a stylus or the mouse.', 'ஒவ்வொரு எழுத்தும் ஒரு குறிப்பிட்ட வரிசையில் வரும் கோடுகளால் ஆனது. எண்ணிட்ட வழிகாட்டியைப் பார்த்து, விரல், எழுதுகோல் அல்லது சுட்டியால் பின்பற்று.'],
       maths: ['Write numbers stroke by stroke, draw shapes that are checked by their corners and sides, find lines of symmetry and draw equal groups.', 'எண்களைக் கோடு கோடாக எழுது; மூலைகளும் பக்கங்களும் பார்க்கப்படும் வடிவங்களை வரை; சமச்சீர்க் கோடுகளைக் கண்டுபிடி; சம குழுக்களை வரை.'],
       science: ['Finish each diagram on the board: then a short lesson explains what you drew and why it matters.', 'பலகையில் உள்ள ஒவ்வொரு படத்தையும் முடி: பிறகு நீ வரைந்தது என்ன, ஏன் முக்கியம் என்று ஒரு சிறு பாடம் விளக்கும்.'],
-      young: ['Ages 4 to 6 trace on a dotted path, one stroke at a time.', '4 முதல் 6 வயதினர் புள்ளிக் கோட்டின் மேல், ஒவ்வொரு கோடாக எழுதுவார்கள்.'],
+      young: ['Ages 3 to 6 trace on a dotted path, one stroke at a time.', '3 முதல் 6 வயதினர் புள்ளிக் கோட்டின் மேல், ஒவ்வொரு கோடாக எழுதுவார்கள்.'],
       older: ['Ages 7 to 10 write freehand between the guide lines.', '7 முதல் 10 வயதினர் வழிகாட்டிக் கோடுகளுக்கு இடையில் தாமாக எழுதுவார்கள்.'],
       tasks: ['5 tasks', '5 பணிகள்'],
     },
