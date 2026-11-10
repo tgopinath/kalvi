@@ -400,7 +400,7 @@
         let s = 1; if (taps.length > 1) { const num = e.reduce((a, v, i) => a + v * (tau[i] || 0), 0), den = e.reduce((a, v) => a + v * v, 0) || 1; s = Math.max(.85, Math.min(1.15, num / den)); }
         const ok = e.map((v, i) => tau[i] != null && Math.abs(tau[i] - s * v) <= 180);
         const good = ok.filter(Boolean).length;
-        q.why.steps[2] = { text: t('music.tap.given', { a: good, b: on.length }), vis: `<div class="mu-taps">${timeline(on, tau.map(x => x / sp), tot, ok)}</div>` };
+        q.why.steps[2] = { text: t('music.tap.given', { a: good, b: on.length }), vis: `<div class="mu-taps">${timeline(on, tau.map(x => x / s / sp), tot, ok)}</div>` };
         return { correct: taps.length === on.length && good === on.length, given: t('music.tap.given', { a: good, b: on.length }) };
       },
       why: { steps: [{ text: t('music.tap.y1') }, { text: t('music.tap.y2', { expr: expr(durs), sum: fmt(tot) }), vis: blocks(durs) }], rule: t('music.tap.rule') } };
