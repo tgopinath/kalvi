@@ -28,4 +28,4 @@ body.lang-ta .gk-tl-when { letter-spacing: 0; text-transform: none; }
 .gk-fact > p { margin: 0; padding: 12px 16px 16px; line-height: 1.55; }
 .gk-fphoto { margin: 0; background: var(--surface-sunken); border-bottom: 1px solid var(--line); }
 .gk-fphoto img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
-.gk-kural blockquote { margin: 8px 0 12px; padding: 12px 16px; border-left: 3px solid var(--acc, var(--line-strong)); background: var(--surface-sunken); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 19px; line-height: 1.8; font-weight: 700; }
+.gk-kural blockquote { margin: 8px 0 12px; padding: 12px 16px; border-left: 3px solid var(--acc, var(--line-strong)); background: var(--surface-sunken); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 17px; line-height: 1.8; font-weight: 700; }
