@@ -191,7 +191,7 @@
       <h2 class="section">${t('prog.bySubject')}</h2>
       ${Store.SUBJECTS.map(s => { const sm = subjectMastery(p, s); return `<article class="k-card subjprog" data-subject="${s}"><header><span class="subj-ic"><svg class="k-icon"><use href="#${SUBJ[s].icon}"/></svg></span><div><h3>${t('subj.' + s + '.title')}</h3><span class="small muted">${t('prog.skillsMastered', { a: sm.mastered, b: sm.total })}</span></div><b class="pctbig">${pct(sm.m)}%</b></header>
         <ul class="topicbars">${SUBJ[s].topics.filter(tp => forBand(tp, p)).map(tp => `<li><a href="#/t/${s}/${tp.id}">${t(tp.title)}</a>${bar(topicMastery(p, tp))}</li>`).join('')}</ul></article>`; }).join('')}
-      ${!p.sessions.length ? `<p class="muted">${t('prog.noActivity')}</p>` : ''}
+      ${!p.sessions.length ? `<p class="muted">${t('prog.noActivity')}</p>` : ''}<p class="small"><a href="#/credits">${t('credits.title')}</a> · <a href="#/parent">${t('nav.grownups')}</a></p>
     </section>`;
   }
 
@@ -234,6 +234,14 @@
     try { const g = window.DRAW?.gallery?.(p) || []; if (g.length) h += `<p class="eyebrow">${t('parent.gallery')}</p><div class="gallery">${g.slice(0, 12).map(src => `<img src="${src}" alt="" loading="lazy">`).join('')}</div>`; } catch {}
     try { const nb = window.LAB?.notebook?.(p) || []; if (nb.length) h += `<p class="eyebrow">${t('parent.notebook')}</p><ul class="sessions">${nb.slice(0, 5).map(x => `<li><span class="mono small">${esc(x.date || '')}</span> <span>${esc(x.title || x.id)}</span> <span class="muted small">${esc(x.summary || '')}</span></li>`).join('')}</ul>`; } catch {}
     return h;
+  }
+  function credits() {
+    const all = [...Object.entries(window.PICS || {}), ...Object.entries(window.PHOTOS || {})];
+    main.innerHTML = `<section class="page credits"><p class="eyebrow">${t('app.name')}</p><h1>${t('credits.title')}</h1><p class="lede">${t('credits.body')}</p>
+      <h2 class="section">${t('credits.photos')}</h2><ul class="credit-list">${all.map(([k, v]) => `<li><img src="${v.src}" alt="" loading="lazy"><span><b>${esc(k)}</b><a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit || 'Wikimedia Commons')}</a></span></li>`).join('')}
+      <li><img src="img/body/lungs.jpg" alt="" loading="lazy"><span><b>body</b><a href="https://udambu.vercel.app" target="_blank" rel="noopener">Sketchfab models (CC BY / CC BY-NC) via Udambu</a></span></li></ul>
+      <h2 class="section">${t('credits.data')}</h2><ul class="sessions"><li>${t('geo.sources')}</li><li>Open-Meteo (CC BY 4.0) · <a href="https://open-meteo.com" target="_blank" rel="noopener">open-meteo.com</a></li><li>Dolch sight word lists (public domain)</li></ul>
+      <h2 class="section">${t('credits.fonts')}</h2><ul class="sessions"><li>Lato, Noto Sans Tamil, JetBrains Mono · SIL Open Font License</li></ul></section>`;
   }
   function gate() {
     const a = 12 + Math.floor(Math.random() * 30), b = 11 + Math.floor(Math.random() * 30);
@@ -294,6 +302,7 @@
     else if (r === 'summary') Engine.summary(main);
     else if (window.ROUTES[r]) window.ROUTES[r].render(main, parts);
     else if (r === 'progress') progress();
+    else if (r === 'credits') credits();
     else if (r === 'parent') parent();
     else if (r === 'profile') profileForm(parts[1]);
     else notFound();
