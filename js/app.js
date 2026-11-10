@@ -5,7 +5,7 @@
   const SUBJ = {
     maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.MATHSQUIZ?.game, window.PUZZLES?.game, window.CODING?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
     english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.TYPING?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
-    science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
+    science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.VIDEOS?.game, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
     world: { icon: 'i-globe', topics: [...(window.GK?.TOPICS || []), { id: 'geo', subject: 'world', title: 'w.geo.title', blurb: 'w.geo.blurb', icon: 'i-map', skills: window.GEO?.skills || [], page: el => { el.innerHTML = `<article class="k-card practice-card"><div><p class="eyebrow">${t('games.title')}</p><h2>${t('w.geo.title')}</h2><p class="muted">${t('w.geo.body')}</p></div><a class="k-btn k-btn-primary k-btn-lg" href="#/geo">${t('common.open')}</a></article>`; } }],
       games: () => [window.GK?.game, window.GK?.dailyGame, window.GEO?.game].filter(Boolean) },
   };
@@ -264,6 +264,7 @@
     main.innerHTML = `<section class="page credits"><p class="eyebrow">${t('app.name')}</p><h1>${t('credits.title')}</h1><p class="lede">${t('credits.body')}</p>
       <h2 class="section">${t('credits.photos')}</h2><ul class="credit-list">${all.map(([k, v]) => `<li><img src="${v.src}" alt="" loading="lazy"><span><b>${esc(k)}</b><a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit || 'Wikimedia Commons')}</a></span></li>`).join('')}
       <li><img src="img/body/lungs.jpg" alt="" loading="lazy"><span><b>body</b><a href="https://udambu.vercel.app" target="_blank" rel="noopener">Sketchfab models (CC BY / CC BY-NC) via Udambu</a></span></li></ul>
+      ${window.VIDEOS?.credits ? `<h2 class="section">${t('videos.title')}</h2><ul class="sessions">${VIDEOS.credits().map(c => `<li><b>${esc(c.title)}</b> · <a href="${c.href}" target="_blank" rel="noopener">${esc(c.credit)}</a></li>`).join('')}</ul>` : ''}
       <h2 class="section">${t('credits.data')}</h2><ul class="sessions"><li>${t('geo.sources')}</li><li>Open-Meteo (CC BY 4.0) · <a href="https://open-meteo.com" target="_blank" rel="noopener">open-meteo.com</a></li><li>Dolch sight word lists (public domain)</li></ul>
       <h2 class="section">${t('credits.fonts')}</h2><ul class="sessions"><li>Lato, Anton, Noto Sans Tamil, JetBrains Mono · SIL Open Font License</li></ul><h2 class="section">3D icons</h2><ul class="sessions"><li>Microsoft Fluent Emoji 3D (MIT License) · <a href="https://github.com/microsoft/fluentui-emoji" target="_blank" rel="noopener">github.com/microsoft/fluentui-emoji</a></li></ul></section>`;
   }
