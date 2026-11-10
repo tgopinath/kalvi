@@ -1,1 +1,6 @@
-/* placeholder */
+/* Earth and places */
+.geo-board { padding: 8px; }
+.geo-board .geo-svg { max-height: 460px; }
+.geo-svg .geo-r:hover { filter: brightness(1.25); }
+.geo-list { margin-top: 4px; }
+#geoPreview .geo-svg { max-height: 360px; }

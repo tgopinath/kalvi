@@ -1,1 +1,169 @@
-// placeholder: being built
+// Earth and places (World subject): map skills, Tamil Nadu, India and the world on bundled maps.
+// Maps: datameet (Survey of India state and district boundaries, so India includes all of Jammu & Kashmir and Ladakh),
+// Natural Earth 110m for other countries, Natural Earth + OpenStreetMap rivers. Built by tools/build-geo.sh; drawn with d3-geo.
+(function () {
+  const esc = Engine.esc, L = v => I18N.loc(v), S = 'world';
+  I18N.add({ geo: {
+    title: ['Earth and places', 'பூமியும் இடங்களும்'], blurb: ['Maps, the compass, Tamil Nadu, India and the world.', 'வரைபடங்கள், திசைகாட்டி, தமிழ்நாடு, இந்தியா, உலகம்.'],
+    sources: ['Maps: datameet / Survey of India boundaries (CC BY 4.0), Natural Earth (public domain), OpenStreetMap contributors (ODbL).', 'வரைபடங்கள்: datameet / இந்திய நில அளவைத் துறை எல்லைகள் (CC BY 4.0), Natural Earth (பொதுக் களம்), OpenStreetMap பங்களிப்பாளர்கள் (ODbL).'],
+    modes: ['Choose a map', 'ஒரு வரைபடத்தைத் தேர்ந்தெடு'], loading: ['Loading the map', 'வரைபடம் ஏற்றப்படுகிறது'], list: ['Or choose from the list', 'அல்லது பட்டியலிலிருந்து தேர்ந்தெடு'], zoom: ['Zoom', 'பெரிதாக்கு'], reset: ['Whole map', 'முழு வரைபடம்'],
+    mode: { compass: [['Map skills', 'வரைபடத் திறன்கள்'], ['The compass, directions, symbols, grids and scale.', 'திசைகாட்டி, திசைகள், குறியீடுகள், கட்டங்கள், அளவுகோல்.']], tn: [['Tamil Nadu', 'தமிழ்நாடு'], ['Districts, cities and rivers of our state.', 'நம் மாநிலத்தின் மாவட்டங்கள், நகரங்கள், ஆறுகள்.']], india: [['India', 'இந்தியா'], ['States, capitals, rivers, mountains and seas.', 'மாநிலங்கள், தலைநகரங்கள், ஆறுகள், மலைகள், கடல்கள்.']], world: [['World', 'உலகம்'], ['Continents, oceans, the equator and the poles.', 'கண்டங்கள், பெருங்கடல்கள், நிலநடுக்கோடு, துருவங்கள்.']], land: [['Landforms and climate', 'நில அமைப்புகளும் காலநிலையும்'], ['Mountains, deltas, deserts, the monsoon and where food grows.', 'மலைகள், டெல்டா, பாலைவனம், பருவமழை, உணவு எங்கே விளைகிறது.']] },
+    q: { find: ['Find {p} on the map.', 'வரைபடத்தில் {p}-ஐக் கண்டுபிடி.'], river: ['Which river is shown in blue?', 'நீல நிறத்தில் காட்டப்பட்டுள்ள ஆறு எது?'], marker: ['What is at the marker?', 'குறியிட்ட இடத்தில் இருப்பது எது?'], capital: ['What is the capital of {s}?', '{s}-இன் தலைநகரம் எது?'], continent: ['Which continent is shaded?', 'நிழலிட்ட கண்டம் எது?'],
+      dir: ['On the town map, what is {d} of the school?', 'ஊர் வரைபடத்தில், பள்ளிக்கு {d} திசையில் இருப்பது எது?'], grid: ['What is in square {g}?', '{g} கட்டத்தில் இருப்பது எது?'], scale: ['On this map 1 cm stands for 1 km. The park is {n} cm from the school. How far is it really?', 'இந்த வரைபடத்தில் 1 செ.மீ. என்பது 1 கி.மீ. பள்ளியிலிருந்து பூங்கா {n} செ.மீ. தொலைவில் உள்ளது. உண்மையில் எவ்வளவு தூரம்?'], symbol: ['What does this map symbol stand for?', 'இந்த வரைபடக் குறியீடு எதைக் குறிக்கிறது?'] },
+    h: { zoom: ['Look closely: the map has zoomed in towards the answer.', 'கூர்ந்து பார்: விடையை நோக்கி வரைபடம் பெரிதாகியுள்ளது.'], outline: ['The answer is outlined in yellow.', 'விடை மஞ்சள் கோட்டால் சுற்றிக் காட்டப்பட்டுள்ளது.'], answer: ['It is {a}.', 'அது {a}.'], dir: ['North is at the top of the map. East is to the right.', 'வரைபடத்தின் மேலே வடக்கு. வலப்பக்கம் கிழக்கு.'], grid: ['Letters go across, numbers go down.', 'எழுத்துகள் குறுக்கே, எண்கள் கீழ்நோக்கி.'], scale: ['Each centimetre is one kilometre.', 'ஒவ்வொரு சென்டிமீட்டரும் ஒரு கிலோமீட்டர்.'] },
+    y: { isHere: ['{p} is here.', '{p} இங்கே உள்ளது.'], dir: ['North is up, south is down, east is right and west is left. The {a} is {d} of the school.', 'மேலே வடக்கு, கீழே தெற்கு, வலம் கிழக்கு, இடம் மேற்கு. {a} பள்ளிக்கு {d} திசையில் உள்ளது.'], grid: ['Go across to column {c}, then down to row {r}: the {a}.', '{c} நிரலுக்குக் குறுக்கே சென்று, {r} வரிசைக்குக் கீழே: {a}.'], scale: ['{n} cm × 1 km = {n} km.', '{n} செ.மீ. × 1 கி.மீ. = {n} கி.மீ.'], symbol: ['Maps use small symbols explained in the legend (key).', 'வரைபடங்கள் சிறு குறியீடுகளைப் பயன்படுத்துகின்றன; அவற்றின் பொருள் குறிப்புப் பெட்டியில் (legend) இருக்கும்.'], wrongTap: ['You tapped {p}.', 'நீ தட்டியது {p}.'] },
+    dir: { N: ['north', 'வடக்கு'], S: ['south', 'தெற்கு'], E: ['east', 'கிழக்கு'], W: ['west', 'மேற்கு'], NE: ['north-east', 'வடகிழக்கு'], NW: ['north-west', 'வடமேற்கு'], SE: ['south-east', 'தென்கிழக்கு'], SW: ['south-west', 'தென்மேற்கு'] },
+    town: { temple: ['temple', 'கோயில்'], park: ['park', 'பூங்கா'], lake: ['lake', 'ஏரி'], hospital: ['hospital', 'மருத்துவமனை'], market: ['market', 'சந்தை'], station: ['railway station', 'தொடர்வண்டி நிலையம்'], postoffice: ['post office', 'அஞ்சல் நிலையம்'], farm: ['farm', 'பண்ணை'], school: ['school', 'பள்ளி'] },
+  } });
+  const P = { // place names
+    'Chennai': ['Chennai', 'சென்னை'], 'Madurai': ['Madurai', 'மதுரை'], 'Coimbatore': ['Coimbatore', 'கோயம்புத்தூர்'], 'The Nilgiris': ['the Nilgiris', 'நீலகிரி'], 'Thanjavur': ['Thanjavur', 'தஞ்சாவூர்'], 'Kanniyakumari': ['Kanniyakumari', 'கன்னியாகுமரி'], 'Tiruchirappalli': ['Tiruchirappalli', 'திருச்சிராப்பள்ளி'], 'Salem': ['Salem', 'சேலம்'], 'Tirunelveli': ['Tirunelveli', 'திருநெல்வேலி'], 'Ramanathapuram': ['Ramanathapuram', 'இராமநாதபுரம்'], 'Vellore': ['Vellore', 'வேலூர்'], 'Erode': ['Erode', 'ஈரோடு'],
+    'Tamil Nadu': ['Tamil Nadu', 'தமிழ்நாடு'], 'Kerala': ['Kerala', 'கேரளம்'], 'Karnataka': ['Karnataka', 'கர்நாடகம்'], 'Andhra Pradesh': ['Andhra Pradesh', 'ஆந்திரப் பிரதேசம்'], 'Telangana': ['Telangana', 'தெலங்காணா'], 'Maharashtra': ['Maharashtra', 'மகாராஷ்டிரம்'], 'Gujarat': ['Gujarat', 'குஜராத்'], 'Rajasthan': ['Rajasthan', 'இராஜஸ்தான்'], 'Madhya Pradesh': ['Madhya Pradesh', 'மத்தியப் பிரதேசம்'], 'Uttar Pradesh': ['Uttar Pradesh', 'உத்தரப் பிரதேசம்'], 'Bihar': ['Bihar', 'பீகார்'], 'West Bengal': ['West Bengal', 'மேற்கு வங்காளம்'], 'Odisha': ['Odisha', 'ஒடிசா'], 'Assam': ['Assam', 'அசாம்'], 'Punjab': ['Punjab', 'பஞ்சாப்'], 'Jammu & Kashmir': ['Jammu and Kashmir', 'ஜம்மு காஷ்மீர்'], 'Ladakh': ['Ladakh', 'லடாக்'], 'Goa': ['Goa', 'கோவா'], 'Chhattisgarh': ['Chhattisgarh', 'சத்தீஸ்கர்'], 'Jharkhand': ['Jharkhand', 'ஜார்க்கண்ட்'], 'Himachal Pradesh': ['Himachal Pradesh', 'இமாச்சலப் பிரதேசம்'], 'Uttarakhand': ['Uttarakhand', 'உத்தராகண்ட்'], 'Haryana': ['Haryana', 'அரியானா'], 'Arunachal Pradesh': ['Arunachal Pradesh', 'அருணாச்சலப் பிரதேசம்'],
+    kaveri: ['Kaveri', 'காவிரி'], vaigai: ['Vaigai', 'வைகை'], thamirabarani: ['Thamirabarani', 'தாமிரபரணி'], ganga: ['Ganga', 'கங்கை'], brahmaputra: ['Brahmaputra', 'பிரம்மபுத்திரா'], godavari: ['Godavari', 'கோதாவரி'], krishna: ['Krishna', 'கிருஷ்ணா'], narmada: ['Narmada', 'நர்மதை'],
+    himalaya: ['the Himalayas', 'இமயமலை'], thar: ['the Thar desert', 'தார் பாலைவனம்'], deccan: ['the Deccan plateau', 'தக்காணப் பீடபூமி'], ghats: ['the Western Ghats', 'மேற்குத் தொடர்ச்சி மலை'], bay: ['the Bay of Bengal', 'வங்காள விரிகுடா'], arabian: ['the Arabian Sea', 'அரபிக் கடல்'], indian: ['the Indian Ocean', 'இந்தியப் பெருங்கடல்'],
+    Asia: ['Asia', 'ஆசியா'], Africa: ['Africa', 'ஆப்பிரிக்கா'], Europe: ['Europe', 'ஐரோப்பா'], 'North America': ['North America', 'வட அமெரிக்கா'], 'South America': ['South America', 'தென் அமெரிக்கா'], Oceania: ['Australia and Oceania', 'ஆஸ்திரேலியா, ஓசியானியா'], Antarctica: ['Antarctica', 'அண்டார்டிகா'],
+    pacific: ['the Pacific Ocean', 'பசிபிக் பெருங்கடல்'], atlantic: ['the Atlantic Ocean', 'அட்லாண்டிக் பெருங்கடல்'], arctic: ['the Arctic Ocean', 'ஆர்க்டிக் பெருங்கடல்'], southern: ['the Southern Ocean', 'தென் பெருங்கடல்'],
+  };
+  const name = k => L(P[k] || [k, k]);
+  const FACT = { // one fact per answer (lesson card)
+    'Chennai': ['Chennai is the capital of Tamil Nadu and sits on the Bay of Bengal.', 'சென்னை தமிழ்நாட்டின் தலைநகரம்; வங்காள விரிகுடாக் கரையில் உள்ளது.'], 'Madurai': ['Madurai stands on the Vaigai river and is one of India’s oldest cities.', 'மதுரை வைகை ஆற்றங்கரையில் உள்ள இந்தியாவின் மிகப் பழைய நகரங்களில் ஒன்று.'], 'The Nilgiris': ['The Nilgiris are blue hills in the Western Ghats, famous for tea.', 'நீலகிரி மேற்குத் தொடர்ச்சி மலையில் உள்ள நீல மலைகள்; தேயிலைக்குப் புகழ் பெற்றவை.'], 'Thanjavur': ['Thanjavur is in the Kaveri delta, the rice bowl of Tamil Nadu.', 'தஞ்சாவூர் காவிரி டெல்டாவில் உள்ளது; தமிழ்நாட்டின் நெற்களஞ்சியம்.'], 'Kanniyakumari': ['Kanniyakumari is the southern tip of mainland India, where three seas meet.', 'கன்னியாகுமரி இந்தியப் பெருநிலத்தின் தென் முனை; மூன்று கடல்கள் சந்திக்கும் இடம்.'],
+    kaveri: ['The Kaveri rises in Karnataka and reaches the sea through a wide delta in Tamil Nadu.', 'காவிரி கர்நாடகத்தில் தோன்றி, தமிழ்நாட்டில் பரந்த டெல்டா வழியாகக் கடலை அடைகிறது.'], vaigai: ['The Vaigai flows from the Western Ghats past Madurai.', 'வைகை மேற்குத் தொடர்ச்சி மலையிலிருந்து மதுரை வழியாகப் பாய்கிறது.'], ganga: ['The Ganga starts in a Himalayan glacier and flows to the Bay of Bengal.', 'கங்கை இமயமலைப் பனியாற்றில் தோன்றி வங்காள விரிகுடாவில் கலக்கிறது.'], brahmaputra: ['The Brahmaputra flows through Assam and is one of the world’s biggest rivers.', 'பிரம்மபுத்திரா அசாம் வழியாகப் பாயும் உலகின் பெரிய ஆறுகளில் ஒன்று.'], godavari: ['The Godavari is the longest river that flows only through peninsular India.', 'கோதாவரி தீபகற்ப இந்தியாவுக்குள் மட்டுமே பாயும் மிக நீளமான ஆறு.'], krishna: ['The Krishna flows east across the Deccan to the Bay of Bengal.', 'கிருஷ்ணா தக்காணத்தைக் கடந்து கிழக்கே வங்காள விரிகுடாவில் கலக்கிறது.'], narmada: ['The Narmada is one of the few big rivers that flow west, into the Arabian Sea.', 'நர்மதை மேற்கு நோக்கி அரபிக் கடலில் கலக்கும் சில பெரிய ஆறுகளில் ஒன்று.'],
+    himalaya: ['The Himalayas have the highest mountains on Earth.', 'இமயமலையில் உலகின் மிக உயரமான மலைகள் உள்ளன.'], thar: ['The Thar desert in Rajasthan gets very little rain.', 'இராஜஸ்தானில் உள்ள தார் பாலைவனத்தில் மிகக் குறைவாக மழை பெய்யும்.'], deccan: ['A plateau is high, mostly flat land. The Deccan covers much of south India.', 'பீடபூமி என்பது உயரமான, பெரும்பாலும் சமதளமான நிலம். தக்காணம் தென்னிந்தியாவின் பெரும் பகுதி.'], ghats: ['The Western Ghats catch monsoon rain and are full of forests.', 'மேற்குத் தொடர்ச்சி மலை பருவமழையைத் தடுத்துப் பெறுகிறது; காடுகள் நிறைந்தது.'], bay: ['Chennai’s coast faces the Bay of Bengal.', 'சென்னைக் கடற்கரை வங்காள விரிகுடாவை நோக்கியுள்ளது.'], arabian: ['The Arabian Sea lies to the west of India.', 'அரபிக் கடல் இந்தியாவின் மேற்கே உள்ளது.'], indian: ['India is a peninsula: water on three sides.', 'இந்தியா ஒரு தீபகற்பம்: மூன்று பக்கமும் நீர்.'],
+  };
+  const fact = k => FACT[k] ? L(FACT[k]) : '';
+  const CAP = { 'Tamil Nadu': ['Chennai', 'சென்னை'], 'Kerala': ['Thiruvananthapuram', 'திருவனந்தபுரம்'], 'Karnataka': ['Bengaluru', 'பெங்களூரு'], 'Maharashtra': ['Mumbai', 'மும்பை'], 'West Bengal': ['Kolkata', 'கொல்கத்தா'], 'Rajasthan': ['Jaipur', 'ஜெய்ப்பூர்'], 'Gujarat': ['Gandhinagar', 'காந்திநகர்'], 'Telangana': ['Hyderabad', 'ஹைதராபாத்'], 'Odisha': ['Bhubaneswar', 'புவனேஸ்வர்'], 'Bihar': ['Patna', 'பாட்னா'], 'Uttar Pradesh': ['Lucknow', 'லக்னோ'], 'Madhya Pradesh': ['Bhopal', 'போபால்'], 'Assam': ['Dispur', 'திஸ்பூர்'], 'Punjab': ['Chandigarh', 'சண்டிகர்'], 'Goa': ['Panaji', 'பனாஜி'] };
+
+  // ---------- data ----------
+  const D = {}; let ready = null;
+  function load() { return ready ||= (async () => {
+    for (const s of ['vendor/d3-array.min.js', 'vendor/d3-geo.min.js', 'vendor/topojson-client.min.js']) if (!document.querySelector(`script[src="${s}"]`)) await new Promise((r, j) => { const e = document.createElement('script'); e.src = s; e.onload = r; e.onerror = j; document.head.appendChild(e); });
+    const get = f => fetch('data/geo/' + f).then(r => r.json());
+    const [ind, tn, w, riv] = await Promise.all(['india-states.json', 'tn-districts.json', 'world.json', 'rivers.json'].map(get));
+    const fc = (t) => topojson.feature(t, Object.values(t.objects)[0]);
+    D.india = fc(ind); D.tn = fc(tn); D.world = fc(w); D.rivers = fc(riv);
+  })(); }
+  load().catch(() => {});
+
+  // ---------- map drawing ----------
+  const COL = { land: '#3f4a5e', land2: '#4a566c', line: '#20262f', sea: '#152234', on: '#e2a336', hit: '#16a39c', river: '#5fb3e6' };
+  function draw(kind, opt = {}) {
+    const W = 600, H = kind === 'world' ? 330 : 600, feats = kind === 'world' ? D.world.features : kind === 'tn' ? D.tn.features : D.india.features;
+    const proj = kind === 'world' ? d3.geoNaturalEarth1().fitSize([W, H], { type: 'Sphere' }) : d3.geoMercator().fitExtent([[10, 10], [W - 10, H - 10]], { type: 'FeatureCollection', features: feats });
+    const path = d3.geoPath(proj);
+    let vb = [0, 0, W, H];
+    if (opt.zoom) { const f = feats.find(x => x.properties.name === opt.zoom || x.properties.CONTINENT === opt.zoom); const b = f ? path.bounds(f) : null; if (b) { const cx = (b[0][0] + b[1][0]) / 2, cy = (b[0][1] + b[1][1]) / 2, s = Math.max(b[1][0] - b[0][0], b[1][1] - b[0][1], 120) * 2.4; vb = [cx - s / 2, cy - s / 2, s, s * H / W]; } }
+    const isOn = f => opt.shade && (f.properties.CONTINENT === opt.shade || f.properties.name === opt.shade || (opt.shade === 'Asia' && f.properties.NAME === 'Russia'));
+    let s = `<svg class="r3 geo-svg" viewBox="${vb.map(v => v.toFixed(1)).join(' ')}" role="img" aria-label="${esc(opt.label || '')}"><rect x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" fill="${COL.sea}"/>`;
+    if (kind === 'world') s += `<path d="${path({ type: 'Sphere' })}" fill="${COL.sea}" stroke="#2c3a52"/><path d="${path(d3.geoGraticule10())}" fill="none" stroke="#22324a" stroke-width=".5"/>`;
+    if (kind === 'india' && opt.context) s += D.world.features.filter(f => f.properties.NAME !== 'India').map(f => `<path d="${path(f)}" fill="#2a3242" stroke="${COL.line}" stroke-width=".6"/>`).join('');
+    s += feats.map((f, i) => { const nm = f.properties.name || f.properties.NAME; return `<path class="geo-r" data-name="${esc(nm)}" d="${path(f)}" fill="${isOn(f) ? COL.on : opt.answer === nm ? COL.hit : i % 2 ? COL.land : COL.land2}" stroke="${opt.outline === nm ? '#f6c56b' : COL.line}" stroke-width="${opt.outline === nm ? 3 : .7}"><title>${esc(name(nm))}</title></path>`; }).join('');
+    if (opt.rivers) s += D.rivers.features.filter(f => opt.rivers === true || opt.rivers.includes(f.properties.id)).map(f => `<path d="${path(f)}" fill="none" stroke="${opt.riverOn === f.properties.id ? '#7cd3ff' : COL.river}" stroke-width="${opt.riverOn === f.properties.id ? 4 : 1.6}" stroke-linecap="round" opacity="${opt.riverOn && opt.riverOn !== f.properties.id ? .35 : 1}"/>`).join('');
+    if (kind === 'world' && opt.equator) { const pts = d3.range(-180, 181, 5).map(x => proj([x, 0])); s += `<path d="M${pts.map(p => p.join(',')).join('L')}" stroke="#f6c56b" stroke-dasharray="5 4" fill="none" stroke-width="1.5"/>`; }
+    if (opt.marker) { const [x, y] = proj(opt.marker); s += `<circle cx="${x}" cy="${y}" r="16" fill="none" stroke="#f6c56b" stroke-width="3"/><circle cx="${x}" cy="${y}" r="4" fill="#f6c56b"/>`; }
+    return s + '</svg>';
+  }
+  const loadingHtml = () => `<div class="board"><p class="muted">${t('geo.loading')}…</p></div>`;
+
+  // generic map task: tap a region (custom) or choose a name (custom choice, so the map can load first)
+  function mapTask({ kind, target, choices, prompt, opt = {}, factKey, why }) {
+    let picked = null, hint = 0;
+    const q = { kind: 'custom', prompt, promptText: prompt.replace(/<[^>]+>/g, ''), answerText: esc(name(target)),
+      hints: [{ text: t('geo.h.zoom') }, { text: t('geo.h.outline') }, { text: t('geo.h.answer', { a: esc(name(target)) }) }], hintRevealsAnswer: true,
+      mount(el, api) {
+        const paint = () => {
+          const h = Engine.round?.hint || 0, o = { ...opt, label: prompt.replace(/<[^>]+>/g, '') };
+          if (!choices) { if (h >= 1) o.zoom = target; if (h >= 2) o.outline = target; if (h >= 3) o.answer = target; }
+          el.innerHTML = `<div class="board geo-board">${draw(kind, o)}</div>` + (choices
+            ? `<div class="choices" role="radiogroup">${choices.map(c => `<button type="button" role="radio" class="choice" aria-checked="${picked === c}" data-c="${esc(c)}">${esc(name(c))}</button>`).join('')}</div>`
+            : `<p class="small muted">${t('geo.list')}</p><div class="chips geo-list">${(opt.list || []).map(c => `<button type="button" class="k-btn k-btn-outline k-btn-sm pill" aria-pressed="${picked === c}" data-c="${esc(c)}">${esc(name(c))}</button>`).join('')}</div>`);
+          el.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { picked = b.dataset.c; paint(); api.ready(true); });
+          el.querySelectorAll('.geo-r').forEach(p => { if (choices) return; p.style.cursor = 'pointer'; p.onclick = () => { picked = p.dataset.name; paint(); api.ready(true); }; });
+          if (picked && !choices) el.querySelectorAll('.geo-r').forEach(p => p.dataset.name === picked && p.setAttribute('fill', '#6d6ad8'));
+        };
+        load().then(() => { paint(); const hb = document.querySelector('.hintbtn'); hb && hb.addEventListener('click', () => setTimeout(paint)); }).catch(() => el.innerHTML = loadingHtml());
+        el.innerHTML = loadingHtml();
+      },
+      check() { return { correct: picked === target, given: picked ? name(picked) : '' }; },
+      why: { steps: [{ text: why || (t('geo.y.isHere', { p: esc(name(target)) }) + ' ' + esc(fact(factKey || target))), vis: '' }] } };
+    q.whyFor = () => ({ ...q.why, steps: [{ text: q.why.steps[0].text, vis: window.d3 ? draw(kind, { ...opt, answer: choices ? undefined : target, zoom: choices ? undefined : target, outline: choices ? undefined : target }) : '' }] });
+    return q;
+  }
+
+  // ---------- skills ----------
+  const TN_YOUNG = ['Chennai', 'Madurai', 'The Nilgiris', 'Kanniyakumari', 'Coimbatore'], TN_OLD = [...TN_YOUNG, 'Thanjavur', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Ramanathapuram', 'Vellore', 'Erode'];
+  Engine.skill({ id: 'geo.tn', subject: S, topic: 'geo', name: 'geo.mode.tn.0', bands: { young: [1, 1], older: [1, 2] }, gen(l, r) {
+    if (l === 2 && r() < 0.4) { const rv = r.pick(['kaveri', 'vaigai']); return mapTask({ kind: 'tn', target: rv, choices: r.shuffle(['kaveri', 'vaigai', 'thamirabarani']), prompt: t('geo.q.river'), opt: { rivers: ['kaveri', 'vaigai'], riverOn: rv } }); }
+    const pool = l === 1 ? TN_YOUNG : TN_OLD, target = r.pick(pool);
+    return mapTask({ kind: 'tn', target, prompt: t('geo.q.find', { p: `<b>${esc(name(target))}</b>` }), opt: { list: r.shuffle([target, ...r.shuffle(pool.filter(x => x !== target)).slice(0, 3)]), rivers: true } });
+  } });
+  const IN_YOUNG = ['Tamil Nadu', 'Kerala', 'Karnataka', 'Rajasthan', 'Maharashtra', 'Gujarat', 'Uttar Pradesh', 'Madhya Pradesh', 'West Bengal', 'Ladakh'], IN_OLD = [...IN_YOUNG, 'Andhra Pradesh', 'Telangana', 'Odisha', 'Bihar', 'Assam', 'Punjab', 'Goa', 'Jammu & Kashmir', 'Chhattisgarh', 'Jharkhand', 'Himachal Pradesh', 'Uttarakhand', 'Arunachal Pradesh'];
+  Engine.skill({ id: 'geo.india', subject: S, topic: 'geo', name: 'geo.mode.india.0', bands: { young: [1, 1], older: [1, 3] }, gen(l, r) {
+    const kindQ = l === 1 ? 'state' : r.pick(l === 2 ? ['state', 'river', 'place'] : ['state', 'river', 'place', 'capital']);
+    if (kindQ === 'river') { const rv = r.pick(['ganga', 'brahmaputra', 'godavari', 'krishna', 'narmada', 'kaveri']); return mapTask({ kind: 'india', target: rv, choices: r.shuffle([rv, ...r.shuffle(['ganga', 'brahmaputra', 'godavari', 'krishna', 'narmada', 'kaveri'].filter(x => x !== rv)).slice(0, 2)]), prompt: t('geo.q.river'), opt: { rivers: true, riverOn: rv } }); }
+    if (kindQ === 'place') { const M = { himalaya: [80, 30.5], thar: [71, 27], deccan: [77, 17], ghats: [75.2, 12.5], bay: [88, 15], arabian: [66, 16], indian: [78, 4] }, k = r.pick(Object.keys(M)); return mapTask({ kind: 'india', target: k, choices: r.shuffle([k, ...r.shuffle(Object.keys(M).filter(x => x !== k)).slice(0, 2)]), prompt: t('geo.q.marker'), opt: { marker: M[k] } }); }
+    if (kindQ === 'capital') { const st = r.pick(Object.keys(CAP)), right = CAP[st], others = r.shuffle(Object.keys(CAP).filter(x => x !== st)).slice(0, 2).map(x => CAP[x]); const opts = r.shuffle([right, ...others]); P['cap:' + right[0]] = right; others.forEach(o => P['cap:' + o[0]] = o);
+      return mapTask({ kind: 'india', target: 'cap:' + right[0], choices: opts.map(o => 'cap:' + o[0]), prompt: t('geo.q.capital', { s: esc(name(st)) }), opt: { shade: st }, why: esc(L(right)) + ' · ' + esc(name(st)) }); }
+    const pool = l === 1 ? IN_YOUNG : IN_OLD, target = r.pick(pool);
+    return mapTask({ kind: 'india', target, prompt: t('geo.q.find', { p: `<b>${esc(name(target))}</b>` }), opt: { list: r.shuffle([target, ...r.shuffle(pool.filter(x => x !== target)).slice(0, 3)]) } });
+  } });
+  Engine.skill({ id: 'geo.world', subject: S, topic: 'geo', name: 'geo.mode.world.0', bands: { young: [1, 1], older: [1, 2] }, gen(l, r) {
+    const C = ['Asia', 'Africa', 'Europe', 'North America', 'South America', 'Oceania', 'Antarctica'];
+    if (l === 2 && r() < 0.5) { const O = { pacific: [-150, 0], atlantic: [-30, 10], indian: [75, -15], arctic: [0, 85], southern: [60, -62] }, k = r.pick(Object.keys(O)); return mapTask({ kind: 'world', target: k, choices: r.shuffle([k, ...r.shuffle(Object.keys(O).filter(x => x !== k)).slice(0, 2)]), prompt: t('geo.q.marker'), opt: { marker: O[k], equator: true } }); }
+    const c = r.pick(C); return mapTask({ kind: 'world', target: c, choices: r.shuffle([c, ...r.shuffle(C.filter(x => x !== c)).slice(0, l === 1 ? 2 : 3)]), prompt: t('geo.q.continent'), opt: { shade: c }, why: t('geo.y.isHere', { p: esc(name(c)) }) });
+  } });
+  // town map for compass, grid and scale
+  const TOWN = { temple: [1, 0], park: [2, 1], lake: [0, 2], hospital: [3, 2], market: [2, 3], station: [1, 3], postoffice: [0, 1], farm: [3, 0] }, SCHOOL = [1.5, 1.5];
+  const sym = { temple: '<path d="M-10 8h20v-10l-10-8-10 8z" fill="#e2a336"/>', park: '<circle r="9" fill="#2f9e6b"/>', lake: '<ellipse rx="12" ry="7" fill="#3b82c4"/>', hospital: '<rect x="-9" y="-9" width="18" height="18" fill="#e9e6dc"/><path d="M-2-6h4v4h4v4h-4v4h-4v-4h-4v-4h4z" fill="#d04b86"/>', market: '<rect x="-10" y="-6" width="20" height="12" fill="#c9a36b"/>', station: '<rect x="-11" y="-5" width="22" height="10" rx="2" fill="#6d6ad8"/>', postoffice: '<rect x="-9" y="-7" width="18" height="12" fill="#d83a4a"/>', farm: '<path d="M-10 6l10-12 10 12z" fill="#9b9a4e"/>', school: '<rect x="-11" y="-8" width="22" height="16" fill="#f4f5f8"/><path d="M-11-8 0-14 11-8z" fill="#f4f5f8"/>' };
+  function town(opt = {}) {
+    const g = 100, ox = 50, oy = 40;
+    let s = `<svg class="r3" viewBox="0 0 520 470" role="img" aria-label="town map"><rect width="520" height="470" fill="#1d2230"/>`;
+    for (let i = 0; i <= 4; i++) s += `<line x1="${ox + i * g}" y1="${oy}" x2="${ox + i * g}" y2="${oy + 4 * g}" stroke="#2f3647"/><line x1="${ox}" y1="${oy + i * g}" x2="${ox + 4 * g}" y2="${oy + i * g}" stroke="#2f3647"/>`;
+    if (opt.grid) for (let i = 0; i < 4; i++) s += `<text x="${ox + i * g + g / 2}" y="${oy - 10}" fill="#cfd4de" font-family="Lato" font-weight="900" font-size="16" text-anchor="middle">${'ABCD'[i]}</text><text x="${ox - 18}" y="${oy + i * g + g / 2 + 5}" fill="#cfd4de" font-family="Lato" font-weight="900" font-size="16" text-anchor="middle">${i + 1}</text>`;
+    const at = ([c, r2]) => [ox + c * g + g / 2, oy + r2 * g + g / 2];
+    Object.entries(TOWN).forEach(([k, p]) => { const [x, y] = at(p); s += `<g transform="translate(${x} ${y}) scale(1.3)">${sym[k]}</g>${opt.labels ? `<text x="${x}" y="${y + 30}" fill="#e6e9f0" font-family="Lato" font-size="12" text-anchor="middle">${esc(t('geo.town.' + k))}</text>` : ''}`; if (opt.hl === k) s += `<circle cx="${x}" cy="${y}" r="26" fill="none" stroke="#f6c56b" stroke-width="3"/>`; });
+    const [sx, sy] = [ox + 2 * g, oy + 2 * g]; s += `<g transform="translate(${sx} ${sy}) scale(1.4)">${sym.school}</g><text x="${sx}" y="${sy + 32}" fill="#e6e9f0" font-family="Lato" font-weight="700" font-size="12" text-anchor="middle">${esc(t('geo.town.school'))}</text>`;
+    s += `<g transform="translate(482 70)"><circle r="24" fill="#141822" stroke="#cfd4de"/><path d="M0-20 6 0 0 20-6 0z" fill="#cfd4de"/><path d="M0-20 6 0-6 0z" fill="#d83a4a"/><text y="-28" fill="#fff" font-family="Lato" font-weight="900" font-size="13" text-anchor="middle">N</text></g>`;
+    return s + '</svg>';
+  }
+  const dirOf = ([c, r2]) => { const dx = c + 0.5 - 2, dy = r2 + 0.5 - 2; const v = (dy < -0.2 ? 'N' : dy > 0.2 ? 'S' : '') + (dx > 0.2 ? 'E' : dx < -0.2 ? 'W' : ''); return v; };
+  Engine.skill({ id: 'geo.compass', subject: S, topic: 'geo', name: 'geo.mode.compass.0', bands: { young: [1, 1], older: [1, 3] }, gen(l, r) {
+    const ks = Object.keys(TOWN), type = l === 1 ? r.pick(['dir', 'symbol']) : l === 2 ? r.pick(['dir', 'grid']) : r.pick(['grid', 'scale', 'dir']);
+    if (type === 'scale') { const n = r.int(2, 6); return { kind: 'num', unit: t('geo.km') || 'km', prompt: t('geo.q.scale', { n }), visual: town({ labels: true }), answer: n, hints: [{ text: t('geo.h.scale') }, { text: `${n} × 1` }, { text: t('geo.y.scale', { n }) }], hintRevealsAnswer: true, why: { steps: [{ text: t('geo.y.scale', { n }) }] } }; }
+    if (type === 'grid') { const k = r.pick(ks), [c, rr] = TOWN[k], g = 'ABCD'[c] + (rr + 1), opts = r.shuffle([k, ...r.shuffle(ks.filter(x => x !== k)).slice(0, 2)]);
+      return { kind: 'choice', prompt: t('geo.q.grid', { g }), visual: town({ grid: true }), choices: opts.map(x => ({ v: x, html: esc(t('geo.town.' + x)) })), answer: k, hints: [{ text: t('geo.h.grid') }, { text: g[0] + ' → ' + g[1] }, { text: t('geo.h.answer', { a: esc(t('geo.town.' + k)) }) }], hintRevealsAnswer: true, why: { steps: [{ text: t('geo.y.grid', { c: g[0], r: g[1], a: esc(t('geo.town.' + k)) }), vis: town({ grid: true, labels: true, hl: k }) }] } }; }
+    if (type === 'symbol') { const k = r.pick(ks), opts = r.shuffle([k, ...r.shuffle(ks.filter(x => x !== k)).slice(0, 2)]);
+      return { kind: 'choice', prompt: t('geo.q.symbol'), visual: `<svg class="r3" viewBox="-30 -30 60 60" style="max-height:140px"><g transform="scale(2)">${sym[k]}</g></svg>`, choices: opts.map(x => ({ v: x, html: esc(t('geo.town.' + x)) })), answer: k, why: { steps: [{ text: t('geo.y.symbol'), vis: town({ labels: true, hl: k }) }] } }; }
+    const pool = ks.filter(k => { const d = dirOf(TOWN[k]); return l === 1 ? d.length === 1 : d.length >= 1; }), k = r.pick(pool.length ? pool : ks), d = dirOf(TOWN[k]) || 'N', opts = r.shuffle([k, ...r.shuffle(ks.filter(x => dirOf(TOWN[x]) !== d)).slice(0, 2)]);
+    return { kind: 'choice', prompt: t('geo.q.dir', { d: t('geo.dir.' + d) }), visual: town({ labels: false }), choices: opts.map(x => ({ v: x, html: esc(t('geo.town.' + x)) })), answer: k, hints: [{ text: t('geo.h.dir') }, { text: t('geo.dir.' + d) }, { text: t('geo.h.answer', { a: esc(t('geo.town.' + k)) }) }], hintRevealsAnswer: true,
+      why: { steps: [{ text: t('geo.y.dir', { a: esc(t('geo.town.' + k)), d: t('geo.dir.' + d) }), vis: town({ labels: true, hl: k }) }] } };
+  } });
+  I18N.add({ geo: { km: ['km', 'கி.மீ.'], land: {
+    q: [[['Land with water on three sides', 'மூன்று பக்கமும் நீர் சூழ்ந்த நிலம்'], 'peninsula'], [['High, mostly flat land', 'உயரமான, பெரும்பாலும் சமதளமான நிலம்'], 'plateau'], [['Land with water all around', 'சுற்றிலும் நீர் சூழ்ந்த நிலம்'], 'island'], [['Where a river splits and spreads into the sea, leaving rich soil', 'ஆறு கிளைகளாகப் பிரிந்து வளமான மண்ணை விட்டுக் கடலில் கலக்கும் இடம்'], 'delta'], [['A dry place with very little rain', 'மிகக் குறைந்த மழை பெய்யும் வறண்ட இடம்'], 'desert'], [['A very high, steep landform', 'மிக உயரமான, செங்குத்தான நில அமைப்பு'], 'mountain'], [['Low, flat land, often good for farms', 'தாழ்வான சமதள நிலம்; பெரும்பாலும் விவசாயத்திற்கு ஏற்றது'], 'plain']],
+    names: { peninsula: ['peninsula', 'தீபகற்பம்'], plateau: ['plateau', 'பீடபூமி'], island: ['island', 'தீவு'], delta: ['delta', 'டெல்டா (கழிமுகம்)'], desert: ['desert', 'பாலைவனம்'], mountain: ['mountain', 'மலை'], plain: ['plain', 'சமவெளி'] },
+    eg: { peninsula: ['India itself is a peninsula.', 'இந்தியாவே ஒரு தீபகற்பம்.'], plateau: ['The Deccan plateau covers much of south India.', 'தக்காணப் பீடபூமி தென்னிந்தியாவின் பெரும் பகுதி.'], island: ['Rameswaram is an island joined to the land by the Pamban bridge.', 'இராமேஸ்வரம் பாம்பன் பாலத்தால் நிலத்துடன் இணைக்கப்பட்ட ஒரு தீவு.'], delta: ['The Kaveri delta around Thanjavur grows rice.', 'தஞ்சாவூரைச் சுற்றிய காவிரி டெல்டாவில் நெல் விளைகிறது.'], desert: ['The Thar desert is in Rajasthan.', 'தார் பாலைவனம் இராஜஸ்தானில் உள்ளது.'], mountain: ['The Himalayas have the highest mountains in the world.', 'இமயமலையில் உலகின் மிக உயர்ந்த மலைகள் உள்ளன.'], plain: ['The Ganga plain is one of the most farmed places on Earth.', 'கங்கைச் சமவெளி உலகில் அதிகம் பயிரிடப்படும் இடங்களில் ஒன்று.'] },
+    climate: [{ q: ['Why does Chennai get most of its rain from October to December?', 'சென்னைக்கு அக்டோபர் முதல் டிசம்பர் வரை ஏன் அதிக மழை?'], o: [['The north-east monsoon blows in from the Bay of Bengal', 'வடகிழக்குப் பருவக்காற்று வங்காள விரிகுடாவிலிருந்து வீசுகிறது'], ['Snow melts in the Himalayas', 'இமயமலையில் பனி உருகுகிறது'], ['The Sun is closest then', 'அப்போது சூரியன் மிக அருகில் இருக்கிறது']], why: ['The south-west monsoon (June–September) mostly rains on the other side of the Western Ghats; Tamil Nadu’s coast gets the north-east monsoon.', 'தென்மேற்குப் பருவமழை (ஜூன்–செப்டம்பர்) பெரும்பாலும் மேற்குத் தொடர்ச்சி மலையின் மறுபக்கம் பெய்கிறது; தமிழ்நாட்டுக் கடற்கரைக்கு வடகிழக்குப் பருவமழை.'] },
+      { q: ['Where in Tamil Nadu does tea grow?', 'தமிழ்நாட்டில் தேயிலை எங்கே விளைகிறது?'], o: [['In the Nilgiris hills', 'நீலகிரி மலையில்'], ['On Marina beach', 'மெரினா கடற்கரையில்'], ['In the Thar desert', 'தார் பாலைவனத்தில்']], why: ['Tea likes cool, rainy hills, which is why the Nilgiris are covered in tea gardens.', 'தேயிலைக்குக் குளிர்ந்த, மழை பெய்யும் மலைகள் பிடிக்கும்; அதனால் நீலகிரியில் தேயிலைத் தோட்டங்கள் நிறைந்துள்ளன.'] },
+      { q: ['Why is the Kaveri delta good for growing rice?', 'காவிரி டெல்டா நெல் விளைச்சலுக்கு ஏன் ஏற்றது?'], o: [['River water and rich soil left by the river', 'ஆற்று நீரும் ஆறு விட்டுச் சென்ற வளமான மண்ணும்'], ['It is very dry', 'அது மிக வறண்டது'], ['It is high in the mountains', 'அது மலை உச்சியில் உள்ளது']], why: ['Rice needs lots of water. The Kaveri spreads water and fertile soil across the delta.', 'நெல்லுக்கு நிறைய நீர் தேவை. காவிரி டெல்டா முழுவதும் நீரையும் வளமான மண்ணையும் பரப்புகிறது.'] },
+      { q: ['Where are the hottest places on Earth, near the equator or near the poles?', 'பூமியின் வெப்பமான இடங்கள் எங்கே: நிலநடுக்கோட்டிற்கு அருகிலா, துருவங்களுக்கு அருகிலா?'], o: [['Near the equator', 'நிலநடுக்கோட்டிற்கு அருகில்'], ['Near the poles', 'துருவங்களுக்கு அருகில்'], ['They are the same', 'இரண்டும் ஒன்றே']], why: ['Near the equator the Sun is high overhead all year, so sunlight is strongest there.', 'நிலநடுக்கோட்டிற்கு அருகில் ஆண்டு முழுவதும் சூரியன் தலைக்கு மேல் இருப்பதால் ஒளி அங்கே மிக வலிமையானது.'] }],
+  } } });
+  Engine.skill({ id: 'geo.land', subject: S, topic: 'geo', name: 'geo.mode.land.0', bands: { young: [1, 1], older: [1, 2] }, gen(l, r) {
+    const G = tx('geo.land');
+    if (l === 2 && r() < 0.5) { const c = r.pick(G.climate), idx = r.shuffle([0, 1, 2]); return { kind: 'choice', prompt: esc(c.q), choices: idx.map(i => ({ v: i, html: esc(c.o[i]) })), answer: 0, hints: [{ text: t('geo.h.zoom') }, { text: esc(c.why) }, { text: esc(c.o[0]) }], hintRevealsAnswer: true, why: { steps: [{ text: esc(c.why) }] } }; }
+    const [def, k] = r.pick(G.q), others = r.shuffle(Object.keys(G.names).filter(x => x !== k)).slice(0, 2), ph = window.PHOTOS?.[k];
+    return { kind: 'choice', prompt: esc(def), choices: r.shuffle([k, ...others]).map(x => ({ v: x, html: esc(G.names[x]) })), answer: k, answerText: esc(G.names[k]), hints: [{ text: esc(G.eg[k]) }, { text: esc(G.names[k][0]) + '…' }, { text: esc(G.names[k]) }], hintRevealsAnswer: true,
+      why: { photo: ph ? { src: ph.src, credit: ph.credit, href: ph.page, alt: k } : null, steps: [{ text: `${esc(G.names[k])}: ${esc(def)}.` }, { text: esc(G.eg[k]) }] } };
+  } });
+
+  const MODES = { compass: 'geo.compass', tn: 'geo.tn', india: 'geo.india', world: 'geo.world', land: 'geo.land' };
+  const ICON = { compass: 'i-map', tn: 'i-map', india: 'i-globe', world: 'i-globe', land: 'i-tree' };
+  ROUTES.geo = { render(main) {
+    main.innerHTML = `<section class="page geo" data-subject="world"><a class="backlink" href="#/s/world"><svg class="k-icon"><use href="#i-back"/></svg>${t('subj.world.title')}</a>
+      <p class="eyebrow">${t('games.title')}</p><h1>${t('geo.title')}</h1><p class="lede">${t('geo.blurb')}</p>
+      <div class="games">${Object.keys(MODES).map(m => { const [ti, bl] = tx('geo.mode.' + m); return `<button type="button" class="gamecard" data-subject="world" data-m="${m}"><span class="subj-ic"><svg class="k-icon"><use href="#${ICON[m]}"/></svg></span><span><b>${esc(ti)}</b><span class="small muted">${esc(bl)}</span></span></button>`; }).join('')}</div>
+      <div class="board geo-board" id="geoPreview"><p class="muted">${t('geo.loading')}…</p></div><p class="small muted">${t('geo.sources')}</p></section>`;
+    main.querySelectorAll('[data-m]').forEach(b => b.onclick = () => runMode(b.dataset.m));
+    load().then(() => { const el = main.querySelector('#geoPreview'); if (el) el.innerHTML = draw('india', { rivers: true, label: t('geo.mode.india')[0] }); });
+  } };
+  function runMode(mode) { const p = Store.current(), id = MODES[mode], title = tx('geo.mode.' + mode)[0];
+    const go = () => Engine.start({ items: [...Store.due(p, S).filter(r => r.skill === id).slice(0, 1).map(r => ({ skill: r.skill, lvl: r.lvl, seed: r.seed })), ...Array.from({ length: 5 }, () => Engine.itemFor(p, id))].slice(0, 5), title, subject: S, topic: 'geo', mode: 'geo', back: '#/geo', again: go }); go(); }
+  window.GEO = { game: { title: 'geo.title', blurb: 'geo.blurb', icon: 'i-map', start: () => { location.hash = '#/geo'; } }, skills: Object.values(MODES), draw, load, runMode };
+})();
