@@ -1,0 +1,53 @@
+/* English quiz: only what the shared round UI does not already cover. */
+.eq-board { display: grid; gap: 10px; justify-items: center; align-content: center; width: 100%; min-height: 64px; text-align: center; }
+.eq-word { margin: 0; font-size: 44px; font-weight: 900; line-height: 1.1; color: var(--board-ink); letter-spacing: .01em; overflow-wrap: anywhere; }
+.eq-word.ta { font-family: 'Noto Sans Tamil', var(--font-sans); font-size: 36px; }
+.board.light .eq-word { color: var(--ink); }
+.eq-pic { width: 100%; max-width: 320px; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-md, 12px); background: #222; box-shadow: 0 6px 18px rgba(0, 0, 0, .35); }
+.eq-pic.sm { max-width: 180px; }
+.eq-hpic { width: 100%; max-width: 200px; aspect-ratio: 4/3; object-fit: cover; border-radius: 10px; display: block; }
+.eq-sound { display: inline-grid; place-items: center; width: 96px; height: 96px; border-radius: 50%; background: rgba(255, 255, 255, .08); border: 2px solid rgba(255, 255, 255, .25); color: var(--board-ink); }
+.eq-sound .k-icon { width: 44px; height: 44px; }
+.eq-cat { margin: 0; font-size: 26px; font-weight: 900; color: var(--board-ink); }
+.board.light .eq-cat { color: var(--ink); }
+.eq-sent { margin: 0; font-size: 24px; line-height: 1.5; font-weight: 700; color: var(--board-ink); max-width: 32ch; }
+.board.light .eq-sent { color: var(--ink); }
+.eq-blank { display: inline-block; min-width: 3.2em; border-bottom: 3px solid var(--acc, currentColor); margin: 0 .15em; vertical-align: baseline; }
+.eq-base, .eq-reply { margin: 0; font-size: 18px; color: var(--ink-muted, var(--ink)); }
+.eq-reply { font-style: italic; }
+.eq-passage { text-align: left; width: 100%; max-width: 60ch; }
+.eq-passage .passage { margin: 0; font-size: 19px; line-height: 1.65; color: var(--ink); }
+.eq-ptitle { margin: 0 0 6px; font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted, var(--ink)); }
+.qprompt .eq-inst { display: block; font-size: .62em; font-weight: 700; color: var(--ink-muted, var(--ink)); margin-bottom: 4px; }
+.eq-mark { font-size: 40px; font-weight: 900; line-height: 1; }
+.eq-mark.big { font-size: 64px; color: var(--board-ink); margin: 0; }
+.eq-markname { font-size: 14px; font-weight: 700; color: var(--ink-muted, var(--ink)); }
+
+/* big pastel tiles: the engine's .choice, tinted in a calm rotation */
+.qcard:has(.eq-board) .choices .choice { --tint: #f6c88f; background: color-mix(in srgb, var(--tint) 26%, var(--surface)); min-height: 72px; font-size: 21px; }
+.qcard:has(.eq-board) .choices .choice:nth-child(4n+2) { --tint: #9fd3c7; }
+.qcard:has(.eq-board) .choices .choice:nth-child(4n+3) { --tint: #b9b4f0; }
+.qcard:has(.eq-board) .choices .choice:nth-child(4n+4) { --tint: #f3a9b5; }
+.qcard:has(.eq-board) .choices .choice.is-right { background: var(--success-soft); }
+.qcard:has(.eq-board) .choices .choice[lang="ta"] { font-family: 'Noto Sans Tamil', var(--font-sans); font-size: 19px; }
+.qcard:has(.eq-board) .choices.pics .choice { padding: 8px; }
+.qcard:has(.eq-board) .choices:not(.pics) .choice { text-align: center; }
+body.age-3 .qcard:has(.eq-board) .choices .choice, body.age-4 .qcard:has(.eq-board) .choices .choice { min-height: 120px; }
+@media (min-width: 560px) { .eq-word { font-size: 56px; } .eq-sent { font-size: 26px; } }
+
+/* Beat your best: a quiet countdown ring in the corner of the board */
+.eq-timed { position: relative; width: 100%; display: grid; place-items: center; }
+.eq-ring { position: absolute; top: -6px; right: -6px; width: 40px; height: 40px; transform: rotate(-90deg); z-index: 1; }
+.eq-ring circle { fill: none; stroke-width: 4; }
+.eq-ring .bg { stroke: rgba(255, 255, 255, .14); }
+.board.light .eq-ring .bg { stroke: var(--line); }
+.eq-ring .fg { stroke: var(--acc, #a15c00); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 0; animation: eq-ring linear forwards; }
+@keyframes eq-ring { to { stroke-dashoffset: 100; } }
+@media (prefers-reduced-motion: reduce) { .eq-ring .fg { animation-timing-function: steps(10, end); } }
+.was-right .eq-ring .fg, .was-wrong .eq-ring .fg { animation-play-state: paused; }
+.eq-timeup { margin: 8px 0 0; color: var(--ink-muted, var(--ink)); }
+.eq-best { font-weight: 700; }
+
+.eq-modes { display: grid; gap: 10px; margin: 12px 0; }
+.eq-mode { display: grid; gap: 4px; text-align: left; padding: 14px 16px; min-height: 64px; border: 1px solid var(--line-strong, var(--line)); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.eq-mode:hover, .eq-mode:focus-visible { border-color: var(--ink); }

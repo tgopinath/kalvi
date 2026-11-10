@@ -46,7 +46,7 @@
   }
   function bindListen(btn, segs) {
     if (!btn) return;
-    btn.onclick = () => Voice.play(typeof segs === 'function' ? segs() : segs, btn, { rate: Store.current()?.settings?.rate ?? .9, onMissing: k => k === 'ta' && App.toast(t('lang.noTamilVoice')) });
+    btn.onclick = () => Voice.play(typeof segs === 'function' ? segs() : segs, btn, { rate: Store.current()?.settings?.rate ?? .9, onMissing: k => { if (k === 'ta' && !Engine._warnedTa) { Engine._warnedTa = true; App.toast(t('lang.noTamilVoice')); } } });
   }
 
   // ---------- a round ----------

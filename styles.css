@@ -124,7 +124,7 @@ body.lang-ta .section { letter-spacing: .02em; font-size: 14px; line-height: 20p
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 3px; gap: 2px; }
 .seg button { min-height: 44px; padding: 0 16px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink); font: 700 14px/1.3 var(--font-sans); cursor: pointer; }
-.k-toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); z-index: 60; max-width: min(92vw, 520px); }
+.k-toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); z-index: 60; pointer-events: none; max-width: min(92vw, 520px); }
 .scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 50; }
 #dialogs .k-dialog { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 51; width: min(92vw, 480px); max-height: 86vh; overflow: auto; }
 

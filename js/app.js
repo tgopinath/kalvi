@@ -4,8 +4,8 @@
   const esc = Engine.esc, main = $('#main');
   const SUBJ = {
     maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.MATHSQUIZ?.game, window.PUZZLES?.game, window.CODING?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
-    english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.TYPING?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
-    science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.VIDEOS?.game, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
+    english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.ENGQUIZ?.game, window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.TYPING?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
+    science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.SCIPZ?.game, window.VIDEOS?.game, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
     world: { icon: 'i-globe', topics: [...(window.GK?.TOPICS || []), { id: 'geo', subject: 'world', title: 'w.geo.title', blurb: 'w.geo.blurb', icon: 'i-map', skills: window.GEO?.skills || [], page: el => { el.innerHTML = `<article class="k-card practice-card"><div><p class="eyebrow">${t('games.title')}</p><h2>${t('w.geo.title')}</h2><p class="muted">${t('w.geo.body')}</p></div><a class="k-btn k-btn-primary k-btn-lg" href="#/geo">${t('common.open')}</a></article>`; } }],
       games: () => [window.GK?.game, window.GK?.dailyGame, window.GEO?.game].filter(Boolean) },
   };
@@ -88,10 +88,11 @@
     const p = Store.current(); const items = [];
     for (const s of Store.SUBJECTS) {
       const due = Store.due(p, s).filter(r => Engine.SK[r.skill]).slice(0, 1).map(r => ({ skill: r.skill, lvl: r.lvl, seed: r.seed }));
-      if (s === 'maths' && window.MATHSQUIZ?.daily) { items.push(...due, ...Engine.weighted(p, base, 1 - due.length), ...MATHSQUIZ.daily(p, 1)); continue; }
-      if (s === 'world' && window.GK?.daily) { items.push(...due, ...GK.daily(p, 2 - due.length)); continue; }
       const pool = SUBJ[s].topics.filter(tp => forBand(tp, p)).flatMap(tp => tp.skills).filter(id => Engine.SK[id] && id !== 'e.bee' && Engine.SK[id].warm !== false);
       const ok = pool.filter(id => AGE.allowSkill(p, id)), tried = ok.filter(id => Store.skill(p, s, id).n > 0), base = tried.length >= 2 ? tried : ok.slice(0, 4);
+      if (s === 'maths' && window.MATHSQUIZ?.daily) { items.push(...due, ...Engine.weighted(p, base, 1 - due.length), ...MATHSQUIZ.daily(p, 1)); continue; }
+      if (s === 'english' && window.ENGQUIZ?.daily) { items.push(...due, ...Engine.weighted(p, base, 1 - due.length), ...ENGQUIZ.daily(p, 1)); continue; }
+      if (s === 'world' && window.GK?.daily) { items.push(...due, ...GK.daily(p, 2 - due.length)); continue; }
       items.push(...due, ...Engine.weighted(p, base, 2 - due.length));
     }
     const go = () => Engine.start({ items: items.sort(() => Math.random() - .5), title: t('pr.warmup'), mode: 'warmup', back: '#/' }); go();
@@ -105,12 +106,12 @@
   // ---------- screens ----------
   function greet(p) { const h = new Date().getHours(); return t(h < 12 ? 'greet.morning' : h < 17 ? 'greet.afternoon' : 'greet.evening', { name: esc(p.name) }); }
   // ---------- icons (Fluent Emoji 3D, MIT) ----------
-  const ICON = { maths: 'abacus', english: 'ABC', science: 'atom', world: 'map',
+  const ICON = { maths: 'abacus', english: 'abc', science: 'atom', world: 'map',
     't:maths': { count: 'abacus', place: 'numbers', add: 'brick', sub: 'ice', mul: 'dice', div: 'plate', frac: 'pie', shapes: 'triruler', measure: 'clock' },
-    't:english': { sounds: 'ABC', blend: 'puzzle', sight: 'openbook', vocab: 'mango', spell: 'pencil', read: 'books', grammar: 'memo' },
+    't:english': { sounds: 'abc', blend: 'puzzle', sight: 'openbook', vocab: 'mango', spell: 'pencil', read: 'books', grammar: 'memo' },
     't:science': { forces: 'rocket', light: 'rainbow', sound: 'music', magnets: 'magnet', electricity: 'bolt', matter: 'ice', water: 'droplet', weather: 'sun', space: 'moon', machines: 'gear', living: 'seedling' },
     't:world': { india: 'flag', tamilnadu: 'classical', scientists: 'microscope', space: 'satellite', wonders: 'trophy', safety: 'bulb', nature: 'elephant', geo: 'map' },
-    g: { 'pz.title': 'puzzle', 'mem.title': 'star', 'draw': 'palette', 'music': 'music', 'stories': 'books', 'bee.title': 'ABC', 'wp.title': 'puzzle', 'home.quizTitle': 'microscope', 'lab.title': 'testtube', 'geo.title': 'compass', 'gk.title': 'trophy', 'gk.dailyTitle': 'glowstar', 'typing.title': 'keyboard', 'coding.title': 'gear', 'videos.title': 'film', 'mq.title': 'numbers' } };
+    g: { 'pz.title': 'puzzle', 'mem.title': 'star', 'draw': 'palette', 'music': 'music', 'stories': 'books', 'bee.title': 'abc', 'wp.title': 'puzzle', 'home.quizTitle': 'microscope', 'lab.title': 'testtube', 'geo.title': 'compass', 'gk.title': 'trophy', 'gk.dailyTitle': 'glowstar', 'typing.title': 'keyboard', 'coding.title': 'gear', 'videos.title': 'film', 'mq.title': 'numbers' } };
   const icon = (k, alt = '') => `<img src="img/icons/${k}.webp" alt="${alt}" loading="lazy" draggable="false">`;
   const gameIcon = g => ICON.g[g.title] || ICON.g[String(g.title).split('.')[0]] || 'star';
   const STK = ['pink', 'yellow', 'mint', 'purple'];
@@ -224,7 +225,7 @@
       <a class="k-btn k-btn-outline pill" href="#/profile/new"><svg class="k-icon"><use href="#i-plus"/></svg>${t('parent.add')}</a>
       <article class="k-card backup" id="backupCard"></article>
       <article class="k-card"><label class="k-switch"><span><b>${t('play.mani.show')}</b><br><span class="small muted">${t('play.mani.showHelp')}</span></span><input type="checkbox" id="maniOn" ${PLAY.maniOn() ? 'checked' : ''}></label></article>
-      <article class="k-card"><label class="k-switch"><span><b>${t('photo.backupPhotos')}</b><br><span class="small muted">${t('photo.backupPhotosHelp')}</span></span><input type="checkbox" id="bkPhotos" ${Photo.backupPhotos() ? 'checked' : ''}></label></article>
+      <article class="k-card" ${window.Capacitor?.isNativePlatform?.() ? 'hidden' : ''}><label class="k-switch"><span><b>${t('photo.backupPhotos')}</b><br><span class="small muted">${t('photo.backupPhotosHelp')}</span></span><input type="checkbox" id="bkPhotos" ${Photo.backupPhotos() ? 'checked' : ''}></label></article>
       <article class="k-card"><p class="eyebrow">${t('parent.voice')}</p><div class="seg" role="group" aria-label="${t('parent.voice')}"><button type="button" data-rate=".72">${t('parent.slow')}</button><button type="button" data-rate=".9">${t('parent.normal')}</button></div></article>
     </section>`;
     $$('.kid-del').forEach(b => b.onclick = () => { const p = db.profiles.find(x => x.id === b.dataset.id);
@@ -234,7 +235,8 @@
     $$('[data-rate]').forEach(b => { b.setAttribute('aria-pressed', String(Math.abs((cur?.settings?.rate ?? .9) - +b.dataset.rate) < .01)); b.onclick = () => { Store.db.profiles.forEach(p => p.settings = { ...p.settings, rate: +b.dataset.rate }); Store.save(); parent(); }; });
     $('#maniOn').onchange = e => PLAY.setMani(e.target.checked);
     $('#bkPhotos').onchange = e => Photo.setBackupPhotos(e.target.checked);
-    window.Backup?.render($('#backupCard'));
+    if (window.Backup) Backup.render($('#backupCard'));
+    else $('#backupCard').innerHTML = `<p class="eyebrow"><svg class="k-icon sm"><use href="#i-cloudup"/></svg>${t('parent.backup')}</p><p class="muted">${t(window.Capacitor?.isNativePlatform?.() ? 'parent.webOnly' : 'parent.needsNet')}</p>`;
   }
   function kidCard(p) {
     const rows = Store.SUBJECTS.map(s => {
@@ -343,6 +345,6 @@
   addEventListener('hashchange', route);
   addEventListener('keydown', e => { const v = document.body.dataset.view; if (v === 'round') Engine.keys(e); else window.ROUTES[v]?.keys?.(e); });
   window.App = { route, toast, dialog, closeDialog, avatar, applyLang, renderRound: () => { Engine.render(main); main.focus({ preventScroll: true }); scrollTo(0, 0); }, SUBJ, forBand, get parentOpen() { return parentOpen; } };
-  Photo.ready.then(route);
+  Promise.race([Photo.ready, new Promise(r => setTimeout(r, 800))]).then(route);
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })();

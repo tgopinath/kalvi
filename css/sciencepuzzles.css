@@ -1,0 +1,108 @@
+/* Science puzzles (js/sciencepuzzles.js): photo cards that drag and snap onto dark art boards; calm and editorial. */
+.spz { --card: clamp(76px, 23vw, 112px); --gold: #f6c56b; }
+.spz-board { padding: 16px 12px; background: var(--board); color: var(--board-ink); }
+.spz-tip { margin: 8px 0 0; text-align: center; }
+
+/* piece cards */
+.spz-card { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: var(--card); min-width: var(--tgt, 48px); min-height: var(--tgt, 48px); padding: 5px; margin: 0;
+  border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); color: var(--ink); box-shadow: 0 3px 0 var(--line-strong);
+  font: 700 14px/1.2 var(--font-sans); text-align: center; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: transform .12s ease, box-shadow .12s ease; }
+body.lang-ta .spz-card { font-family: "Noto Sans Tamil", var(--font-sans); font-size: 13px; }
+.spz-pic { display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--surface-sunken); pointer-events: none; }
+.spz-pic img, .spz-pic .spz-svg { display: block; width: 100%; height: 100%; object-fit: cover; }
+.spz-word { display: grid; place-items: center; height: 100%; padding: 4px; font: 900 14px/1.2 var(--font-sans); }
+.spz-cap { display: block; min-height: 1.2em; overflow-wrap: anywhere; pointer-events: none; }
+.spz-card.pic-only .spz-cap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.spz-card:hover { box-shadow: 0 4px 0 var(--line-strong); }
+.spz-card:focus-visible, .spz-target:focus-visible, .spz-pcell:focus-visible, .spz-maze:focus-visible, .spz-switch:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.spz-card.sel { outline: 3px solid var(--gold); outline-offset: 2px; transform: translateY(-3px); }
+.spz-card.dragging { pointer-events: none; z-index: 60; cursor: grabbing; transition: none; box-shadow: 0 14px 28px rgba(0, 0, 0, .35); }
+.spz-card.good { box-shadow: inset 0 0 0 3px #1f9d6b, 0 3px 0 var(--line-strong); }
+.spz-card.bad { box-shadow: inset 0 0 0 3px #c8553d, 0 3px 0 var(--line-strong); }
+
+/* tray */
+.spz-tray { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; min-height: calc(var(--card) + 28px); margin-top: 12px; padding: 12px; border: 1px dashed var(--line-strong); border-radius: 16px; background: var(--surface-sunken); }
+.spz-tray.over { outline: 3px solid var(--gold); }
+.spz-trayph { color: var(--ink-2, #555); font: 400 15px/1.4 var(--font-sans); }
+.spz-back { min-height: var(--tgt, 48px); }
+
+/* empty targets */
+.spz-target { display: block; width: 100%; height: 100%; min-width: var(--tgt, 48px); min-height: var(--tgt, 48px); padding: 0; border: 0; border-radius: 12px; background: transparent; cursor: pointer; color: inherit; }
+.spz-slot { position: relative; display: grid; width: var(--card); aspect-ratio: 1 / 1.22; border: 2px dashed rgba(246, 197, 107, .75); border-radius: 14px; }
+.spz-slot.full { border-color: transparent; }
+.spz-slot.over, .spz-bin.over { border-color: var(--gold); border-style: solid; background: rgba(246, 197, 107, .12); }
+.spz-slot > .spz-card { width: 100%; height: 100%; min-width: 0; }
+.spz-slotbg { position: absolute; inset: 6px; display: grid; place-items: center; border-radius: 10px; background: #cfd5df; pointer-events: none; }
+.spz-slotbg .spz-svg { width: 86%; height: 86%; }
+.spz-shadowslot .spz-card { opacity: .96; }
+.spz-num { position: absolute; z-index: 3; top: -11px; left: -11px; width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #1f1b2e; font: 900 14px/26px var(--font-sans); text-align: center; pointer-events: none; }
+
+/* row (sequence) */
+.spz-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 2px; }
+.spz-row .spz-slot { --card: clamp(64px, 21vw, 112px); }
+.spz-arrow { display: inline-grid; color: var(--gold); } .spz-arrow svg { width: 16px; height: 22px; }
+.spz-loop { display: inline-flex; align-items: center; gap: 6px; flex-basis: 100%; justify-content: center; color: var(--gold); font: 700 13px/1.2 var(--font-sans); }
+.spz-loop svg { width: 22px; height: 22px; }
+
+/* bins */
+.spz-bins { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 10px; }
+.spz-bin { display: flex; flex-direction: column; min-height: 180px; border: 2px dashed rgba(246, 197, 107, .65); border-radius: 14px; }
+.spz-binhead { display: flex; align-items: center; justify-content: center; gap: 8px; height: auto; padding: 8px; border-radius: 12px 12px 0 0; background: rgba(255, 255, 255, .07); color: var(--board-ink); font: 900 15px/1.2 var(--font-sans); text-align: center; }
+body.lang-ta .spz-binhead { font-family: "Noto Sans Tamil", var(--font-sans); font-size: 14px; }
+.spz-binicon svg { display: block; width: 32px; height: 32px; }
+.spz-binbody { --card: clamp(66px, 19vw, 96px); display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; justify-content: center; flex: 1; padding: 10px 6px; }
+@media (max-width: 560px) { .spz-bins[style*="--n:3"] { grid-template-columns: 1fr; } .spz-bins[style*="--n:3"] .spz-bin { min-height: 120px; } }
+
+/* stage with positioned spots (face, body, circuit) */
+.spz-stage { position: relative; width: 100%; max-width: 460px; margin: 0 auto; }
+.spz-stage > .spz-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.spz-stage .spz-slot { position: absolute; transform: translate(-50%, -50%); width: auto; min-width: var(--tgt, 48px); min-height: var(--tgt, 48px); z-index: 2; }
+.spz-stage .spz-card { padding: 3px; }
+.spz-bodyst .spz-card .spz-cap { font-size: 11px; }
+.spz-face .spz-slot { border-color: rgba(255, 255, 255, .7); }
+.spz-face .spz-pic { aspect-ratio: auto; height: 100%; }
+.spz-face .spz-card { padding: 2px; }
+.spz-circuit { max-width: 560px; }
+.spz-circuit .spz-slot { background: rgba(31, 27, 46, .85); }
+.spz-gap .spz-card .spz-cap { font-size: 11px; }
+.spz-switch { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); z-index: 3; min-height: var(--tgt, 48px); padding: 6px 12px; border: 1px solid #cfd4de; border-radius: 999px; background: #262b39; color: #f2efff; font: 700 13px/1.2 var(--font-sans); cursor: pointer; }
+.spz-switch[aria-pressed="true"] { background: #1f6b4f; border-color: #8fe0b8; }
+.spz-bulbsr { margin: 6px 0 0; text-align: center; font-weight: 700; }
+
+/* water-cycle pipes */
+.spz-pipes { display: grid; grid-template-columns: repeat(var(--w), minmax(var(--tgt, 48px), 92px)); gap: 4px; justify-content: center; }
+.spz-pcell { position: relative; aspect-ratio: 1; padding: 0; border: 1px solid #2f3647; border-radius: 10px; background: #161b28; cursor: pointer; overflow: hidden; }
+.spz-pcell svg { display: block; width: 100%; height: 100%; transition: transform .15s ease; }
+.spz-pcell.fixed { cursor: default; background: #1d2433; }
+.spz-pmid { border-color: transparent; background: transparent; cursor: default; display: grid; place-items: center; }
+.spz-pmid svg { width: 70%; height: 70%; }
+.spz-plabel { position: absolute; left: 0; right: 0; bottom: 3px; color: #f2efff; font: 700 11px/1 var(--font-sans); text-align: center; text-shadow: 0 1px 2px #000; pointer-events: none; }
+body.lang-ta .spz-plabel { font-family: "Noto Sans Tamil", var(--font-sans); }
+
+/* maze */
+.spz-maze { display: grid; grid-template-columns: repeat(var(--n), minmax(var(--tgt, 48px), 64px)); justify-content: center; border-radius: 6px; }
+.spz-mc { position: relative; aspect-ratio: 1; padding: 6px; margin: 0; border: 0 solid #f2efff; background: #222a3a; color: inherit; display: grid; place-items: center; cursor: pointer; }
+.spz-mc.trail { background: #2d3b2f; }
+.spz-mc.wN { border-top-width: 3px; } .spz-mc.wE { border-right-width: 3px; } .spz-mc.wS { border-bottom-width: 3px; } .spz-mc.wW { border-left-width: 3px; }
+.spz-mc svg { width: 100%; height: 100%; }
+.spz-sprout { display: block; width: 100%; height: 100%; transform: scale(var(--g, .7)); transition: transform .2s ease; }
+.spz-has { margin: 8px 0 0; text-align: center; }
+.spz-pad { display: grid; grid-template-columns: repeat(3, minmax(var(--tgt, 48px), 64px)); grid-template-areas: ". u ." "l d r" "x x x"; gap: 6px; justify-content: center; margin-top: 10px; }
+.spz-pad [data-d] { min-height: var(--tgt, 48px); padding: 0; font: 900 22px/1 var(--font-sans); }
+.spz-pad [data-d="0"] { grid-area: u; } .spz-pad [data-d="3"] { grid-area: l; } .spz-pad [data-d="2"] { grid-area: d; } .spz-pad [data-d="1"] { grid-area: r; } .spz-restart { grid-area: x; justify-self: center; min-height: var(--tgt, 48px); }
+
+/* food web */
+.spz-web { display: block; width: 100%; max-width: 460px; margin: 0 auto; }
+
+/* static answer pictures inside hints and lesson cards */
+.spz-static { --card: clamp(56px, 15vw, 80px); pointer-events: none; }
+.spz-static .spz-card { box-shadow: none; font-size: 11px; }
+.spz-static .spz-bin { min-height: 0; }
+.spz-static .spz-pipes, .spz-static .spz-maze { grid-template-columns: repeat(var(--w, var(--n)), minmax(32px, 52px)); }
+.spz-static .spz-stage { max-width: 320px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .spz-card, .spz-pcell svg, .spz-sprout { transition: none; }
+  .spz-card.sel { transform: none; }
+}
+@media (min-width: 600px) { .spz-row { gap: 16px 8px; } .spz-arrow svg { width: 24px; } }

@@ -59,3 +59,5 @@ function paint() {
 }
 window.Backup = { render(el) { card = el; paint(); if (!native() && flagged()) load().catch(() => {}); } };
 if (!native() && flagged()) load().catch(() => {});
+// the module can load after the Grown-ups page drew its fallback card: take it over
+{ const el = document.getElementById('backupCard'); if (el) window.Backup.render(el); }

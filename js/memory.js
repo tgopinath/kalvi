@@ -89,7 +89,7 @@
     const pairs = AGE.band(p) === 'young' ? 6 : (lvlSt.m > 0.7 ? 10 : 8), cols = AGE.band(p) === 'young' ? 3 : 4;
     const ps = pool(subject, AGE.band(p), r).slice(0, pairs);
     const cards = r.shuffle(ps.flatMap((x, i) => [{ pair: i, side: 'a', face: x.a }, { pair: i, side: 'b', face: x.b }]));
-    G = { subject, seed, ps, cards, cols, up: [], done: new Set(), flips: 0, tries: ps.map(() => 0), focus: 0, t0: Date.now(), msg: t('mem.help'), lock: false };
+    G = { subject, seed, ps, cards, cols, up: [], done: new Set(), flips: 0, tries: ps.map(() => 0), focus: 0, t0: Date.now(), msg: null, lock: false };
     const h = '#/memory/' + subject; if (location.hash === h) setTimeout(() => App.route()); else location.hash = h;
   }
   function render(main, parts) {
@@ -100,7 +100,7 @@
       <a class="backlink" href="#/s/${subject}"><svg class="k-icon"><use href="#i-back"/></svg>${t('subj.' + subject + '.title')}</a>
       <p class="eyebrow">${t('games.title')}</p><div class="lesson-head"><h1>${t('mem.title')}</h1>${Engine.listenBtn('mlisten')}</div>
       <div class="mem-bar"><span class="small"><b>${t('mem.flips')}:</b> <span class="mono" id="flips">${G.flips}</span>${best ? ` · ${t('mem.best')}: <span class="mono">${best}</span>` : ''}</span><span class="small muted" id="left">${t('mem.pairsLeft', { n: G.ps.length - G.done.size })}</span></div>
-      <div class="mem-why" id="why" aria-live="polite">${G.msg}</div>
+      <div class="mem-why" id="why" aria-live="polite">${G.msg ?? t('mem.help')}</div>
       <div class="mem-grid" style="--cols:${G.cols}" role="grid" aria-label="${t('mem.title')}">${G.cards.map((c, i) => cardHtml(c, i)).join('')}</div>
       <div id="recap"></div></section>`;
     Engine.bindListen(main.querySelector('.mlisten'), () => [{ text: t('mem.blurb.' + subject) + ' ' + t('mem.help'), lang: I18N.lang }]);

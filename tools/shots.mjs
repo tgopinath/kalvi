@@ -8,7 +8,7 @@ const mode = process.argv[2] || 'verify';
 const profile = (lang, band = 'young', extra = {}) => JSON.stringify({ profiles: [{ id: 'cshot', name: lang === 'ta' ? 'அனு' : 'Anu', band, avatar: 'cone', color: '#16a39c', lang, created: 1, updated: 1,
   subjects: { maths: { skills: { 'm.count': { lvl: 2, m: .9, n: 12, ok: 11, run: 0, miss: 0 }, 'm.add10': { lvl: 2, m: .62, n: 9, ok: 6, run: 0, miss: 0 }, 'm.after': { lvl: 1, m: .4, n: 4, ok: 2, run: 0, miss: 0 } }, review: { 'm.make10|1|11': { box: 0, due: '2020-01-01', skill: 'm.make10', lvl: 1, seed: 11, miss: 2 } }, lessons: { count: '2026-11-09' } },
     english: { skills: { 'e.sound': { lvl: 1, m: .7, n: 8, ok: 6, run: 0, miss: 0 } }, review: {}, lessons: {} }, science: { skills: { 's.magnets': { lvl: 1, m: .5, n: 4, ok: 2, run: 0, miss: 0 } }, review: {}, lessons: {} } },
-  days: { '2026-11-08': 6, '2026-11-09': 9, '2026-11-10': 5 }, sessions: [{ subject: 'maths', topic: 'add', mode: 'topic', n: 8, right: 6, ms: 300000, date: '2026-11-09', at: 1 }], warmup: null, settings: { rate: .9 }, ...extra }], current: 'cshot', updated: 1 });
+  days: { '2026-11-08': 6, '2026-11-09': 9, '2026-11-10': 5 }, sessions: [{ subject: 'maths', topic: 'add', mode: 'topic', n: 8, right: 6, ms: 300000, date: '2026-11-09', at: 1 }], warmup: null, settings: { rate: .9 }, extras: { stickers: 99 }, ...extra }], current: 'cshot', updated: 1 });
 const SHOTS = {
   verify: [
     ['home', '#/', null], ['profile-new', '#/profile/new', null, { fresh: true }], ['lesson-add', '#/t/maths/add', null],
@@ -36,6 +36,7 @@ async function shot(name, hash, js, opt = {}, lang, size) {
   await page.goto(BASE + hash); await page.waitForTimeout(900);
   if (js) { await page.evaluate(`(async () => { const sleep = ms => new Promise(r => setTimeout(r, ms)); ${js} })()`); await page.waitForTimeout(900); }
   const file = path.join(out, `${mode === 'card' ? '' : 'core-'}${name}${langs.length > 1 ? '-' + lang : ''}${size.width > 1000 ? '-desktop' : ''}.${mode === 'card' ? 'jpg' : 'png'}`);
+  await page.evaluate(() => { document.getElementById('guide')?.remove(); document.querySelector('.sticker-modal')?.remove(); });
   await page.screenshot({ path: file, type: mode === 'card' ? 'jpeg' : 'png', quality: mode === 'card' ? 82 : undefined });
   await ctx.close(); return file;
 }
