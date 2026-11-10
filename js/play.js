@@ -17,6 +17,8 @@
       science: ['Tap the glowing stop to try the next experiment.', 'அடுத்த சோதனையைச் செய்ய ஒளிரும் நிறுத்தத்தைத் தட்டு.'], world: ['Tap the glowing stop to explore the world.', 'உலகத்தை ஆராய ஒளிரும் நிறுத்தத்தைத் தட்டு.'],
       round: ['Look, listen, then choose your answer.', 'பார், கேள், பிறகு உன் பதிலைத் தேர்ந்தெடு.'], topic: ['Move the pieces to see how it works, then press Play.', 'இது எப்படி வேலை செய்கிறது என்று பார்க்கத் துண்டுகளை நகர்த்து, பிறகு விளையாடு.'],
     },
+    mani: { name: ['Mani', 'மணி'], show: ['Show Mani', 'மணியைக் காட்டு'], showHelp: ['Mani the clay elephant guides children through each screen.', 'களிமண் யானை மணி ஒவ்வொரு திரையிலும் குழந்தைகளுக்கு வழிகாட்டும்.'], hello: ['Hi, I’m Mani. Let’s learn and play.', 'வணக்கம், நான் மணி. கற்போம், விளையாடுவோம்.'], empty: ['Nothing here yet. Let’s play a game first.', 'இங்கே இன்னும் எதுவும் இல்லை. முதலில் ஒரு விளையாட்டு விளையாடுவோம்.'] },
+    nice: ['Nice!', 'அருமை!'], stickerCaption: ['It’s in your sticker book now.', 'இப்போது இது உன் ஸ்டிக்கர் புத்தகத்தில்.'],
     mascot: { title: ['Mascot options (preview only)', 'சின்னத் தேர்வுகள் (முன்னோட்டம் மட்டும்)'], elephant: ['Clay elephant', 'களிமண் யானை'], pen: ['Brass kolam pen', 'பித்தளைக் கோலப் பேனா'], owl: ['Sculpted owl', 'செதுக்கிய ஆந்தை'], sprout: ['Little sprout', 'சிறு முளை'] },
   } });
 
@@ -83,8 +85,13 @@
     main.innerHTML = `<section class="page stickers world-today"><a class="backlink" href="#/"><svg class="k-icon"><use href="#i-back"/></svg>${t('nav.today')}</a><h1 class="big">${t('play.stickers')}</h1><p class="lede">${t('play.stickersBody')}</p>
       <div class="stickergrid">${STICKERS.map((s, i) => `<div class="sticker ${i < n ? 'got' : ''}">${i < n && stickerSrc(s) ? `<img src="${stickerSrc(s)}" alt="${esc(s[0])}">` : `<span>${t('play.locked')}</span>`}</div>`).join('')}</div></section>`;
   }
-  function revealSticker(s) { if (!s || !stickerSrc(s)) return; const d = document.createElement('div'); d.className = 'sticker-reveal'; d.setAttribute('role', 'status'); d.innerHTML = `<div class="sticker flip"><img src="${stickerSrc(s)}" alt=""></div><p>${t('play.newSticker')}</p>`; d.onclick = () => d.remove(); document.body.appendChild(d); sfx('unlock'); setTimeout(() => d.remove(), 1500); }
-
+  function revealSticker(s) {
+    if (!s || !stickerSrc(s)) return;
+    const d = document.createElement('div'); d.className = 'sticker-modal'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-label', t('play.newSticker'));
+    d.innerHTML = `<div class="sticker-scrim"></div><div class="sticker-card">${mani('cheer', 84)}<div class="sticker flip"><img src="${stickerSrc(s)}" alt="${esc(s[0])}"></div><p class="stk yellow" style="--r:-3deg">${t('play.newSticker')}</p><p>${t('play.stickerCaption')}</p><button type="button" class="k-btn k-btn-primary">${t('play.nice')}</button></div>`;
+    const close = () => { d.remove(); clearTimeout(tm); }; d.querySelector('button').onclick = close; d.querySelector('.sticker-scrim').onclick = close;
+    document.body.appendChild(d); d.querySelector('button').focus(); sfx('unlock'); const tm = setTimeout(close, 2600);
+  }
   // ---------- rewards ----------
   function burst(x, y, n = 10) { if (RM()) return; const host = document.createElement('div'); host.className = 'burst'; host.style.left = x + 'px'; host.style.top = y + 'px'; for (let i = 0; i < n; i++) { const s = document.createElement('i'); const a = i / n * Math.PI * 2; s.style.setProperty('--dx', Math.cos(a) * (40 + Math.random() * 30) + 'px'); s.style.setProperty('--dy', Math.sin(a) * (40 + Math.random() * 30) + 'px'); host.appendChild(s); } document.body.appendChild(host); setTimeout(() => host.remove(), 900); }
   function starsToJar(el, n) { if (!el) return; el.innerHTML = `<svg class="jar" viewBox="0 0 80 96" aria-hidden="true"><path d="M18 14h44v8c8 6 10 14 10 24v34a8 8 0 0 1-8 8H16a8 8 0 0 1-8-8V46c0-10 2-18 10-24z" fill="rgba(255,255,255,.14)" stroke="currentColor" stroke-width="2"/><rect x="16" y="6" width="48" height="10" rx="3" fill="currentColor" opacity=".5"/></svg><div class="jarstars">${Array.from({ length: n }, (_, i) => `<span style="--i:${i}">${starRow(1, 1)}</span>`).join('')}</div>`; let k = 0; const tick = () => { if (k++ < n) { sfx('star'); setTimeout(tick, RM() ? 0 : 220); } }; tick(); }
@@ -95,8 +102,8 @@
     const p = Store.current(); let card = document.getElementById('guide'); if (!p) { card?.remove(); return; }
     const txt = t('play.guide.' + key); if (txt.startsWith('play.')) { card?.remove(); return; }
     if (!card) { card = document.createElement('aside'); card.id = 'guide'; card.className = 'speechcard'; card.setAttribute('aria-live', 'polite'); document.body.appendChild(card); }
-    card.innerHTML = `<p>${esc(txt)}</p><button type="button" class="k-iconbtn" aria-label="${t('common.listen')}"><svg class="k-icon"><use href="#i-sound"/></svg></button><button type="button" class="k-iconbtn" data-x aria-label="${t('common.close')}"><svg class="k-icon"><use href="#i-close"/></svg></button>`;
-    card.querySelector('button').onclick = () => Voice.play([{ text: txt, lang: I18N.lang }], null, {});
+    card.innerHTML = `${mani('wave', 72)}<p>${esc(txt)}</p><button type="button" class="k-iconbtn" aria-label="${t('common.listen')}"><svg class="k-icon"><use href="#i-sound"/></svg></button><button type="button" class="k-iconbtn" data-x aria-label="${t('common.close')}"><svg class="k-icon"><use href="#i-close"/></svg></button>`;
+    card.querySelector('button').onclick = () => { maniSay(card, 'talk'); Voice.play([{ text: txt, lang: I18N.lang }], null, {}); };
     card.querySelector('[data-x]').onclick = () => card.remove();
     clearTimeout(guide.t); guide.t = setTimeout(() => card?.remove(), 9000);
     if (on && p.band === 'young' && lastGuide !== key + I18N.lang) { lastGuide = key + I18N.lang; setTimeout(() => Voice.play([{ text: txt, lang: I18N.lang }], null, { onMissing: () => {} }), 500); }
@@ -112,16 +119,12 @@
     return `<div class="scene sc-today"><svg viewBox="0 0 600 160" aria-hidden="true"><circle class="sun" cx="480" cy="110" r="46" fill="#ffd27a"/><path d="M0 120 q150 -40 300 0 t300 0 v40 H0z" fill="#e9895c"/><path d="M0 140 q150 -30 300 0 t300 0 v20 H0z" fill="#c8603f"/><g class="cloud c1"><ellipse cx="140" cy="46" rx="50" ry="14" fill="#fff" opacity=".7"/></g></svg></div>`;
   }
 
-  // ---------- mascot options (preview only, not shipped until chosen) ----------
-  function mascots() {
-    const el = R3.Scene({ yaw: -35, pitch: 18, scale: 20 }); const T = '#c4673e', T2 = '#a8532f';
-    el.group(0).shadow(0, 0, 0, 2.6, 1.6); el.group(1).box(-2, -1.1, 1.4, 4, 2.2, 2.2, T); [[-1.6, -0.8], [1.2, -0.8], [-1.6, .6], [1.2, .6]].forEach(([x, y]) => el.group(1).cylinder(x + .2, y + .2, 0, .4, 1.5, T2, { n: 20 })); el.group(2).sphere(2.6, 0, 3.2, 1.25, T, { matte: true }); el.group(2).cylinder(3.4, 0, .5, .32, 2.4, T2, { n: 16 }); el.group(2).sphere(2.0, -1.2, 3.6, .9, T2, { matte: true }); el.group(3).sphere(3.25, -.85, 3.6, .12, '#1f2433');
-    const pen = R3.Scene({ yaw: -30, pitch: 22, scale: 22 }); pen.group(0).shadow(0, 0, 0, 1.6, 1); pen.group(1).cone(0, 0, 0, .55, 1.1, '#d3a94a', { n: 32 }); pen.group(1).cylinder(0, 0, 1.1, .55, 3.2, '#c99a3a', { n: 32 }); pen.group(1).cylinder(0, 0, 4.3, .62, .5, '#a07a2a', { n: 32 }); pen.group(2).sphere(0, 0, 5.3, .5, '#fff1b8'); pen.group(0).raw(P => { const c = P([0, 0, 5.3]); return `<circle cx="${c[0]}" cy="${c[1]}" r="28" fill="#ffe28a" opacity=".25"/>`; }, [[0, 0, 5.3]]);
-    const owl = R3.Scene({ yaw: -10, pitch: 16, scale: 22 }); const O = '#7b8a6e'; owl.group(0).shadow(0, 0, 0, 1.6, 1.2); owl.group(1).sphere(0, 0, 1.6, 1.6, O, { matte: true }); owl.group(2).sphere(0, -.2, 3.4, 1.15, O, { matte: true }); owl.group(3).sphere(-.45, -1.2, 3.6, .38, '#e9e6dc'); owl.group(3).sphere(.45, -1.2, 3.6, .38, '#e9e6dc'); owl.group(4).sphere(-.45, -1.5, 3.6, .14, '#2b3140'); owl.group(4).sphere(.45, -1.5, 3.6, .14, '#2b3140'); owl.group(4).cone(0, -1.35, 3.1, .14, .1, '#d3a94a', { n: 12 }); owl.group(2).cone(-.75, -.1, 4.3, .25, .6, O, { n: 12 }); owl.group(2).cone(.75, -.1, 4.3, .25, .6, O, { n: 12 });
-    return [['elephant', el.svg('clay elephant')], ['pen', pen.svg('brass kolam pen')], ['owl', owl.svg('sculpted owl')]];
-  }
-  ROUTES.mascots = { render(main) { const m = mascots(), opts = [['elephant', '<img src="img/icons/elephant.webp" alt="">'], ['pen', m[1][1]], ['sprout', '<img src="img/icons/seedling.webp" alt="">']]; main.innerHTML = `<section class="page"><div class="hero"><h1 class="big">${t('play.mascot.title')} <span class="stk yellow">${t('play.play')}</span></h1></div><div class="mascots">${opts.map(([k, a], i) => `<figure class="stop" style="min-height:260px"><span class="num">0${i + 1}</span><div class="blobart" style="height:180px">${a}</div><figcaption class="stop-title">${t('play.mascot.' + k)}</figcaption></figure>`).join('')}</div></section>`; } };
+  // ---------- Mani, the clay elephant guide (states: idle, talk, cheer, think, wave) ----------
+  const maniOn = () => { try { return localStorage.getItem('kalvi.mani') !== 'off'; } catch { return true; } };
+  const mani = (state = 'idle', size = 88, label = '') => maniOn() ? `<span class="mani mani-${state}" style="--m:${size}px" role="img" aria-label="${esc(label || t('play.mani.name'))}"><img src="img/icons/elephant.webp" alt="" draggable="false"></span>` : '';
+  function maniSay(el, state) { const m = el?.querySelector?.('.mani'); if (!m) return; m.className = 'mani mani-' + state; clearTimeout(m._t); if (state !== 'idle') m._t = setTimeout(() => { m.className = 'mani mani-idle'; }, 1600); }
   ROUTES.stickers = { render: stickerBook };
+  delete ROUTES.mascots;
 
-  window.PLAY = { sfx, buzz, setSound, paintToggle, get soundOn() { return on; }, stopArt, starsFor, starRow, ring, kolam, todayCount, checkStickers, revealSticker, burst, starsToJar, guide, scene, cheer: ok => { const a = tx('play.cheer.' + (ok ? 'right' : 'wrong')); return a[Math.floor(Math.random() * a.length)]; } };
+  window.PLAY = { mani, maniSay, maniOn, setMani: v => { try { v ? localStorage.removeItem('kalvi.mani') : localStorage.setItem('kalvi.mani', 'off'); } catch {} }, sfx, buzz, setSound, paintToggle, get soundOn() { return on; }, stopArt, starsFor, starRow, ring, kolam, todayCount, checkStickers, revealSticker, burst, starsToJar, guide, scene, cheer: ok => { const a = tx('play.cheer.' + (ok ? 'right' : 'wrong')); return a[Math.floor(Math.random() * a.length)]; } };
 })();

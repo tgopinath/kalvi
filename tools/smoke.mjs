@@ -9,7 +9,7 @@ for (const lang of ['en', 'ta']) for (const band of ['young', 'older']) for (con
   const ctx = await br.newContext({ viewport: { width: 375, height: 812 } }); const pg = await ctx.newPage();
   const tag = `${g.replace(/\W+/g, '_')}-${lang}-${band}`;
   pg.on('pageerror', e => errs.push(`${tag}: ${e.message}`)); pg.on('console', m => m.type() === 'error' && !/404|favicon|Failed to load resource/.test(m.text()) && errs.push(`${tag}: ${m.text()}`));
-  await pg.addInitScript(p => { if (!sessionStorage.s) { sessionStorage.s = 1; localStorage.setItem('kalvi.v1', p); } }, prof(lang, band));
+  await pg.addInitScript(p => { if (!sessionStorage.s) { sessionStorage.s = 1; localStorage.setItem('kalvi.v1', p[0]); localStorage.setItem('kalvi.lang', p[1]); } }, [prof(lang, band), lang]);
   await pg.goto(B + '#/'); await pg.waitForTimeout(700);
   try { await pg.evaluate(`(${g}).start(Store.current())`); } catch (e) { errs.push(`${tag}: start ${e.message}`); }
   await pg.waitForTimeout(1200);

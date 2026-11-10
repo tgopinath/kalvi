@@ -1,0 +1,10 @@
+import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+const prof = JSON.stringify({ profiles: [{ id: 'cs', name: 'Anu', age: 5, color: '#0c7777', created: 1, updated: 1, subjects: { maths: { skills: {}, review: {}, lessons: {} }, english: { skills: {}, review: {}, lessons: {} }, science: { skills: {}, review: {}, lessons: {} }, world: { skills: {}, review: {}, lessons: {} } }, days: {}, sessions: [{ subject: 'maths', topic: 'count', n: 5, right: 5, date: '2026-11-09' }], settings: { rate: .9 } }], current: 'cs', updated: 1 });
+const b = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' }); const errs = [];
+for (const [n, w, js] of [['today', 1440, ''], ['today', 375, ''], ['card', 375, `Engine.start({items:[{skill:'m.add10',lvl:1,seed:4}],title:'Addition',subject:'maths',back:'#/'}); await s(500); const q=Engine.round.q; String(q.answer).split('').forEach(d=>document.querySelector('.numpad [data-k="'+d+'"]').click()); document.querySelector('.checkbtn').click(); await s(700); document.querySelector('.lessoncard').scrollIntoView({block:'center'})`], ['sticker', 375, `PLAY.revealSticker(['elephant','PICS'])`], ['sticker', 1440, `PLAY.revealSticker(['elephant','PICS'])`]]) {
+  const c = await b.newContext({ viewport: { width: w, height: w > 1000 ? 900 : 812 } }), p = await c.newPage(); p.on('pageerror', e => errs.push(e.message));
+  await p.addInitScript(x => { if (!sessionStorage.s) { sessionStorage.s = 1; localStorage.setItem('kalvi.v1', x); localStorage.setItem('kalvi.lang', 'en'); localStorage.setItem('kalvi.sound', 'off'); } }, prof);
+  await p.goto('http://localhost:5330/#/'); await p.waitForTimeout(1000); if (js) await p.evaluate(`(async()=>{const s=ms=>new Promise(r=>setTimeout(r,ms)); ${js}})()`); await p.waitForTimeout(700);
+  await p.screenshot({ path: `.work/shots/mani-${n}-${w}.png` }); await c.close();
+}
+await b.close(); console.log(errs.length ? errs : 'ok');

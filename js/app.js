@@ -3,7 +3,7 @@
   const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = Engine.esc, main = $('#main');
   const SUBJ = {
-    maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.PUZZLES?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
+    maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.PUZZLES?.game, window.CODING?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
     english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.TYPING?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
     science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
     world: { icon: 'i-globe', topics: [...(window.GK?.TOPICS || []), { id: 'geo', subject: 'world', title: 'w.geo.title', blurb: 'w.geo.blurb', icon: 'i-map', skills: window.GEO?.skills || [], page: el => { el.innerHTML = `<article class="k-card practice-card"><div><p class="eyebrow">${t('games.title')}</p><h2>${t('w.geo.title')}</h2><p class="muted">${t('w.geo.body')}</p></div><a class="k-btn k-btn-primary k-btn-lg" href="#/geo">${t('common.open')}</a></article>`; } }],
@@ -121,7 +121,7 @@
     const totalStars = Store.SUBJECTS.reduce((a, s) => a + SUBJ[s].topics.reduce((b, tp) => b + PLAY.starsFor(p, tp), 0), 0), goal = 5, done = PLAY.todayCount(p);
     const lt = lastTopic(p), stickers = (p.extras?.stickers || 0);
     main.innerHTML = `<section class="page home">
-      <div class="hero">${deco()}<div class="hello">${avatar(p, 72)}<div><p class="eyebrow">${new Date().toLocaleDateString(I18N.lang === 'ta' ? 'ta-IN' : 'en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p><h1>${greet(p)} <span class="stk pink" style="--r:-8deg">${t('play.play')}</span></h1></div></div></div>
+      <div class="hero">${deco()}<div class="hello">${avatar(p, 72)}${PLAY.mani('wave', innerWidth > 900 ? 130 : 60)}<div><p class="eyebrow">${new Date().toLocaleDateString(I18N.lang === 'ta' ? 'ta-IN' : 'en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p><h1>${greet(p)} <span class="stk pink" style="--r:-8deg">${t('play.play')}</span></h1></div></div></div>
       <div class="stattiles"><div class="stattile pink"><b>${totalStars}</b><span>${t('play.stars', { n: '' }).trim()}</span></div><div class="stattile yellow">${PLAY.kolam(streak)}<span>${t('home.streak')}: ${streak}</span></div><div class="stattile mint">${PLAY.ring(done, goal)}<span>${t('play.goal', { a: done, b: goal })}</span></div></div>
       <article class="playcard"><div><span class="stk purple" style="--r:-4deg">${t('home.warmTitle')}</span><h2>${warmDone ? t('home.warmAgain') : t('play.startToday')}</h2><p>${warmDone ? t('home.warmDone') : t('play.startTodayBody')}</p><button class="k-btn k-btn-primary k-btn-lg" id="warmBtn">${t('common.start')}</button>${dueN ? ` <button class="k-btn k-btn-outline k-btn-lg" id="revBtn">${t('home.reviewTitle')} · ${dueN}</button>` : ''}</div>${icon('rocket')}</article>
       ${lt ? `<a class="continuecard" data-subject="${lt[0]}" href="#/t/${lt[0]}/${lt[1].id}">${icon(ICON['t:' + lt[0]][lt[1].id] || ICON[lt[0]])}<span><span class="eyebrow">${t('play.continue')}</span><b>${t(lt[1].title)}</b></span></a>` : ''}
@@ -197,7 +197,7 @@
       <h2 class="section">${t('prog.bySubject')}</h2>
       ${Store.SUBJECTS.map(s => { const sm = subjectMastery(p, s); return `<article class="k-card subjprog" data-subject="${s}"><header><span class="subj-ic"><svg class="k-icon"><use href="#${SUBJ[s].icon}"/></svg></span><div><h3>${t('subj.' + s + '.title')}</h3><span class="small muted">${t('prog.skillsMastered', { a: sm.mastered, b: sm.total })}</span></div><b class="pctbig">${pct(sm.m)}%</b></header>
         <ul class="topicbars">${SUBJ[s].topics.filter(tp => forBand(tp, p)).map(tp => `<li><a href="#/t/${s}/${tp.id}">${t(tp.title)}</a>${bar(topicMastery(p, tp))}</li>`).join('')}</ul></article>`; }).join('')}
-      ${!p.sessions.length ? `<p class="muted">${t('prog.noActivity')}</p>` : ''}<p class="small"><a href="#/credits">${t('credits.title')}</a> · <a href="#/parent">${t('nav.grownups')}</a></p>
+      ${!p.sessions.length ? `<div class="emptystate">${PLAY.mani('think', 84)}<p>${t('prog.noActivity')}</p></div>` : ''}<p class="small"><a href="#/credits">${t('credits.title')}</a> · <a href="#/parent">${t('nav.grownups')}</a></p>
     </section>`;
   }
 
@@ -211,6 +211,7 @@
       <div class="kids">${db.profiles.map(p => kidCard(p)).join('')}</div>
       <a class="k-btn k-btn-outline pill" href="#/profile/new"><svg class="k-icon"><use href="#i-plus"/></svg>${t('parent.add')}</a>
       <article class="k-card backup" id="backupCard"></article>
+      <article class="k-card"><label class="k-switch"><span><b>${t('play.mani.show')}</b><br><span class="small muted">${t('play.mani.showHelp')}</span></span><input type="checkbox" id="maniOn" ${PLAY.maniOn() ? 'checked' : ''}></label></article>
       <article class="k-card"><label class="k-switch"><span><b>${t('photo.backupPhotos')}</b><br><span class="small muted">${t('photo.backupPhotosHelp')}</span></span><input type="checkbox" id="bkPhotos" ${Photo.backupPhotos() ? 'checked' : ''}></label></article>
       <article class="k-card"><p class="eyebrow">${t('parent.voice')}</p><div class="seg" role="group" aria-label="${t('parent.voice')}"><button type="button" data-rate=".72">${t('parent.slow')}</button><button type="button" data-rate=".9">${t('parent.normal')}</button></div></article>
     </section>`;
@@ -219,6 +220,7 @@
         d => $('#delYes', d).onclick = () => { Photo.put(p.id, null); Store.remove(p.id); closeDialog(); applyLang(); if (!Store.db.profiles.length) location.hash = '#/welcome'; else route(); }); });
     const cur = Store.current();
     $$('[data-rate]').forEach(b => { b.setAttribute('aria-pressed', String(Math.abs((cur?.settings?.rate ?? .9) - +b.dataset.rate) < .01)); b.onclick = () => { Store.db.profiles.forEach(p => p.settings = { ...p.settings, rate: +b.dataset.rate }); Store.save(); parent(); }; });
+    $('#maniOn').onchange = e => PLAY.setMani(e.target.checked);
     $('#bkPhotos').onchange = e => Photo.setBackupPhotos(e.target.checked);
     window.Backup?.render($('#backupCard'));
   }
@@ -264,7 +266,7 @@
     const p = isNew ? { name: '', age: null, color: Store.AV_COLORS[Math.floor(Math.random() * Store.AV_COLORS.length)] } : Store.db.profiles.find(x => x.id === id);
     if (!p) return notFound();
     const st = { ...p };
-    main.innerHTML = `<section class="page profile">${first ? `<p class="eyebrow"><span lang="en">Kalvi</span> · <span lang="ta">கல்வி</span></p><h1>${t('prof.welcome')}</h1><p class="lede">${t('prof.welcomeBody')}</p>` : `<a class="backlink" href="#/parent"><svg class="k-icon"><use href="#i-back"/></svg>${t('nav.grownups')}</a><h1>${isNew ? t('prof.newTitle') : t('prof.editTitle')}</h1>`}
+    main.innerHTML = `<section class="page profile">${first ? `<div class="hello">${PLAY.mani('wave', 96)}<p class="speechbubble">${t('play.mani.hello')}</p></div><p class="eyebrow"><span lang="en">Kalvi</span> · <span lang="ta">கல்வி</span></p><h1>${t('prof.welcome')}</h1><p class="lede">${t('prof.welcomeBody')}</p>` : `<a class="backlink" href="#/parent"><svg class="k-icon"><use href="#i-back"/></svg>${t('nav.grownups')}</a><h1>${isNew ? t('prof.newTitle') : t('prof.editTitle')}</h1>`}
       <form class="k-card pform" id="pform" novalidate>
         <div class="pform-preview"></div>
         <div class="k-field"><label class="k-label" for="pname">${t('prof.name')}</label><input class="k-input" id="pname" maxlength="24" autocomplete="off" placeholder="${t('prof.namePh')}" value="${esc(st.name)}"><p class="k-error" id="perr" hidden>${t('prof.nameErr')}</p></div>

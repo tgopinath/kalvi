@@ -407,7 +407,7 @@
       missing: ['Which number goes in the box?', 'கட்டத்தில் எந்த எண் வரும்?'],
       tfPic: ['Are there {n} {things}?', 'இங்கே {n} {things} உள்ளனவா?'], tf: ['True or false?', 'சரியா, தவறா?'],
       shape: ['Which one is a {s}?', 'இவற்றில் {s} எது?'], shapeSides: ['Which shape has {n} sides?', 'எந்த வடிவத்துக்கு {n} பக்கங்கள் உள்ளன?'],
-      clock: ['Which clock shows {time} ({words})?', '{time} ({words}) காட்டும் கடிகாரம் எது?'],
+      clock: ['Which clock shows {time}?', '{time} காட்டும் கடிகாரம் எது?'],
       money: ['Which coins make ₹{n}?', 'எந்த நாணயங்கள் சேர்ந்தால் ₹{n} ஆகும்?'],
       frac: ['Which picture has {f} shaded?', 'எந்தப் படத்தில் {f} பகுதி நிழலிடப்பட்டுள்ளது?'],
       round10: ['Which ten is {n} closest to?', '{n} எந்தப் பத்துக்கு மிக அருகில் உள்ளது?'],

@@ -167,7 +167,7 @@
   function lessonCard(el, q, ok, giv) {
     const ansTxt = q.answerText ?? (q.kind === 'choice' || q.kind === 'tf' ? (q.choices.find(c => c.v === q.answer)?.html ?? q.answer) : (q.unit === '₹' ? '₹' + q.answer : q.answer + (q.unit ? ' ' + q.unit : '')));
     const steps = q.why?.steps || [];
-    el.innerHTML = `<article class="lessoncard ${ok ? 'ok' : 'miss'}" tabindex="-1">
+    el.innerHTML = `<article class="lessoncard ${ok ? 'ok' : 'miss'}" tabindex="-1">${window.PLAY ? PLAY.mani(ok ? 'cheer' : 'think', 76) : ''}
       <header class="lc-head"><span class="lc-mark" aria-hidden="true"><svg class="k-icon"><use href="#${ok ? 'i-check' : 'i-dot'}"/></svg></span>
         <div><p class="lc-status">${window.PLAY ? PLAY.cheer(ok) : ok ? t('pr.right') : t('pr.wrong')}</p><p class="lc-answer">${t('pr.answerIs', { a: `<strong>${ansTxt}</strong>` }).replace(/\.(<\/strong>)\.$/, '.$1').replace(/([.?])(<\/span><\/strong>)\.$/, '$1$2')}${!ok && giv != null && giv !== '' && q.kind === 'num' ? ` <span class="muted">${t('pr.youSaid', { a: q.unit === '₹' ? '₹' + giv : giv })}</span>` : ''}</p></div>
         ${listenBtn('lclisten')}</header>
@@ -186,6 +186,7 @@
     if (more) more.onclick = () => { const h = hidden(); if (h[0]) { h[0].hidden = false; h[0].classList.add('fresh'); } if (hidden().length === 0) more.remove(); };
     // reveal the remaining steps one by one, calmly
     let k = 0; const timer = setInterval(() => { const h = hidden(); if (!h.length || !document.body.contains(card)) { clearInterval(timer); more?.remove(); return; } h[0].hidden = false; h[0].classList.add('fresh'); if (!hidden().length) more?.remove(); if (++k > 6) clearInterval(timer); }, 1400);
+    card.querySelector('.lclisten')?.addEventListener('click', () => window.PLAY?.maniSay(card, 'talk'));
     bindListen(card.querySelector('.lclisten'), () => { const segs = [{ text: (ok ? t('pr.right') : t('pr.wrong')) + '. ' + t('pr.answerIs', { a: String(ansTxt).replace(/<[^>]+>/g, ' ') }), lang: I18N.lang }]; steps.forEach(s => segs.push({ text: s.text.replace(/<[^>]+>/g, ' '), lang: s.lang || I18N.lang })); return segs; });
     card.querySelector('.fb-yes').onclick = e => { e.target.closest('.feedback').innerHTML = `<span>${t('pr.clearYes')}</span>`; };
     card.querySelector('.fb-no').onclick = e => { Store.flagReview(Store.current(), q.subject, q); e.target.closest('.feedback').innerHTML = `<span>${t('pr.clearNoted')}</span>`; };
