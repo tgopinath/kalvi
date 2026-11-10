@@ -16,7 +16,7 @@
   }
   function build(item, p) {
     const sk = SK[item.skill]; const r = rng(item.seed);
-    const lvl = Math.max(1, Math.min(item.lvl || 1, Math.max(sk.max('older'), sk.max('young'))));
+    const lvl = Math.max(Math.min(sk.min('young'), sk.min('older')), Math.min(item.lvl || 1, Math.max(sk.max('older'), sk.max('young'))));
     const q = sk.gen(lvl, r, { band: p.band, lang: I18N.lang, seed: item.seed });
     return Object.assign(q, { key: item.skill + '|' + item.lvl + '|' + item.seed, skill: item.skill, lvl: item.lvl, seed: item.seed, subject: sk.subject });
   }
@@ -168,7 +168,7 @@
     const steps = q.why?.steps || [];
     el.innerHTML = `<article class="lessoncard ${ok ? 'ok' : 'miss'}" tabindex="-1">
       <header class="lc-head"><span class="lc-mark" aria-hidden="true"><svg class="k-icon"><use href="#${ok ? 'i-check' : 'i-dot'}"/></svg></span>
-        <div><p class="lc-status">${ok ? t('pr.right') : t('pr.wrong')}</p><p class="lc-answer">${t('pr.answerIs', { a: `<strong>${ansTxt}</strong>` })}${!ok && giv != null && giv !== '' && q.kind === 'num' ? ` <span class="muted">${t('pr.youSaid', { a: q.unit === '₹' ? '₹' + giv : giv })}</span>` : ''}</p></div>
+        <div><p class="lc-status">${ok ? t('pr.right') : t('pr.wrong')}</p><p class="lc-answer">${t('pr.answerIs', { a: `<strong>${ansTxt}</strong>` }).replace(/\.(<\/strong>)\.$/, '.$1').replace(/([.?])(<\/span><\/strong>)\.$/, '$1$2')}${!ok && giv != null && giv !== '' && q.kind === 'num' ? ` <span class="muted">${t('pr.youSaid', { a: q.unit === '₹' ? '₹' + giv : giv })}</span>` : ''}</p></div>
         ${listenBtn('lclisten')}</header>
       ${q.why?.photo ? `<figure class="lc-photo"><img src="${q.why.photo.src}" alt="${esc(q.why.photo.alt || '')}" loading="lazy" onerror="this.closest('figure').classList.add('noimg')"><figcaption>${t('common.credit')}: <a href="${q.why.photo.href}" target="_blank" rel="noopener">${esc(q.why.photo.credit)}</a></figcaption></figure>` : ''}
       <p class="eyebrow">${t('pr.whyTitle')}</p>

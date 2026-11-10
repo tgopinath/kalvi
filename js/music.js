@@ -439,7 +439,7 @@
     if (a === 'clap') return `<svg viewBox="0 0 48 48" aria-hidden="true"><g fill="${ink}"><rect x="11" y="10" width="11" height="26" rx="5.5" transform="rotate(-14 16 23)"/><rect x="26" y="10" width="11" height="26" rx="5.5" transform="rotate(14 32 23)" opacity=".8"/></g><path d="M24 4v4M15 6l2 3M33 6l-2 3" stroke="${ink}" stroke-width="2" stroke-linecap="round"/></svg>`;
     if (a === 'wave') return `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="12" width="18" height="24" rx="7" fill="none" stroke="${ink}" stroke-width="2.4"/><path d="M8 30c0-10 6-18 14-20" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/><path d="m19 6 3.5 4-4.5 2.2" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     const n = +a[1]; // little finger first, then ring, then middle
-    return `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="22" width="28" height="18" rx="7" fill="${ink}" opacity=".35"/>${[0, 1, 2, 3].map(i => { const lit = i >= 4 - n; const x = 34 - i * 7.4; return `<rect x="${x - 3}" y="${i === 0 ? 13 : 7 + (i === 1 ? 1 : 0)}" width="6" height="${i === 0 ? 13 : 19}" rx="3" fill="${ink}" opacity="${lit ? 1 : .3}"/>`; }).join('')}</svg>`;
+    return `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="22" width="28" height="18" rx="7" fill="${ink}" opacity=".35"/>${[0, 1, 2, 3].map(i => { const lit = i < n; const x = 34 - i * 7.4; return `<rect x="${x - 3}" y="${i === 0 ? 13 : 7 + (i === 1 ? 1 : 0)}" width="6" height="${i === 0 ? 13 : 19}" rx="3" fill="${ink}" opacity="${lit ? 1 : .3}"/>`; }).join('')}</svg>`;
   }
   function talaVis(o = {}) {
     const lab = a => a === 'clap' ? t('music.tala.clap') : a === 'wave' ? t('music.tala.wave') : t('music.tala.' + a);
@@ -766,7 +766,7 @@
       <p class="eyebrow">${t('music.eyebrow')}</p><h1>${t('music.free.title')}</h1><p class="muted">${t('music.free.lead')}</p>
       ${toolbar(false)}
       <div class="mu-voices"><span class="small muted" id="mu-vl">${t('music.free.voice')}</span><div class="seg" role="group" aria-labelledby="mu-vl">${VOICES.map(v => `<button type="button" data-voice="${v}" aria-pressed="${F.voice === v}">${t('music.free.' + v)}</button>`).join('')}</div></div>
-      <div class="board mu-padboard">${ring()}<div class="mu-keys" role="group" aria-label="${t('music.free.pad')}">${SEMI.map((_, n) => `<button type="button" class="mu-key" data-n="${n}" aria-label="${t('music.free.key', { s: t('music.sw.' + n), k: (n + 1) + ' / ' + LETTERS[n].toUpperCase() })}"><b>${t('music.sw.' + n)}</b><small aria-hidden="true">${n + 1} · ${LETTERS[n].toUpperCase()}</small></button>`).join('')}</div><p class="mu-now small" aria-live="polite"></p></div>
+      <div class="board mu-padboard">${ring()}<div class="mu-keys" role="group" aria-label="${t('music.free.pad')}">${SEMI.map((_, n) => `<button type="button" class="mu-key" data-n="${n}" aria-label="${t('music.free.key', { s: t('music.sw.' + n), k: (n + 1) + ' / ' + LETTERS[n].toUpperCase() })}"><b>${n === 7 ? t('music.sw.0') + '<i class="mu-hi" aria-hidden="true"></i>' : t('music.sw.' + n)}</b><small aria-hidden="true">${n + 1} · ${LETTERS[n].toUpperCase()}</small></button>`).join('')}</div><p class="mu-now small" aria-live="polite"></p></div>
       <p class="kbd-note">${t('music.free.keys')}</p>
       <div class="controls mu-reccontrols">
         <button type="button" class="k-btn k-btn-outline pill mu-rec" aria-pressed="${F.rec}"><span>${F.rec ? t('music.free.stop') : t('music.free.rec')}</span></button>

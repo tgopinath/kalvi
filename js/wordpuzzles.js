@@ -20,7 +20,7 @@
   I18N.add({ wp: {
     title: ['Word puzzles', 'சொல் புதிர்கள்'],
     blurb: ['Crosswords, word searches, word ladders and sentence jigsaws. Learn how words and sentences are built.', 'குறுக்கெழுத்து, சொல் தேடல், சொல் ஏணி, வாக்கியப் புதிர். சொற்களும் வாக்கியங்களும் எப்படி அமைகின்றன என்று கற்போம்.'],
-    skill: { crossword: ['Picture crossword', 'படக் குறுக்கெழுத்து'], search: ['Word search', 'சொல் தேடல்'], unscramble: ['Unscramble', 'எழுத்துகளை வரிசைப்படுத்து'], ladder: ['Word ladder', 'சொல் ஏணி'], jigsaw: ['Sentence jigsaw', 'வாக்கியப் புதிர்'], missing: ['Missing letters', 'விடுபட்ட எழுத்துகள்'], compound: ['Compound words', 'கூட்டுச் சொற்கள் (compound words)'] },
+    skill: { crossword: ['Crossword', 'குறுக்கெழுத்து'], search: ['Word search', 'சொல் தேடல்'], unscramble: ['Unscramble', 'எழுத்துகளை வரிசைப்படுத்து'], ladder: ['Word ladder', 'சொல் ஏணி'], jigsaw: ['Sentence jigsaw', 'வாக்கியப் புதிர்'], missing: ['Missing letters', 'விடுபட்ட எழுத்துகள்'], compound: ['Compound words', 'கூட்டுச் சொற்கள் (compound words)'] },
     kbd: ['Letter keyboard', 'எழுத்து விசைப்பலகை'], del: ['Delete letter', 'எழுத்தை அழி'],
     kbdNote: ['You can also type on your keyboard. Arrow keys move.', 'உன் விசைப்பலகையிலும் தட்டச்சு செய்யலாம். அம்புக்குறி விசைகள் நகர்த்தும்.'],
     across: ['Across', 'குறுக்கே'], down: ['Down', 'நெடுக்கே'], clues: ['Clues', 'குறிப்புகள்'],
