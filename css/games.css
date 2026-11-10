@@ -1,0 +1,5 @@
+/* Shared styles for games that plug into the engine (Spelling Bee etc.) */
+.bee-status { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 8px; }
+.bee-heart { color: var(--line-strong); fill: none; } .bee-heart.on { color: var(--warning); fill: currentColor; }
+.bee-shape { font-family: var(--font-mono); }
+.bee-keys { grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)) !important; max-width: 420px; }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#141822"/>
+<g fill="#ffffff" opacity=".16">
+<circle cx="96" cy="96" r="7"/><circle cx="176" cy="96" r="7"/><circle cx="256" cy="96" r="7"/><circle cx="336" cy="96" r="7"/><circle cx="416" cy="96" r="7"/>
+<circle cx="96" cy="416" r="7"/><circle cx="176" cy="416" r="7"/><circle cx="256" cy="416" r="7"/><circle cx="336" cy="416" r="7"/><circle cx="416" cy="416" r="7"/>
+<circle cx="96" cy="176" r="7"/><circle cx="96" cy="256" r="7"/><circle cx="96" cy="336" r="7"/><circle cx="416" cy="176" r="7"/><circle cx="416" cy="256" r="7"/><circle cx="416" cy="336" r="7"/></g>
+<g stroke="#0c0e16" stroke-width="3" stroke-linejoin="round">
+<polygon points="256,132 372,196 256,260 140,196" fill="#5fd3c9"/>
+<polygon points="140,196 256,260 256,392 140,328" fill="#e2a336"/>
+<polygon points="256,260 372,196 372,328 256,392" fill="#3b82c4"/></g>
+<g stroke="#0c0e16" stroke-opacity=".35" stroke-width="2"><line x1="198" y1="164" x2="314" y2="228"/><line x1="314" y1="164" x2="198" y2="228"/><line x1="140" y1="262" x2="256" y2="326"/><line x1="198" y1="228" x2="198" y2="360"/><line x1="372" y1="262" x2="256" y2="326"/><line x1="314" y1="228" x2="314" y2="360"/></g>
+</svg>

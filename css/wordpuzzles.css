@@ -1,0 +1,110 @@
+/* Word puzzles (js/wordpuzzles.js): crisp 3D-edged tiles on dark art boards, calm and editorial. */
+.wp-board { padding: 12px; }
+.wp-ta { font-family: "Noto Sans Tamil", var(--font-sans); color: var(--ink-2); }
+.wp-msg { min-height: 24px; margin: 8px 0 0; text-align: center; font: 700 16px/1.45 var(--font-sans); color: var(--ink-2); }
+.wp-msg .wp-ta { font-weight: 400; margin-left: 4px; }
+.wp-chg { color: var(--acc, #b86e00); font-weight: 900; text-decoration: underline; text-underline-offset: 3px; }
+.board .wp-chg { color: #f6c56b; }
+
+/* on-screen letter keyboard (48px keys) */
+.wp-kbd { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 6px; max-width: 520px; margin: 14px auto 0; }
+.wp-kbd button { min-height: 48px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); font: 700 20px/1 var(--font-sans); cursor: pointer; display: grid; place-items: center; box-shadow: 0 2px 0 var(--line-strong); }
+.wp-kbd button:hover { background: var(--surface-sunken); }
+.wp-kbd button:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--line-strong); }
+.wp-kbd .del { grid-column: span 2; }
+
+/* crossword */
+.wp-cross { display: grid; gap: 4px; grid-template-columns: repeat(var(--n), minmax(48px, 60px)); justify-content: center; }
+.wp-cross .pz-cell { font-size: 26px; text-transform: lowercase; display: grid; place-items: center; }
+.wp-void { aspect-ratio: 1; min-height: 48px; border-radius: var(--radius-sm); background: transparent; }
+.wp-num { position: absolute; left: 4px; top: 3px; font: 900 11px/1 var(--font-sans); color: #6b5d36; }
+.pz-cell.wp-hl { background: linear-gradient(#fff3d1, #f1d99a); }
+.pz-cell.wp-hl.sel, .pz-cell.sel { outline: 3px solid #f6c56b; outline-offset: 2px; }
+.pz-cell.bad .wp-ch { color: #b5360b; text-decoration: underline; }
+.wp-clues { display: grid; gap: 8px; grid-template-columns: 1fr; }
+.wp-clues.pics { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.wp-clue { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: 400 16px/1.35 var(--font-sans); text-align: left; cursor: pointer; }
+.wp-clues.pics .wp-clue { flex-direction: column; align-items: stretch; text-align: center; padding: 8px; }
+.wp-clue[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+.wp-clue.full .wp-cnum { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.wp-cnum { flex: none; display: inline-flex; align-items: baseline; gap: 4px; padding: 4px 8px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font: 900 15px/1 var(--font-sans); }
+.wp-clues.pics .wp-cnum { align-self: flex-start; }
+.wp-cnum small { font: 700 11px/1 var(--font-sans); letter-spacing: .04em; text-transform: uppercase; }
+.wp-cpic { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.wp-len { font: 700 18px/1 var(--font-mono); letter-spacing: .1em; color: var(--ink-muted); }
+
+/* word search */
+.wp-search { display: grid; gap: 3px; grid-template-columns: repeat(var(--n), minmax(44px, 56px)); justify-content: center; touch-action: none; user-select: none; -webkit-user-select: none; }
+.wp-search .pz-cell { font-size: 22px; box-shadow: 0 2px 0 #a99d7c, 0 4px 8px #0004; }
+.pz-cell.wp-found { background: linear-gradient(#f9d58a, #e6a93c); color: #2a1700; box-shadow: 0 2px 0 #9a6a14, 0 4px 8px #0004; }
+.wp-search .pz-cell.sel { background: linear-gradient(#5fd3c9, #16a39c); color: #032a2a; outline: 0; box-shadow: 0 2px 0 #0d6e69, 0 4px 8px #0004; }
+.wp-words { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+.wp-words li { display: grid; gap: 4px; justify-items: center; padding: 6px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); font: 700 16px/1.2 var(--font-sans); }
+.wp-wpic { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-sm); filter: grayscale(.85); opacity: .7; }
+.wp-words li.done { border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); }
+.wp-words li.done .wp-wpic { filter: none; opacity: 1; }
+.wp-words li.done span { text-decoration: line-through; text-decoration-color: var(--acc); text-decoration-thickness: 2px; }
+
+/* mini grids inside hints and lesson cards */
+.wp-mini { display: grid; gap: 2px; grid-template-columns: repeat(var(--n), 28px); justify-content: center; }
+.wp-mini i { width: 28px; height: 28px; display: grid; place-items: center; font: 900 15px/1 var(--font-sans); font-style: normal; color: #1f2433; background: #f6f2e6; border-radius: 3px; }
+.wp-mini i.void { background: transparent; }
+.wp-mini.search i { background: #3a4152; color: #c7ccd8; }
+.wp-mini.search i.on, .wp-mini i.on { background: #f0b35a; color: #2a1700; }
+
+/* unscramble clue card */
+.wp-cluecard { max-width: 420px; text-align: center; }
+.wp-cluecard p:last-child { margin: 0; font: 700 20px/1.4 var(--font-sans); }
+
+/* word ladder */
+.wp-ladder { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; justify-items: center; width: 100%; }
+.wp-rung { display: grid; grid-template-columns: 64px auto; align-items: center; gap: 10px; position: relative; }
+.wp-rlabel { font: 700 11px/1.2 var(--font-sans); letter-spacing: .06em; text-transform: uppercase; color: #9aa1b2; text-align: right; }
+.wp-rcells { display: flex; gap: 4px; }
+.wp-lcell { width: 52px; height: 52px; min-height: 48px; display: grid; place-items: center; font-size: 26px; }
+span.wp-lcell { cursor: default; }
+.wp-lcell.blank { background: transparent; box-shadow: none; border: 1px dashed #4a5163; }
+.wp-rung.given .pz-cell { background: linear-gradient(#cfd4de, #aeb5c3); box-shadow: 0 3px 0 #79808f, 0 5px 10px #0005; }
+.wp-rung.goal .wp-rlabel { color: #f6c56b; }
+.wp-rung.on .pz-cell { background: linear-gradient(#5fd3c9, #16a39c); color: #032a2a; box-shadow: 0 3px 0 #0d6e69, 0 5px 10px #0005; }
+.wp-lcell.chg { color: #b86e00; }
+.wp-tools { display: flex; justify-content: center; margin-top: 8px; }
+
+/* sentence jigsaw */
+.wp-jig { place-items: stretch; }
+.wp-cap { margin: 0 0 6px; font: 700 11px/1 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: #9aa1b2; }
+.wp-line { min-height: 72px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px; border: 1px dashed #4a5163; border-radius: var(--radius-md); }
+.wp-line.over { border-color: #f6c56b; background: #ffffff08; }
+.wp-line .slot-ph { color: #9aa1b2; }
+.wp-tok { touch-action: none; user-select: none; -webkit-user-select: none; min-height: 52px; }
+.wp-tok.stop { min-width: 48px; font-size: 26px; font-weight: 900; }
+.wp-tok.dragging { position: relative; z-index: 30; pointer-events: none; box-shadow: 0 10px 20px #0006; }
+.wp-line .tile[disabled], .wp-bank .tile[disabled] { opacity: 1; box-shadow: 0 3px 0 #b9ae8f; cursor: default; }
+.wp-tip { text-align: center; margin: 8px 0 0; }
+.wp-parts { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 0; }
+.wp-part { display: inline-grid; justify-items: center; gap: 2px; padding: 6px 10px; border-radius: var(--radius-sm); font: 700 17px/1.2 var(--font-sans); }
+.wp-part small { font: 700 10px/1 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+.wp-part.p0 { background: #f0b35a; color: #2a1700; }
+.wp-part.p1 { background: #5fd3c9; color: #032a2a; }
+.wp-part.p2 { background: #c7cdf9; color: #1e1b4b; }
+body.lang-ta .wp-part small { font-family: "Noto Sans Tamil", var(--font-sans); text-transform: none; letter-spacing: 0; }
+
+/* missing letters */
+.wp-missing { display: grid; gap: 10px; justify-items: center; }
+.wp-mpic { width: 100%; max-width: 260px; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-md); }
+.wp-mword { margin: 0; font: 900 48px/1.1 var(--font-sans); letter-spacing: .06em; color: var(--board-ink); }
+.wp-gap { display: inline-block; min-width: 1ch; color: #f6c56b; }
+
+/* compound words */
+.wp-compound { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+.wp-piece { display: inline-grid; gap: 4px; justify-items: center; }
+.wp-piece img { width: 104px; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-sm); }
+.wp-piece b { font: 900 20px/1 var(--font-sans); color: var(--board-ink); }
+.board.small .wp-piece b { font-size: 16px; }
+.wp-piece.tile { cursor: default; }
+.wp-piece.gap { width: 64px; height: 56px; place-items: center; border: 2px dashed #f6c56b; border-radius: var(--radius-sm); color: #f6c56b; font: 900 26px/1 var(--font-sans); }
+.wp-op { font: 900 26px/1 var(--font-sans); color: #9aa1b2; }
+.board.small .wp-piece img { width: 72px; }
+
+@media (min-width: 720px) { .wp-cross { grid-template-columns: repeat(var(--n), 60px); } .wp-search { grid-template-columns: repeat(var(--n), 56px); } }
+@media (prefers-reduced-motion: reduce) { .wp-kbd button:active { transform: none; } .wp-tok.dragging { transition: none; } }
