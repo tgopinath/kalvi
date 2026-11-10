@@ -9,7 +9,7 @@
   function photo(key) {
     if (!key) return null;
     if (key.startsWith('body:')) { const k = key.slice(5), b = BODY[k]; return b ? { src: `img/body/${k}.jpg`, credit: `3D model by ${b.by} on Sketchfab (${b.lic}), from Udambu`, href: b.href, alt: k } : null; }
-    const p = window.PICS?.[key]; return p ? { src: p.src, credit: p.credit, href: p.page, alt: key } : null;
+    const p = window.PHOTOS?.[key] || window.PICS?.[key]; return p ? { src: p.src, credit: p.credit, href: p.page, alt: key } : null;
   }
   // build an engine question from a bank item (already localised by tx)
   function fromItem(it, r, topicKey) {
@@ -17,7 +17,8 @@
     let choices, answer;
     if (tf) { choices = [{ v: true, html: t('common.true') }, { v: false, html: t('common.false') }]; answer = it.a; }
     else { const idx = r.shuffle(it.o.map((_, i) => i)); choices = idx.map(i => ({ v: i, html: esc(it.o[i]) })); answer = it.a; }
-    const ph = photo(it.photo);
+    const TOPIC_PHOTO = { light: 'rainbow', water: 'clouds', weather: 'lightning', matter: 'glass', magnets: 'iron', forces: 'wood', living: 'seed', plants: 'leaf' };
+    const ph = photo(it.photo || (!it.snap && TOPIC_PHOTO[topicKey]));
     const snap = it.snap ? SIMS.snap(it.snap.sim, it.snap.s) : null;
     const prompt = tf ? t('s.ui.tfPrompt', { s: esc(it.q) }) : esc(it.q);
     const visual = snap || (ph ? `<figure class="qphoto"><img src="${ph.src}" alt="" loading="lazy" referrerpolicy="no-referrer"></figure>` : null);
