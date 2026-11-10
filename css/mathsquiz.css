@@ -2,9 +2,9 @@
 .mq-pics { display: grid; gap: 6px; justify-items: center; }
 .mq-pics .mq-row { display: flex; gap: 6px; }
 .mq-pics img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; background: var(--surface-sunken); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
-.mq-pics.sm img { width: 30px; height: 30px; border-radius: 7px; }
+.mq-pics.sm img { width: 34px; height: 34px; border-radius: 8px; }
 .mq-pics.sm, .mq-pics.sm .mq-row { gap: 4px; }
-@media (min-width: 560px) { .mq-pics img { width: 60px; height: 60px; } .mq-pics.sm img { width: 36px; height: 36px; } }
+@media (min-width: 560px) { .mq-pics img { width: 60px; height: 60px; } .mq-pics.sm img { width: 40px; height: 40px; } }
 .choice .cvis .mq-pics { padding: 6px 0; }
 .mq-plus { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; }
 .mq-plus > b { font-size: 36px; line-height: 1; color: var(--board-ink); }
@@ -16,7 +16,8 @@
 
 /* Beat your best: a quiet countdown ring in the corner of the board */
 .mq-timed { position: relative; width: 100%; display: grid; place-items: center; }
-.mq-timed.solo { min-height: 56px; }
+.mq-timed.solo { min-height: 0; }
+.board.mq-ringonly { min-height: 0; padding: 8px; }
 .mq-ring { position: absolute; top: -6px; right: -6px; width: 40px; height: 40px; transform: rotate(-90deg); z-index: 1; }
 .mq-timed.solo .mq-ring { position: static; transform: rotate(-90deg); width: 48px; height: 48px; }
 .mq-ring circle { fill: none; stroke-width: 4; }

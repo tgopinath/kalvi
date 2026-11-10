@@ -198,4 +198,8 @@ body.band-young .choice { font-size: 22px; }
 .sticker-card { position: relative; display: grid; justify-items: center; gap: 10px; padding: 24px 28px; background: var(--cream); border: 3px solid var(--ink); border-radius: 26px; box-shadow: 6px 6px 0 var(--ink); max-width: min(90vw, 340px); text-align: center; }
 .sticker-card .mani { position: absolute; left: -30px; top: -40px; }
 .sticker-card p { margin: 0; font-weight: 700; }
-@media (max-width: 600px) { .hero .hello { align-items: flex-start; } .hero .hello .mani { position: absolute; right: 0; top: 64px; } .hero h1 { padding-right: 56px; } }
+/* only one Mani on screen: the modal's, else the guide card's, else the greeting's */
+body:has(.sticker-modal) .mani:not(.sticker-card .mani), body:has(.k-dialog) .mani:not(.k-dialog .mani) { display: none; }
+body:has(#guide) .hero .mani { display: none; }
+@media (max-width: 600px) { .hero .hello .mani { display: none; } }
+.sticker-card .mani { position: static; margin: -56px 0 0; }

@@ -50,7 +50,7 @@
       q.hintRevealsAnswer = true;
       if (!q.say) q.say = [{ text: q.promptText || String(q.prompt).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), lang: I18N.lang }];
       if ((c || {}).band === 'young') q.autoSay = true;
-      if (Engine.round?.mode === BEST) q.visual = `<div class="mq-timed ${q.visual ? '' : 'solo'}">${ring(SEC[def.id] || 20)}${q.visual || ''}</div>`;
+      if (Engine.round?.mode === BEST) { if (!q.visual) q.boardClass = ((q.boardClass || '') + ' mq-ringonly').trim(); q.visual = `<div class="mq-timed ${q.visual ? '' : 'solo'}">${ring(SEC[def.id] || 20)}${q.visual || ''}</div>`; }
       return q;
     } });
   }
