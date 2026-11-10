@@ -3,14 +3,14 @@
   const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = Engine.esc, main = $('#main');
   const SUBJ = {
-    maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.PUZZLES?.game, window.CODING?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
+    maths: { icon: 'i-maths', topics: MATHS.TOPICS, games: () => [window.MATHSQUIZ?.game, window.PUZZLES?.game, window.CODING?.game, window.MEMORY?.game('maths'), window.DRAW?.game('maths'), window.MUSIC?.game('maths')].filter(Boolean) },
     english: { icon: 'i-english', topics: ENGLISH.TOPICS, games: () => [window.STORIES?.game, window.BEE?.game, window.WORDPZ?.game, window.TYPING?.game, window.MEMORY?.game('english'), window.DRAW?.game('english'), window.MUSIC?.game('english')].filter(Boolean) },
     science: { icon: 'i-science', topics: SCIENCE.TOPICS, games: () => [SCIENCE.quizGame, window.LAB?.game, window.GEO?.game, window.MEMORY?.game('science'), window.DRAW?.game('science'), window.MUSIC?.game('science')].filter(Boolean) },
     world: { icon: 'i-globe', topics: [...(window.GK?.TOPICS || []), { id: 'geo', subject: 'world', title: 'w.geo.title', blurb: 'w.geo.blurb', icon: 'i-map', skills: window.GEO?.skills || [], page: el => { el.innerHTML = `<article class="k-card practice-card"><div><p class="eyebrow">${t('games.title')}</p><h2>${t('w.geo.title')}</h2><p class="muted">${t('w.geo.body')}</p></div><a class="k-btn k-btn-primary k-btn-lg" href="#/geo">${t('common.open')}</a></article>`; } }],
       games: () => [window.GK?.game, window.GK?.dailyGame, window.GEO?.game].filter(Boolean) },
   };
   const allSkills = s => SUBJ[s].topics.flatMap(tp => tp.skills).filter(id => Engine.SK[id]);
-  const forBand = (tp, p) => !tp.bands || tp.bands.includes(p.band);
+  const forBand = (tp, p) => AGE.allowTopic(p, tp.subject, tp.id);
 
   // ---------- language ----------
   function langNow() { return (() => { try { return localStorage.getItem('kalvi.lang'); } catch { return null; } })() || 'en'; }
@@ -40,7 +40,7 @@
     const h = location.hash || '#/';
     $('#nav').setAttribute('aria-label', t('nav.main'));
     $('#nav').innerHTML = p ? items.map(([href, ic, k]) => { const on = href === '#/' ? (h === '#/' || h === '#') : h.startsWith(href) || (href.startsWith('#/s/') && h.startsWith('#/t/' + href.slice(4) + '/')); return `<a href="${href}" class="${href === '#/parent' ? 'nav-parent' : ''}" ${on ? 'aria-current="page"' : ''}><svg class="k-icon"><use href="#${ic}"/></svg><span>${t(k)}</span></a>`; }).join('') : '';
-    document.body.classList.toggle('no-profile', !p); document.body.classList.toggle('band-young', p?.band === 'young'); PLAY.paintToggle();
+    document.body.classList.toggle('no-profile', !p); document.body.classList.toggle('band-young', !!p && p.age <= 6); AGE.apply(p); PLAY.paintToggle();
   }
   $('#whoBtn').onclick = () => {
     const db = Store.db;
@@ -74,7 +74,7 @@
 
   // ---------- rounds ----------
   function practiceTopic(tp) {
-    const p = Store.current(); const go = () => Engine.start({ items: mix(p, tp.skills.filter(id => Engine.SK[id] && id !== 'e.bee'), tp.subject, 8), title: t(tp.title), subject: tp.subject, topic: tp.id, back: `#/t/${tp.subject}/${tp.id}`, again: go }); go();
+    const p = Store.current(); const go = () => Engine.start({ items: mix(p, tp.skills.filter(id => Engine.SK[id] && id !== 'e.bee' && AGE.allowSkill(p, id)), tp.subject, AGE.of(p).round), title: t(tp.title), subject: tp.subject, topic: tp.id, back: `#/t/${tp.subject}/${tp.id}`, again: go }); go();
   }
   // 8 questions: due reviews from this topic first, then adaptive picks, with mixed review from other practised topics
   function mix(p, skills, subject, n) {
@@ -88,9 +88,10 @@
     const p = Store.current(); const items = [];
     for (const s of Store.SUBJECTS) {
       const due = Store.due(p, s).filter(r => Engine.SK[r.skill]).slice(0, 1).map(r => ({ skill: r.skill, lvl: r.lvl, seed: r.seed }));
+      if (s === 'maths' && window.MATHSQUIZ?.daily) { items.push(...due, ...Engine.weighted(p, base, 1 - due.length), ...MATHSQUIZ.daily(p, 1)); continue; }
       if (s === 'world' && window.GK?.daily) { items.push(...due, ...GK.daily(p, 2 - due.length)); continue; }
       const pool = SUBJ[s].topics.filter(tp => forBand(tp, p)).flatMap(tp => tp.skills).filter(id => Engine.SK[id] && id !== 'e.bee' && Engine.SK[id].warm !== false);
-      const tried = pool.filter(id => Store.skill(p, s, id).n > 0), base = tried.length >= 2 ? tried : pool.slice(0, 4);
+      const ok = pool.filter(id => AGE.allowSkill(p, id)), tried = ok.filter(id => Store.skill(p, s, id).n > 0), base = tried.length >= 2 ? tried : ok.slice(0, 4);
       items.push(...due, ...Engine.weighted(p, base, 2 - due.length));
     }
     const go = () => Engine.start({ items: items.sort(() => Math.random() - .5), title: t('pr.warmup'), mode: 'warmup', back: '#/' }); go();
@@ -132,29 +133,40 @@
       <div class="games">${gameCards(p, ['maths', 'english', 'science', 'world'], 2)}</div>
       <p class="small"><a href="#/stickers">${t('play.stickers')}</a> · <a href="#/credits">${t('credits.title')}</a></p>
     </section>`;
-    $('#warmBtn').onclick = warmup; $('#revBtn') && ($('#revBtn').onclick = review);
+    $('#warmBtn').onclick = warmup; $('#revBtn') && ($('#revBtn').onclick = review); AGE.birthdayCheck(p);
     const tr = $('#subjTrack'), dots = $$('.dots i');
     $$('[data-car]').forEach(b => b.onclick = () => tr.scrollBy({ left: +b.dataset.car * tr.clientWidth * .8, behavior: 'smooth' }));
     tr.onscroll = () => { const i = Math.round(tr.scrollLeft / (tr.scrollWidth - tr.clientWidth || 1) * (dots.length - 1)); dots.forEach((d, k) => d.classList.toggle('on', k === i)); };
     bindGames(); PLAY.guide('home'); PLAY.revealSticker(PLAY.checkStickers(p));
   }
+  function lockedDialog(p, key, onOpen) {
+    dialog(`${PLAY.mani('think', 80)}<h2 class="k-dialog-title">${t('age.olderTitle')}</h2><p class="k-dialog-body">${t('age.olderBody', { name: esc(p.name) })}</p><div class="k-dialog-actions"><button class="k-btn k-btn-outline" data-close>${t('age.later')}</button><button class="k-btn k-btn-primary" id="unl">${t('age.unlock', { name: esc(p.name) })}</button></div>`,
+      d => $('#unl', d).onclick = () => { closeDialog(); unlockAfterGate(p, key, onOpen); });
+  }
+  function unlockAfterGate(p, key, onOpen) {
+    const a = 12 + Math.floor(Math.random() * 30), b = 11 + Math.floor(Math.random() * 30);
+    dialog(`<h2 class="k-dialog-title">${t('parent.gate')}: ${a} + ${b} = ?</h2><form id="ug"><input class="k-input" id="ugIn" inputmode="numeric" autocomplete="off" aria-label="${a} + ${b}"><div class="k-dialog-actions"><button class="k-btn k-btn-outline" type="button" data-close>${t('common.cancel')}</button><button class="k-btn k-btn-primary">${t('common.open')}</button></div></form>`, d => {
+      $('#ug', d).onsubmit = e => { e.preventDefault(); if (+$('#ugIn', d).value !== a + b) { closeDialog(); return; } Store.update(p.id, { unlocked: { ...(p.unlocked || {}), [key]: 1 } }); closeDialog(); onOpen ? onOpen() : route(); };
+    });
+  }
   function gameCards(p, subjects, perSubject = 99) {
     const gs = subjects.flatMap(s => SUBJ[s].games().slice(0, perSubject).map(g => ({ ...g, s })));
-    return gs.map((g, i) => `<button type="button" class="gamecard" data-subject="${g.s}" data-g="${i}">${icon(gameIcon(g)).replace('<img ', '<img class="gico" ')}<span><span class="eyebrow">${t('subj.' + g.s + '.title')}</span><b>${t(g.title)}</b><span class="small muted">${t(g.blurb)}</span></span></button>`).join('');
+    return gs.map((g, i) => { const lock = !AGE.allowGame(p, g); return `<button type="button" class="gamecard ${lock ? 'later' : ''}" data-subject="${g.s}" data-g="${i}" ${lock ? `data-glock="g:${AGE.gameKey(g)}"` : ''}>${icon(gameIcon(g)).replace('<img ', '<img class="gico" ')}<span><span class="eyebrow">${t('subj.' + g.s + '.title')}</span><b>${t(g.title)}</b><span class="small muted">${t(g.blurb)}</span>${lock ? `<span class="stk mint" style="--r:-2deg;justify-self:start">${t('age.older', { n: AGE.gameMin(g) })}</span>` : ''}</span></button>`; }).join('');
   }
   function bindGames() {
     const p = Store.current();
-    $$('.gamecard').forEach(b => { const s = b.dataset.subject; const gs = SUBJ[s].games(); const sub = $$(`.gamecard[data-subject="${s}"]`).indexOf(b); b.onclick = () => gs[sub]?.start(p); });
+    $$('.gamecard').forEach(b => { const s = b.dataset.subject; const gs = SUBJ[s].games(); const sub = $$(`.gamecard[data-subject="${s}"]`).indexOf(b); b.onclick = () => b.dataset.glock ? lockedDialog(p, b.dataset.glock, () => gs[sub]?.start(Store.current())) : gs[sub]?.start(p); });
   }
   function subject(s) {
     const p = Store.current(), S = SUBJ[s]; if (!S) return notFound();
     const tps = S.topics, next = nextTopic(p, s), stars = tps.reduce((a, tp) => a + PLAY.starsFor(p, tp), 0);
     main.innerHTML = `<section class="page subject" data-subject="${s}">
       <div class="hero sbanner">${deco()}<p class="eyebrow">${t('subj.path')}</p><h1>${t('subj.' + s + '.title')} <span class="stk ${STK[Store.SUBJECTS.indexOf(s)]}">${t('play.starsOf', { a: stars, b: tps.length * 3 })}</span></h1><p class="lede">${t('subj.' + s + '.blurb')}</p>${Engine.listenBtn('slisten')}</div>
-      <div class="journey">${tps.map((tp, i) => { const st = PLAY.starsFor(p, tp), isNext = tp === next, later = !forBand(tp, p); return `<a class="stop ${isNext ? 'next' : ''} ${later ? 'later' : ''}" href="#/t/${s}/${tp.id}" title="${esc(t(tp.blurb))}" aria-label="${esc(t(tp.title))}. ${t('play.starsOf', { a: st, b: 3 })}"><span class="num">${String(i + 1).padStart(2, '0')}</span><div class="blobart">${icon(ICON['t:' + s]?.[tp.id] || ICON[s])}</div><h3 class="stop-title stop-name">${t(tp.title)}</h3>${PLAY.starRow(st)}${isNext ? `<span class="k-btn k-btn-primary playbtn">${t('play.play')}</span>` : ''}</a>`; }).join('')}</div>
+      <div class="journey">${tps.map((tp, i) => { const st = PLAY.starsFor(p, tp), isNext = tp === next, later = !forBand(tp, p); return `<a class="stop ${isNext ? 'next' : ''} ${later ? 'later' : ''}" ${later ? `data-locked="${s}:${tp.id}" data-min="${AGE.topicMin(s, tp.id)}"` : ''} href="#/t/${s}/${tp.id}" title="${esc(t(tp.blurb))}" aria-label="${esc(t(tp.title))}. ${t('play.starsOf', { a: st, b: 3 })}"><span class="num">${String(i + 1).padStart(2, '0')}</span><div class="blobart">${icon(ICON['t:' + s]?.[tp.id] || ICON[s])}</div><h3 class="stop-title stop-name">${t(tp.title)}</h3>${later ? `<span class="stk mint" style="--r:-3deg">${t('age.older', { n: AGE.topicMin(s, tp.id) })}</span>` : PLAY.starRow(st)}${isNext ? `<span class="k-btn k-btn-primary playbtn">${t('play.play')}</span>` : ''}</a>`; }).join('')}</div>
       <h2 class="section">${t('play.shelf')}</h2><div class="games">${gameCards(p, [s])}</div>
     </section>`;
     Engine.bindListen($('.slisten'), () => [{ text: t('subj.' + s + '.blurb') + '. ' + tps.map(tp => t(tp.title)).join(', '), lang: I18N.lang }]);
+    $$('[data-locked]').forEach(a => a.onclick = e => { e.preventDefault(); lockedDialog(p, a.dataset.locked); });
     bindGames(); PLAY.guide(s);
   }
   function topic(s, id) {
@@ -235,6 +247,7 @@
     const sessions = p.sessions.slice(0, 5).map(x => `<li><span class="mono small">${x.date}</span> <span>${x.subject === 'mixed' ? t('pr.warmup') : t('subj.' + x.subject + '.title')}</span> <span class="muted small">${t('pr.score', { a: x.right, b: x.n })} · ${t('common.minutes', { n: Math.max(1, Math.round((x.ms || 0) / 60000)) })}</span></li>`).join('');
     return `<article class="k-card kid"><header>${avatar(p, 48)}<div><h3>${esc(p.name)}</h3><span class="small muted">${t('prof.ageIs', { n: p.age })} · ${t('parent.streak')}: ${Store.streak(p)}</span></div>
       <div class="kid-actions"><a class="k-btn k-btn-ghost k-btn-sm" href="#/profile/${p.id}">${t('common.edit')}</a><button class="k-btn k-btn-ghost k-btn-sm kid-del" data-id="${p.id}">${t('common.delete')}</button></div></header>
+      <ul class="classline">${Store.SUBJECTS.map(s => `<li>${t('age.working', { c: AGE.classIn(p, s, subjectMastery(p, s).m), s: t('subj.' + s + '.title') })}</li>`).join('')}</ul>
       <table class="ptable"><thead><tr><th scope="col">${t('parent.perSubject')}</th><th scope="col">${t('subj.mastery')}</th><th scope="col">${t('parent.accuracy')}</th><th scope="col">${t('parent.minutes')}</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="kid-cols"><div><p class="eyebrow">${t('parent.trouble')}</p>${trouble.length ? `<ul class="trouble">${troubleTxt}</ul>` : `<p class="muted small">${t('parent.troubleNone')}</p>`}</div>
       <div><p class="eyebrow">${t('parent.recent')}</p>${sessions ? `<ul class="sessions">${sessions}</ul>` : `<p class="muted small">${t('parent.recentNone')}</p>`}</div></div>${extrasHtml(p)}</article>`;
@@ -246,12 +259,13 @@
     return h;
   }
   function credits() {
-    const all = [...Object.entries(window.PICS || {}), ...Object.entries(window.PHOTOS || {})];
+    const gk = Object.entries(window.GK_DATA?.PHOTOS || {}).map(([k, v]) => [k, { src: v.src, credit: v.credit || [v.artist, v.lic].filter(Boolean).join(' · '), page: v.page || v.href }]);
+    const all = [...Object.entries(window.PICS || {}), ...Object.entries(window.PHOTOS || {}), ...gk];
     main.innerHTML = `<section class="page credits"><p class="eyebrow">${t('app.name')}</p><h1>${t('credits.title')}</h1><p class="lede">${t('credits.body')}</p>
       <h2 class="section">${t('credits.photos')}</h2><ul class="credit-list">${all.map(([k, v]) => `<li><img src="${v.src}" alt="" loading="lazy"><span><b>${esc(k)}</b><a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit || 'Wikimedia Commons')}</a></span></li>`).join('')}
       <li><img src="img/body/lungs.jpg" alt="" loading="lazy"><span><b>body</b><a href="https://udambu.vercel.app" target="_blank" rel="noopener">Sketchfab models (CC BY / CC BY-NC) via Udambu</a></span></li></ul>
       <h2 class="section">${t('credits.data')}</h2><ul class="sessions"><li>${t('geo.sources')}</li><li>Open-Meteo (CC BY 4.0) · <a href="https://open-meteo.com" target="_blank" rel="noopener">open-meteo.com</a></li><li>Dolch sight word lists (public domain)</li></ul>
-      <h2 class="section">${t('credits.fonts')}</h2><ul class="sessions"><li>Lato, Noto Sans Tamil, JetBrains Mono · SIL Open Font License</li></ul></section>`;
+      <h2 class="section">${t('credits.fonts')}</h2><ul class="sessions"><li>Lato, Anton, Noto Sans Tamil, JetBrains Mono · SIL Open Font License</li></ul><h2 class="section">3D icons</h2><ul class="sessions"><li>Microsoft Fluent Emoji 3D (MIT License) · <a href="https://github.com/microsoft/fluentui-emoji" target="_blank" rel="noopener">github.com/microsoft/fluentui-emoji</a></li></ul></section>`;
   }
   function gate() {
     const a = 12 + Math.floor(Math.random() * 30), b = 11 + Math.floor(Math.random() * 30);
@@ -263,7 +277,14 @@
   function profileForm(id) {
     const isNew = id === 'new', first = !Store.db.profiles.length;
     if (!first && Date.now() - parentOpen > 10 * 60 * 1000) return gate();
-    const p = isNew ? { name: '', age: null, color: Store.AV_COLORS[Math.floor(Math.random() * Store.AV_COLORS.length)] } : Store.db.profiles.find(x => x.id === id);
+    if (first && !profileForm.age) {
+      main.innerHTML = `<section class="page agefirst"><div class="hello">${PLAY.mani('wave', 110)}<p class="speechbubble">${t('age.howOld')}</p></div><h1 class="big">${t('age.howOld')}</h1><p class="lede">${t('age.howOldHelp')}</p>
+        <div class="agetiles" role="group" aria-label="${t('age.howOld')}">${[3, 4, 5, 6, 7, 8, 9, 10].map(n => `<button type="button" class="agetile" data-a="${n}" aria-label="${n}">${n}</button>`).join('')}</div></section>`;
+      setTimeout(() => Voice.play([{ text: t('age.howOld'), lang: I18N.lang }], null, { onMissing: () => {} }), 400);
+      $$('.agetile').forEach(b => b.onclick = () => { profileForm.age = +b.dataset.a; PLAY.sfx('correct'); profileForm(id); });
+      return;
+    }
+    const p = isNew ? { name: '', age: profileForm.age || null, color: Store.AV_COLORS[Math.floor(Math.random() * Store.AV_COLORS.length)] } : Store.db.profiles.find(x => x.id === id);
     if (!p) return notFound();
     const st = { ...p };
     main.innerHTML = `<section class="page profile">${first ? `<div class="hello">${PLAY.mani('wave', 96)}<p class="speechbubble">${t('play.mani.hello')}</p></div><p class="eyebrow"><span lang="en">Kalvi</span> · <span lang="ta">கல்வி</span></p><h1>${t('prof.welcome')}</h1><p class="lede">${t('prof.welcomeBody')}</p>` : `<a class="backlink" href="#/parent"><svg class="k-icon"><use href="#i-back"/></svg>${t('nav.grownups')}</a><h1>${isNew ? t('prof.newTitle') : t('prof.editTitle')}</h1>`}
@@ -271,6 +292,7 @@
         <div class="pform-preview"></div>
         <div class="k-field"><label class="k-label" for="pname">${t('prof.name')}</label><input class="k-input" id="pname" maxlength="24" autocomplete="off" placeholder="${t('prof.namePh')}" value="${esc(st.name)}"><p class="k-error" id="perr" hidden>${t('prof.nameErr')}</p></div>
         <div class="k-field"><label class="k-label" for="page">${t('prof.age')}</label><input class="k-input" id="page" type="number" inputmode="numeric" min="3" max="12" autocomplete="off" value="${st.age ?? ''}" aria-describedby="pagehelp"><div class="agechips" role="group" aria-label="${t('prof.age')}">${[3, 4, 5, 6, 7, 8, 9, 10].map(n => `<button type="button" class="k-btn k-btn-outline pill" data-age="${n}">${n}</button>`).join('')}</div><p class="k-error" id="ageerr" hidden>${t('prof.ageErr')}</p><p class="k-help" id="pagehelp">${t('band.help')}</p></div>
+        <div class="k-field"><label class="k-label" for="pbm">${t('age.bmonth')}</label><select class="k-input" id="pbm"><option value="">${t('age.none')}</option>${Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}" ${+st.bmonth === i + 1 ? 'selected' : ''}>${new Date(2020, i, 1).toLocaleDateString(I18N.lang === 'ta' ? 'ta-IN' : 'en-IN', { month: 'long' })}</option>`).join('')}</select><p class="k-help">${t('age.bmonthHelp')}</p></div>
         <fieldset class="k-fieldset"><legend class="k-label">${t('prof.color')}</legend><div class="swatches">${Store.AV_COLORS.map(c => `<button type="button" data-col="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('')}</div></fieldset>
         <div class="row-actions">${first ? '' : `<a class="k-btn k-btn-ghost" href="#/parent">${t('common.cancel')}</a>`}<button class="k-btn k-btn-primary k-btn-lg">${isNew ? t('prof.create') : t('common.save')}</button></div>
       </form></section>`;
@@ -287,7 +309,8 @@
       if (!st.name) { $('#perr').hidden = false; $('#pname').focus(); return; }
       st.age = +$('#page').value; if (!(st.age >= 3)) { $('#ageerr').hidden = false; $('#page').focus(); return; } st.age = Math.min(12, st.age);
       const saved = isNew ? Store.newProfile(st) : null; if (saved && st.photo) Photo.put(saved.id, st.photo); if (!isNew && st.photo !== undefined) Photo.put(p.id, st.photo);
-      if (!isNew) Store.update(p.id, { name: st.name, age: st.age, color: st.color });
+      st.bmonth = +$('#pbm').value || null; if (saved) Store.update(saved.id, { bmonth: st.bmonth, ageYear: new Date().getFullYear() });
+      if (!isNew) Store.update(p.id, { name: st.name, age: st.age, color: st.color, bmonth: st.bmonth });
       applyLang(); location.hash = first ? '#/' : '#/parent';
     };
     draw();

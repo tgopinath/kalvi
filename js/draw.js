@@ -846,7 +846,7 @@
   }
   function intro(main, subject) {
     const p = Store.current(); if (!p || !IDS[subject]) { location.hash = '#/'; return; }
-    const ex = extras(p), ta = I18N.lang === 'ta', young = p.band === 'young';
+    const ex = extras(p), ta = I18N.lang === 'ta', young = AGE.band(p) === 'young';
     const sets = subject === 'english' ? ['upper', 'lower', 'mix'].concat(ta ? ['uyir'] : []) : null;
     let set = sets?.includes(ex.set) ? ex.set : 'upper';
     const art = subject === 'english' ? glyphSVG(glyph('A'), { label: 'A' }) : subject === 'maths' ? VIS.shape2d('triangle', { corners: true }) : circuitSVG(true);

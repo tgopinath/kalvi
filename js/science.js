@@ -74,7 +74,7 @@
     skills: id === 'living' ? ['s.plants', 's.animals', 's.body', 's.seasons'] : ['s.' + id],
     bands: ['electricity', 'machines'].includes(id) ? ['older'] : undefined }));
   const quizGame = { title: 'home.quizTitle', blurb: 'home.quizBody', icon: 'i-quiz', start(p) {
-    const ids = TOPICS.filter(tp => App.forBand(tp, p)).flatMap(tp => tp.skills), n = p.band === 'young' ? 6 : 8;
+    const ids = TOPICS.filter(tp => App.forBand(tp, p)).flatMap(tp => tp.skills), n = AGE.band(p) === 'young' ? 6 : 8;
     const due = Store.due(p, S).filter(r => Engine.SK[r.skill]).slice(0, 2).map(r => ({ skill: r.skill, lvl: r.lvl, seed: r.seed }));
     const go = () => Engine.start({ items: [...due, ...Engine.weighted(p, ids, n - due.length)], title: t('home.quizTitle'), subject: S, topic: 'quiz', mode: 'quiz', back: '#/s/science', again: go }); go();
   } };

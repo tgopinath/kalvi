@@ -54,7 +54,7 @@
   // birthday: suggest the new age once a year
   function birthdayCheck(p) {
     if (!p?.bmonth || p.age >= 12) return; const now = new Date(), y = now.getFullYear(), m = now.getMonth() + 1;
-    const last = p.ageYear || y; if (y > last && m >= p.bmonth || (y === last + 1 && m >= p.bmonth)) {
+    if (!p.ageYear) { Store.update(p.id, { ageYear: y }); return; } if (p.ageYear < y && m >= p.bmonth) {
       App.dialog(`<h2 class="k-dialog-title">${t('age.birthday', { name: Engine.esc(p.name), n: p.age + 1 })}</h2><div class="k-dialog-actions"><button class="k-btn k-btn-outline" id="bdNo">${t('age.no')}</button><button class="k-btn k-btn-primary" id="bdYes">${t('age.yes')}</button></div>`, d => {
         d.querySelector('#bdYes').onclick = () => { Store.update(p.id, { age: p.age + 1, ageYear: y }); App.closeDialog(); App.route(); };
         d.querySelector('#bdNo').onclick = () => { Store.update(p.id, { ageYear: y }); App.closeDialog(); };
@@ -64,5 +64,6 @@
   // break nudge after breakMin minutes of play in one sitting
   let t0 = Date.now(), nudged = false;
   setInterval(() => { const p = Store.current(); if (!p || nudged) return; if ((Date.now() - t0) / 60000 >= of(p).breakMin) { nudged = true; App.toast(t('age.breakTime')); } }, 30000);
-  window.AGE = { T, TOPIC, GAME, SKILL, of, allowTopic, allowGame, allowSkill, topicMin, gameMin, gameKey, startLevel, range, cls, classIn, apply, birthdayCheck, clamp };
+  const band = p => clamp(p?.age) >= 7 ? 'older' : 'young';   // compatibility only; prefer of(p)
+  window.AGE = { band, T, TOPIC, GAME, SKILL, of, allowTopic, allowGame, allowSkill, topicMin, gameMin, gameKey, startLevel, range, cls, classIn, apply, birthdayCheck, clamp };
 })();

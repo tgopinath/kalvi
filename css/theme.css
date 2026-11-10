@@ -203,3 +203,11 @@ body:has(.sticker-modal) .mani:not(.sticker-card .mani), body:has(.k-dialog) .ma
 body:has(#guide) .hero .mani { display: none; }
 @media (max-width: 600px) { .hero .hello .mani { display: none; } }
 .sticker-card .mani { position: static; margin: -56px 0 0; }
+.agetiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 520px; margin: 18px 0; }
+.agetile { min-height: 84px; border: 3px solid var(--ink); border-radius: 22px; background: #fff; box-shadow: var(--shadow-hard); font: 400 44px/1 var(--display); color: var(--ink); cursor: pointer; }
+.agetile:nth-child(4n+1) { background: var(--pink); } .agetile:nth-child(4n+2) { background: var(--yellow); } .agetile:nth-child(4n+3) { background: var(--mint); } .agetile:nth-child(4n) { background: #b9b0ff; }
+.classline { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 4px; font-weight: 700; } .classline li::before { content: "★ "; color: #b0237a; }
+/* per-age sizing from the AGE table */
+body[class*="age-"] .choice, body[class*="age-"] .numpad button, body[class*="age-"] .agetile, body[class*="age-"] .stop .playbtn { min-height: var(--tgt, 48px); }
+body.age-3 .qprompt, body.age-4 .qprompt { font-size: calc(30px * var(--age-scale, 1)); }
+body.age-3 .choice, body.age-4 .choice { font-size: 26px; }

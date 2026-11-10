@@ -143,10 +143,10 @@
     main.innerHTML = `<section class="page vid" data-subject="science"><a class="backlink" href="#/s/science"><svg class="k-icon"><use href="#i-back"/></svg>${t('subj.science.title')}</a>
       <p class="eyebrow">${t('games.title')}</p><h1>${t('videos.title')}</h1><p class="lede">${t('videos.blurb')}</p>
       <h2 class="section">${t('videos.made')}</h2><p class="muted small">${t('videos.madeSub')}</p>
-      <ul class="vid-grid">${list.map(x => { const r0 = rows(x, p.band).find(Array.isArray); const secs = Math.round(rows(x, p.band).filter(Array.isArray).reduce((a, r) => a + r[2], 0));
-        return `<li><a class="vid-card" href="#/videos/${x.id}"><span class="board vid-thumb" aria-hidden="true">${scene(r0[0], r0[1](0.6))}</span><span class="vid-meta"><b>${esc(L(x.title))}</b><span class="small muted">${esc(L(x.blurb))}</span><span class="vid-tags"><span class="small mono">${t('videos.secs', { n: secs })}</span>${w.includes(x.id) ? `<span class="k-badge k-badge-success k-badge-pill">${t('videos.watched')}</span>` : ''}</span></span></a></li>`; }).join('')}</ul>
+      <ul class="vid-grid">${list.map(x => { const r0 = rows(x, AGE.band(p)).find(Array.isArray); const secs = Math.round(rows(x, AGE.band(p)).filter(Array.isArray).reduce((a, r) => a + r[2], 0));
+        return `<li><a class="vid-card" href="#/videos/${x.id}"><span class="board vid-thumb" aria-hidden="true">${scene(r0[0], r0[1](0.6))}</span><span class="vid-meta"><b>${esc(L(x.title))}</b><span class="small muted">${esc(L(x.blurb))}</span><span class="vid-tags"><span class="small muted">${t('videos.secs', { n: secs })}</span>${w.includes(x.id) ? `<span class="k-badge k-badge-success k-badge-pill">${t('videos.watched')}</span>` : ''}</span></span></a></li>`; }).join('')}</ul>
       ${C.length ? `<h2 class="section">${t('videos.real')}</h2><p class="muted small">${t('videos.realSub')}</p>${online() ? '' : `<p class="vid-note" role="status">${t(native() ? 'videos.inApp' : 'videos.needsNet')}</p>`}
-      <ul class="vid-grid">${C.map(c => `<li><a class="vid-card" href="#/videos/${c.id}"><span class="vid-thumb photo" aria-hidden="true"><img src="${c.poster}" alt="" loading="lazy"></span><span class="vid-meta"><b>${esc(L(c.title))}</b><span class="small muted">${esc(L(c.blurb))}</span><span class="vid-tags"><span class="small mono">${t('videos.secs', { n: Math.round(c.dur) })}</span>${w.includes(c.id) ? `<span class="k-badge k-badge-success k-badge-pill">${t('videos.watched')}</span>` : ''}</span><span class="vid-credit">${esc(c.author)} · ${esc(c.lic)}</span></span></a></li>`).join('')}</ul>` : ''}
+      <ul class="vid-grid">${C.map(c => `<li><a class="vid-card" href="#/videos/${c.id}"><span class="vid-thumb photo" aria-hidden="true"><img src="${c.poster}" alt="" loading="lazy"></span><span class="vid-meta"><b>${esc(L(c.title))}</b><span class="small muted">${esc(L(c.blurb))}</span><span class="vid-tags"><span class="small muted">${t('videos.secs', { n: Math.round(c.dur) })}</span>${w.includes(c.id) ? `<span class="k-badge k-badge-success k-badge-pill">${t('videos.watched')}</span>` : ''}</span><span class="vid-credit">${esc(c.author)} · ${esc(c.lic)}</span></span></a></li>`).join('')}</ul>` : ''}
     </section>`;
   }
 
@@ -173,7 +173,7 @@
   }
   const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   function syncCtrls(main) {
-    const pb = main.querySelector('[data-a="play"]'); if (!pb) return;
+    const pb = main.querySelector('.vp-ctrls [data-a="play"]'); if (!pb) return;
     pb.querySelector('span').textContent = S.playing ? t('videos.pause') : t('videos.play'); pb.setAttribute('aria-label', S.playing ? t('videos.pause') : t('videos.play'));
     pb.querySelector('use').setAttribute('href', S.playing ? '#i-minus' : '#i-next');
     main.querySelector('[data-a="cc"]').setAttribute('aria-pressed', S.cc);
@@ -191,17 +191,21 @@
     const d = document; if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
     else (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
   }
-  function newState(x, p) { const pref = ccPref() || {}; return { id: x.id, x, p, band: p.band, playing: false, speed: 1, cc: pref.cc ?? true, cl: pref.cl || I18N.lang, pos: 0, done: {}, stage: 'play', t0: Date.now(), right: 0, n: 0, ri: 0, raf: 0 }; }
+  function newState(x, p) { const pref = ccPref() || {}; return { id: x.id, x, p, band: AGE.band(p), playing: false, speed: 1, cc: pref.cc ?? true, cl: pref.cl || I18N.lang, pos: 0, done: {}, stage: 'play', t0: Date.now(), right: 0, n: 0, ri: 0, raf: 0 }; }
 
   // explainer timeline
   function explainer(main, x) {
     const p = Store.current(); if (!S || S.id !== x.id) S = newState(x, p);
     const R = rows(x, S.band), qs = qlist(x), dur = r => Array.isArray(r) ? r[2] : 0, total = R.reduce((a, r) => a + dur(r), 0);
-    const at = pos => { let a = 0; for (let i = 0; i < R.length; i++) { const d = dur(R[i]); if (pos < a + d || i === R.length - 1 && Array.isArray(R[i])) return { i, k: d ? Math.min(1, (pos - a) / d) : 0 }; if (!Array.isArray(R[i]) && pos <= a && !S.done[i]) return { i, k: 0 }; a += d; } return { i: R.length - 1, k: 1 }; };
+    const at = pos => { let a = 0, lastA = 0;
+      for (let i = 0; i < R.length; i++) { const d = dur(R[i]);
+        if (!d) { if (!S.done[i] && pos >= a) return { i, k: 0 }; continue; }
+        if (pos < a + d) return { i, k: (pos - a) / d }; lastA = i; a += d; }
+      return { i: lastA, k: 1 }; };
     const r0 = R.find(Array.isArray);
     shell(main, x, scene(r0[0], r0[1](0)) + `<button type="button" class="vp-big" data-a="play" aria-label="${t('videos.play')}"><svg class="k-icon" aria-hidden="true"><use href="#i-next"/></svg></button>`);
     const stage = main.querySelector('#stage'), cap = main.querySelector('#cap'), bar = main.querySelector('.vp-prog'), time = main.querySelector('.vp-time'), panel = main.querySelector('#panel');
-    let lastRow = -1, lastK = -1;
+    let lastRow = -1, lastK = -1; if (!S.pos) cap.textContent = t('videos.pressPlay');
     const capRow = () => { const r = R[lastRow]; if (!Array.isArray(r)) return; cap.textContent = r[3][S.cl === 'ta' ? 1 : 0]; cap.lang = S.cl; };
     const draw = () => {
       const { i, k } = at(S.pos), r = R[i];
@@ -220,18 +224,18 @@
       S.raf = requestAnimationFrame(step);
     };
     const api = {
-      play() { if (S.stage !== 'play') return; if (S.playing) { stop(); Voice.stop(); return; } main.querySelector('.vp-big')?.remove(); S.playing = true; syncCtrls(main); if (S.pos >= total) { S.pos = 0; S.done = {}; } lastRow = -1; tick(); },
-      back() { S.pos = Math.max(0, S.pos - 10); lastRow = -1; const { i } = at(S.pos); Object.keys(S.done).forEach(k => { if (+k >= i) S.done[k] = S.done[k]; }); draw(); },
+      play() { if (S.stage !== 'play') return; if (S.playing) { stop(); Voice.stop(); return; } main.querySelector('.vp-big')?.remove(); S.playing = true; syncCtrls(main); lastRow = -1; tick(); },
+      back() { if (S.stage !== 'play') return; S.pos = Math.max(0, S.pos - 10); lastRow = -1; draw(); },
       cc() { S.cc = !S.cc; ccSave({ cc: S.cc, cl: S.cl }); syncCtrls(main); }, cap: capRow, full: () => fullscreen(main.querySelector('#vp')), speed() { },
     };
     // a pause point: question → feedback → continue
     function ask(ri) {
       S.stage = 'pause'; const pr = R[ri], idx = x.tl.filter(r => !Array.isArray(r)).indexOf(pr);
       cap.textContent = t(pr.p === 'predict' ? 'videos.predict' : 'videos.why');
-      question(panel, p, x, idx, null, ok => { S.done[ri] = true; S.stage = 'play'; panel.innerHTML = ''; api.play(); }, t('videos.go'));
+      question(panel, p, x, idx, null, () => { S.done[ri] = true; S.stage = 'play'; panel.innerHTML = ''; if (S.pos >= total) finish(); else api.play(); }, t('videos.go'));
     }
     function finish() {
-      S.stage = 'lesson'; cap.textContent = '';
+      S.stage = 'lesson'; cap.textContent = t('videos.lesson');
       panel.innerHTML = `<article class="lessoncard vid-lesson" tabindex="-1"><p class="eyebrow">${t('videos.lesson')}</p><ol class="steps">${x.lesson.map((s, i) => `<li class="step"><span class="step-n">${i + 1}</span><div class="step-body"><p>${esc(L(s))}</p></div></li>`).join('')}</ol><p class="lc-rule">${esc(L(x.rule))}</p>
         <div class="row-actions">${Engine.listenBtn('vlisten')}<button type="button" class="k-btn k-btn-primary" id="toRecap">${t('videos.startRecap')}</button></div></article>`;
       Engine.bindListen(panel.querySelector('.vlisten'), () => [{ text: L(x.lesson).join(' ') + ' ' + L(x.rule), lang: I18N.lang }]);
@@ -258,9 +262,9 @@
 
   // one question in the panel; picture choices for young, Listen reads it
   function question(panel, p, x, idx, eyebrow, onNext, nextLabel) {
-    const q = Engine.build({ skill: 'vid.' + x.id, lvl: 1, seed: 1000 + idx }, p), pics = q.pics;
+    const q = Engine.build({ skill: 'vid.' + x.id, lvl: 1, seed: 1000 + idx }, p), pics = q.pics && S.band === 'young';
     panel.innerHTML = `<article class="k-card vid-q" aria-labelledby="vq"><div class="lesson-head"><p class="eyebrow">${eyebrow || q.eyebrow}</p>${Engine.listenBtn('vqlisten')}</div><h2 id="vq">${q.prompt}</h2>
-      <div class="choices ${pics ? 'vid-pics' : ''}" role="radiogroup" aria-labelledby="vq">${q.choices.map(c => `<button type="button" class="choice" role="radio" aria-checked="false" data-v="${c.v}">${pics || (c.vis && q.qkind === 'predict') ? `<span class="board vid-pic" aria-hidden="true">${c.vis}</span>` : ''}<span>${c.html}</span></button>`).join('')}</div><div id="vfb" aria-live="polite"></div></article>`;
+      <div class="choices ${pics ? 'vid-pics' : ''}" role="radiogroup" aria-labelledby="vq">${q.choices.map(c => `<button type="button" class="choice" role="radio" aria-checked="false" data-v="${c.v}">${pics ? `<span class="board vid-pic" aria-hidden="true">${c.vis}</span>` : ''}<span>${c.html}</span></button>`).join('')}</div><div id="vfb" aria-live="polite"></div></article>`;
     Engine.bindListen(panel.querySelector('.vqlisten'), () => q.say);
     if (S.band === 'young') Voice.play(q.say, null, {});
     panel.querySelector('.choice').focus({ preventScroll: true }); panel.querySelector('.vid-q').scrollIntoView({ block: 'nearest', behavior: RM() ? 'auto' : 'smooth' });
@@ -280,7 +284,7 @@
     const p = Store.current(); if (!S || S.id !== x.id) S = newState(x, p);
     if (!online()) {
       shell(main, x, `<img src="${x.poster}" alt="">`);
-      main.querySelector('.vp-ctrls').remove(); main.querySelector('.vp-bar').remove();
+      main.querySelector('.vp-ctrls').remove(); main.querySelector('.vp-bar').remove(); main.querySelector('#cap').remove();
       main.querySelector('#panel').innerHTML = `<p class="vid-note" role="status">${t(native() ? 'videos.inApp' : 'videos.needsNet')}</p><a class="k-btn k-btn-outline pill" href="#/videos">${t('videos.library')}</a>`;
       return;
     }
@@ -294,7 +298,7 @@
         Store.logSession(p, { subject: 'science', topic: 'videos', mode: 'clip', n: S.n, right: S.right, ms: Date.now() - S.t0 }); location.hash = '#/videos'; }, t('common.done')); };
     const api = { play() { main.querySelector('.vp-big')?.remove(); if (v.paused) { v.playbackRate = S.speed; v.play().catch(() => {}); } else v.pause(); }, back() { v.currentTime = Math.max(0, v.currentTime - 10); },
       cc() { S.cc = !S.cc; ccSave({ cc: S.cc, cl: S.cl }); syncCtrls(main); }, cap: cue, full: () => fullscreen(main.querySelector('#vp')), speed() { v.playbackRate = S.speed; } };
-    bindCtrls(main, api); cue();
+    bindCtrls(main, api); cue(); if (!cap.textContent) cap.textContent = t('videos.pressPlay');
   }
 
   function player(main, id) {

@@ -1,0 +1,48 @@
+/* Watch, predict, explain */
+.vid-grid { list-style: none; padding: 0; margin: 12px 0 24px; display: grid; gap: 12px; }
+@media (min-width: 640px) { .vid-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .vid-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.vid-card { display: grid; grid-template-columns: 112px 1fr; gap: 12px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-decoration: none; min-height: 48px; }
+.vid-card:hover { border-color: var(--acc); }
+.vid-card:focus-visible { outline: 3px solid var(--acc); outline-offset: 2px; }
+.vid-thumb { display: block; aspect-ratio: 600 / 250; border-radius: var(--radius-md); overflow: hidden; padding: 0; min-height: 0; }
+.vid-thumb svg { width: 100%; height: 100%; display: block; }
+.vid-thumb.photo { background: #0e1118; aspect-ratio: 16 / 10; }
+.vid-thumb.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vid-meta { display: grid; gap: 4px; min-width: 0; }
+.vid-meta b { font-size: 16px; line-height: 21px; }
+.vid-tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.vid-credit { font-size: 12px; line-height: 16px; color: var(--ink-muted); margin: 8px 0 0; }
+.vid-note { padding: 12px 14px; border: 1px solid var(--line); border-left: 4px solid var(--acc); border-radius: var(--radius-md); background: var(--surface); margin: 8px 0 12px; }
+
+.vp { display: grid; gap: 8px; margin-top: 12px; }
+.vp:fullscreen { padding: 16px; align-content: center; background: var(--board, #12151d); color: #e6e9f0; }
+.vp:fullscreen .vp-cap { color: #e6e9f0; }
+.vp-stage { position: relative; padding: 0; min-height: 0; overflow: hidden; border-radius: var(--radius-lg); }
+.vp-stage.board svg { width: 100%; height: auto; display: block; }
+.vp-stage.clip { background: #000; aspect-ratio: 16 / 9; }
+.vp-stage.clip video, .vp-stage.clip img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.vp-big { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; border: 2px solid #e6e9f0; background: rgba(12, 14, 22, .55); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.vp-big .k-icon { width: 34px; height: 34px; }
+.vp-big:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+.vp-bar { display: flex; align-items: center; gap: 10px; }
+.vp-prog { flex: 1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.vp-prog span { display: block; height: 100%; width: 0; background: var(--acc); }
+.vp-cap { min-height: 52px; margin: 0; padding: 8px 12px; border-left: 3px solid var(--acc); font-size: 17px; line-height: 25px; font-weight: 700; color: var(--ink); }
+.vp-cap[lang="ta"] { font-family: 'Noto Sans Tamil', var(--font-sans); font-size: 16px; line-height: 26px; }
+.vp-ctrls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.vp-ctrls .k-btn, .vp-ctrls .seg button { min-height: 48px; }
+.vp-play { min-width: 132px; }
+.vp-panel { margin-top: 12px; }
+.vid-q h2 { font-size: 20px; line-height: 27px; margin: 4px 0 12px; }
+.vid-q .choices { display: grid; gap: 10px; }
+.vid-q .choice { display: grid; gap: 8px; text-align: left; justify-items: start; min-height: 56px; }
+.vid-q .choice > span:last-child { justify-self: start; }
+.vid-pics .choice { grid-template-columns: 132px 1fr; align-items: center; padding: 8px; }
+@media (min-width: 560px) { .vid-pics { grid-template-columns: repeat(3, 1fr); } .vid-pics .choice { grid-template-columns: 1fr; } }
+.vid-pic { display: block; padding: 0; min-height: 0; border-radius: var(--radius-md); overflow: hidden; }
+.vid-pic svg { width: 100%; height: auto; display: block; }
+.vid-lesson .steps { margin: 8px 0; }
+.vid-done .bignum { margin: 4px 0; }
+.vp-panel .row-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
+@media (prefers-reduced-motion: reduce) { .vp-prog span { transition: none; } }

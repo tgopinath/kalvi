@@ -162,7 +162,7 @@
 
   const IDS = { young: ['pz.path', 'pz.missing', 'pz.pattern', 'pz.balance', 'pz.tangram'], older: ['pz.path', 'pz.missing', 'pz.pattern', 'pz.balance', 'pz.tangram', 'pz.magic', 'pz.kenken'] };
   const game = { title: 'pz.title', blurb: 'm.topic.puzzles.blurb', icon: 'i-puzzle', start(p) {
-    const ids = IDS[p.band] || IDS.older;
+    const ids = IDS[AGE.band(p)] || IDS.older;
     const due = Store.due(p, S).filter(r => r.skill.startsWith('pz.')).slice(0, 1).map(r => ({ skill: r.skill, lvl: r.lvl, seed: r.seed }));
     const pick = Engine.weighted(p, ids, 5 - due.length);
     const go = () => Engine.start({ items: [...due, ...pick], title: t('pz.title'), subject: S, topic: 'puzzles', mode: 'puzzles', back: '#/s/maths', again: () => game.start(p) }); go();

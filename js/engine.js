@@ -17,17 +17,19 @@
   function build(item, p) {
     const sk = SK[item.skill]; const r = rng(item.seed);
     const lvl = Math.max(Math.min(sk.min('young'), sk.min('older')), Math.min(item.lvl || 1, Math.max(sk.max('older'), sk.max('young'))));
-    const q = sk.gen(lvl, r, { band: p.band, lang: I18N.lang, seed: item.seed });
+    const q = sk.gen(lvl, r, { band: AGE.band(p), age: AGE.of(p).age, lang: I18N.lang, seed: item.seed });
+    // fewer choices for younger children (keep the answer, drop wrong options from the end)
+    const maxC = AGE.of(p).choices; if ((q.kind === 'choice') && q.choices?.length > maxC && !q.keepChoices) { const keep = q.choices.filter(c => c.v === q.answer); q.choices = q.choices.filter(c => c.v !== q.answer).slice(0, maxC - keep.length).concat(keep); q.choices = rng(item.seed + 7).shuffle(q.choices); }
     return Object.assign(q, { key: item.skill + '|' + item.lvl + '|' + item.seed, skill: item.skill, lvl: item.lvl, seed: item.seed, subject: sk.subject });
   }
   function itemFor(p, skillId) {
     const sk = SK[skillId], st = Store.skill(p, sk.subject, skillId);
-    const lvl = Math.min(sk.max(p.band), Math.max(sk.min(p.band), st.lvl ?? Store.startLvl(p, sk)));
+    const [lo, hi] = AGE.range(p, sk), lvl = st.lvl != null ? Math.max(Math.min(sk.min('young'), sk.min('older')), Math.min(Math.max(sk.max('young'), sk.max('older')), st.lvl)) : Math.min(hi, Math.max(lo, Store.startLvl(p, sk)));
     return { skill: skillId, lvl, seed: newSeed() };
   }
   // pick skills weighted toward low mastery
   function weighted(p, ids, n) {
-    const out = [];
+    const out = []; const allowed = window.AGE ? ids.filter(id => AGE.allowSkill(p, id)) : ids; if (allowed.length) ids = allowed;
     for (let i = 0; i < n; i++) {
       const w = ids.map(id => { const st = Store.skill(p, SK[id].subject, id); return 0.35 + (1 - st.m) + (out.length && out[out.length - 1].skill === id ? -0.3 : 0); });
       let x = Math.random() * w.reduce((a, b) => a + b, 0), k = 0; while ((x -= w[k]) > 0 && k < w.length - 1) k++;
@@ -51,6 +53,7 @@
   let R = null;
   function start({ items, title, mode = 'topic', subject, topic, back = '#/', again }) {
     const p = Store.current(); if (!p || !items.length) return;
+    items = items.filter(it => mode === 'review' || AGE.allowSkill(p, it.skill)).slice(0, Math.max(AGE.of(p).round, mode === 'review' ? 8 : 0) || items.length); if (!items.length) return;
     R = { items, i: 0, title, mode, subject, topic, back, results: [], t0: Date.now(), ups: [], again };
     if (location.hash === '#/round') App.route(); else location.hash = '#/round';
   }
@@ -91,6 +94,8 @@
     const hb = main.querySelector('.hintbtn');
     if (hb) hb.onclick = () => showHint(main);
     main.querySelector('h2').focus?.();
+    const A = AGE.of(p); if (A.autoHint && q.hints?.length) R.autoHintT = setTimeout(() => { if (R?.q === q && !R.answered && !R.hint) showHint(main); }, A.autoHint * 1000);
+    if ((q.autoSay || A.autoListen) && setTimeout(() => { if (R?.q === q && !R.answered && A.autoListen && !q.autoSay) main.querySelector('.qlisten')?.click(); }, 450)) {}
     if (q.autoSay && q.say) setTimeout(() => { if (R?.q === q && !R.answered) main.querySelector('.qlisten')?.click(); }, 350);
     R.keys = e => {
       if (R.answered) { if (e.key === 'Enter') { e.preventDefault(); main.querySelector('.nextbtn')?.click(); } return; }

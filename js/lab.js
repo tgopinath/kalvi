@@ -79,7 +79,7 @@
       home: { need: [['two paper cups', 'இரண்டு காகிதக் கோப்பைகள்'], ['3 m of string', '3 மீ. நூல்']], steps: [['A grown-up makes a small hole in each cup and ties the string.', 'பெரியவர் ஒவ்வொரு கோப்பையிலும் சிறு துளை இட்டு நூலைக் கட்டுவார்.'], ['Pull tight and whisper.', 'இறுக்கி இழுத்து மெதுவாகப் பேசு.']], note: ['A grown-up makes the holes with a pencil tip, not a knife.', 'துளையைக் கத்தியால் அல்ல, பென்சில் முனையால் பெரியவர் இடுவார்.'] } },
   ];
   const byId = Object.fromEntries(X.map(x => [x.id, x]));
-  const forBand = (x, p) => p.band === 'older' ? true : x.lvl === 1;
+  const forBand = (x, p) => AGE.band(p) === 'older' ? true : x.lvl === 1;
 
   // conclusion check as an engine skill (so misses go to the review queue)
   Engine.skill({ id: 'lab.conclude', subject: 'science', topic: 'lab', name: 'lab.skill', bands: { young: [1, 1], older: [1, 2] }, warm: false, gen(l, r, ctx) {
@@ -121,8 +121,8 @@
     }
     if (st === 'plan') {
       const pl = L(x.plan.q), opts = x.plan.opts.map(L);
-      say = (p.band === 'young' ? t('lab.young') : pl);
-      el.innerHTML = `<p class="eyebrow">${t('lab.step.plan')}</p><h2>${esc(p.band === 'young' ? t('lab.young') : pl)}</h2><div class="choices" role="radiogroup">${[0, 2, 1].map(i => `<button type="button" class="choice ${S.plan != null ? (i === 0 ? 'is-right' : i === S.plan ? 'is-wrong' : '') : ''}" data-pl="${i}" ${S.plan != null ? 'disabled' : ''}>${esc(opts[i])}</button>`).join('')}</div>
+      say = (AGE.band(p) === 'young' ? t('lab.young') : pl);
+      el.innerHTML = `<p class="eyebrow">${t('lab.step.plan')}</p><h2>${esc(AGE.band(p) === 'young' ? t('lab.young') : pl)}</h2><div class="choices" role="radiogroup">${[0, 2, 1].map(i => `<button type="button" class="choice ${S.plan != null ? (i === 0 ? 'is-right' : i === S.plan ? 'is-wrong' : '') : ''}" data-pl="${i}" ${S.plan != null ? 'disabled' : ''}>${esc(opts[i])}</button>`).join('')}</div>
         ${S.plan != null ? `<article class="lessoncard ${S.plan === 0 ? 'ok' : 'miss'}"><p class="lc-status">${S.plan === 0 ? t('pr.right') : t('pr.wrong')}</p><p>${esc(L(x.plan.why))}</p></article>` : ''}${nav(S.plan != null)}`;
       el.querySelectorAll('[data-pl]').forEach(b => b.onclick = () => { S.plan = +b.dataset.pl; exp(main, id); });
     }
@@ -137,7 +137,7 @@
       S.score = x.kind === 'cat' ? [right, items.length] : [S.pred.one === best ? 1 : 0, 1];
       say = x.kind === 'cat' ? t('lab.score', { a: right, b: items.length }) : (S.pred.one === best ? t('lab.right') : t('lab.wrongP'));
       el.innerHTML = `<p class="eyebrow">${t('lab.step.record')}</p><table class="ptable"><thead><tr><th>${t('lab.item')}</th><th>${t('lab.guess')}</th><th>${t('lab.result')}</th></tr></thead><tbody>${items.map(it => `<tr><td>${ph(it.k)}${esc(it.label)}</td><td>${x.kind === 'cat' ? esc(L(C[S.pred[it.k]] || ['–', '–'])) : (S.pred.one === it.k ? '✓' : '')}</td><td><b>${x.kind === 'cat' ? esc(L(C[it.v])) : it.v + ' ' + esc(x.unit)}</b></td></tr>`).join('')}</tbody></table>
-        ${x.kind === 'num' && p.band === 'older' ? `<p class="eyebrow">${t('lab.chart')}</p><svg class="lab-chart" viewBox="0 0 320 ${items.length * 34 + 10}" role="img" aria-label="${t('lab.chart')}">${items.map((it, k) => `<text x="0" y="${k * 34 + 22}" font-size="11" fill="currentColor">${esc(it.label.slice(0, 22))}</text><rect x="130" y="${k * 34 + 8}" width="${Math.max(2, it.v / max * 160)}" height="20" rx="3" fill="var(--acc)"/><text x="${136 + it.v / max * 160}" y="${k * 34 + 23}" font-size="11" fill="currentColor">${it.v}</text>`).join('')}</svg>` : ''}
+        ${x.kind === 'num' && AGE.band(p) === 'older' ? `<p class="eyebrow">${t('lab.chart')}</p><svg class="lab-chart" viewBox="0 0 320 ${items.length * 34 + 10}" role="img" aria-label="${t('lab.chart')}">${items.map((it, k) => `<text x="0" y="${k * 34 + 22}" font-size="11" fill="currentColor">${esc(it.label.slice(0, 22))}</text><rect x="130" y="${k * 34 + 8}" width="${Math.max(2, it.v / max * 160)}" height="20" rx="3" fill="var(--acc)"/><text x="${136 + it.v / max * 160}" y="${k * 34 + 23}" font-size="11" fill="currentColor">${it.v}</text>`).join('')}</svg>` : ''}
         <p class="lc-rule">${say}</p>${nav()}`;
     }
     if (st === 'conclude') {

@@ -315,12 +315,12 @@
 
   // ---------- progress ----------
   const extras = p => { p.extras ??= {}; return p.extras.coding ??= { solved: {}, stars: {}, best: {} }; };
-  const maxStars = p => p.band === 'older' ? 3 : 2;
+  const maxStars = p => AGE.band(p) === 'older' ? 3 : 2;
   const starSVG = on => `<svg class="cd-star ${on ? 'on' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8L3.5 9.7l5.9-.8z"/></svg>`;
 
   // ---------- level map ----------
   function mapScreen(main) {
-    const p = Store.current(), ex = extras(p), ls = levelsFor(p.band), m = maxStars(p);
+    const p = Store.current(), ex = extras(p), ls = levelsFor(AGE.band(p)), m = maxStars(p);
     const sets = [...new Set(ls.map(l => l.set))];
     const next = ls.find(l => !ex.solved[l.id]);
     main.innerHTML = `<section class="page coding" data-subject="maths">
@@ -345,8 +345,8 @@
     const p = Store.current(), l = id === 'free' ? FREE : BYID[id];
     if (!l) { location.hash = '#/coding'; return; }
     if (!G || G.l !== l) setup(l, p);
-    const ls = levelsFor(p.band), inSet = ls.filter(x => x.set === l.set), num = inSet.indexOf(l) + 1;
-    const young = p.band === 'young';
+    const ls = levelsFor(AGE.band(p)), inSet = ls.filter(x => x.set === l.set), num = inSet.indexOf(l) + 1;
+    const young = AGE.band(p) === 'young';
     main.innerHTML = `<section class="page coding cd-play ${young ? 'young' : ''}" data-subject="maths">
       <a class="backlink" href="#/coding"><svg class="k-icon"><use href="#i-back"/></svg>${t('coding.map')}</a>
       <p class="eyebrow">${l.free ? t('coding.eyebrow') : `${t('coding.set.' + l.set)} · ${t('coding.level', { n: num })}`}</p>
@@ -413,7 +413,7 @@
         ${k === 'rep' && i === G.sel ? `<button type="button" class="k-iconbtn cd-mini cd-less" aria-label="${t('coding.ui.less')}"><svg class="k-icon"><use href="#i-minus"/></svg></button><button type="button" class="k-iconbtn cd-mini cd-more" aria-label="${t('coding.ui.more')}"><svg class="k-icon"><use href="#i-plus"/></svg></button>` : ''}
         <button type="button" class="k-iconbtn cd-mini cd-del" aria-label="${esc(t('coding.ui.remove', { b: lab }))}"><svg class="k-icon"><use href="#i-close"/></svg></button></li>`; }).join('')
       : `<li class="cd-empty muted">${t('coding.ui.empty')}</li>`;
-    m.querySelector('.cd-count').innerHTML = t('coding.ui.count', { n: countBlocks(G.prog), max: maxFor(G.l, G.p.band) }) + (G.p.band === 'older' && !G.l.free ? ' · ' + t('coding.ui.fewest', { n: G.l.par }) : '');
+    m.querySelector('.cd-count').innerHTML = t('coding.ui.count', { n: countBlocks(G.prog), max: maxFor(G.l, AGE.band(G.p)) }) + (AGE.band(G.p) === 'older' && !G.l.free ? ' · ' + t('coding.ui.fewest', { n: G.l.par }) : '');
     ol.querySelectorAll('.cd-row').forEach(li => bindRow(li, +li.dataset.i));
     drawCode();
   }
@@ -422,7 +422,7 @@
   function changed() { stop(); G.run = null; G.ti = -1; G.wrongAt = null; drawAll(); }
   function add(k) {
     if (G.done && !G.l.free) return;
-    const max = maxFor(G.l, G.p.band); if (countBlocks(G.prog) >= max) { say(t('coding.ui.full'), 'warn'); return; }
+    const max = maxFor(G.l, AGE.band(G.p)); if (countBlocks(G.prog) >= max) { say(t('coding.ui.full'), 'warn'); return; }
     const at = G.sel >= 0 ? G.sel + 1 : G.prog.length, tok = k === 'rep' ? 'rep:' + (G.l.sol.map(tk).find(x => x.t === 'rep')?.n || 4) : k;
     G.prog.splice(at, 0, ...(OPEN.has(k) ? [tok, 'E'] : [tok])); G.sel = at;
     changed(); say(t('coding.ui.added', { b: label(tok) })); speak(label(tok)); focusRow(at);
@@ -521,7 +521,7 @@
   }
   function solved() {
     const p = G.p, l = G.l, ex = extras(p), ok = !G.usedAnswer, n = countBlocks(G.prog);
-    let stars = 1 + (ok ? 1 : 0) + (p.band === 'older' && n <= l.par && ok ? 1 : 0);
+    let stars = 1 + (ok ? 1 : 0) + (AGE.band(p) === 'older' && n <= l.par && ok ? 1 : 0);
     ex.solved[l.id] = 1; ex.stars[l.id] = Math.max(ex.stars[l.id] || 0, stars); ex.best[l.id] = Math.min(ex.best[l.id] || 99, n);
     const id = 'cd.' + l.concept;
     Store.record(p, 'maths', Engine.SK[id], { key: id + '|1|' + G.seed, lvl: 1, seed: G.seed }, ok);
@@ -530,7 +530,7 @@
     G.done = true; G.stars = stars; say(t('coding.msg.done'), 'ok'); drawProg(); lessonCard();
   }
   function lessonCard() {
-    const p = G.p, l = G.l, m = maxStars(p), c = l.concept, n = countBlocks(G.prog), ls = levelsFor(p.band), nx = ls[ls.indexOf(l) + 1];
+    const p = G.p, l = G.l, m = maxStars(p), c = l.concept, n = countBlocks(G.prog), ls = levelsFor(AGE.band(p)), nx = ls[ls.indexOf(l) + 1];
     const steps = [t('coding.lc.' + c + '.what'), t('coding.lc.yours', { n, m: l.par }), G.usedAnswer ? t('coding.lc.withHint') : t('coding.lc.noHint')];
     const el = G.main.querySelector('.cd-lesson');
     el.innerHTML = `<article class="lessoncard ${G.usedAnswer ? 'miss' : 'ok'}" tabindex="-1">

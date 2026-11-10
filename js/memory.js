@@ -86,8 +86,8 @@
   let G = null;
   function start(subject, p) {
     const seed = Engine.newSeed(), r = Engine.rng(seed), lvlSt = Store.skill(p, subject, 'mem.' + subject);
-    const pairs = p.band === 'young' ? 6 : (lvlSt.m > 0.7 ? 10 : 8), cols = p.band === 'young' ? 3 : 4;
-    const ps = pool(subject, p.band, r).slice(0, pairs);
+    const pairs = AGE.band(p) === 'young' ? 6 : (lvlSt.m > 0.7 ? 10 : 8), cols = AGE.band(p) === 'young' ? 3 : 4;
+    const ps = pool(subject, AGE.band(p), r).slice(0, pairs);
     const cards = r.shuffle(ps.flatMap((x, i) => [{ pair: i, side: 'a', face: x.a }, { pair: i, side: 'b', face: x.b }]));
     G = { subject, seed, ps, cards, cols, up: [], done: new Set(), flips: 0, tries: ps.map(() => 0), focus: 0, t0: Date.now(), msg: t('mem.help'), lock: false };
     const h = '#/memory/' + subject; if (location.hash === h) setTimeout(() => App.route()); else location.hash = h;
@@ -129,7 +129,7 @@
   function finish(main) {
     const p = Store.current(), sk = Engine.SK['mem.' + G.subject];
     let right = 0;
-    G.ps.forEach((x, i) => { const ok = G.tries[i] <= 2; if (ok) right++; Store.record(p, G.subject, sk, { key: `mem.${G.subject}|${p.band === 'young' ? 1 : 2}|${x.code}`, lvl: p.band === 'young' ? 1 : 2, seed: x.code }, ok); });
+    G.ps.forEach((x, i) => { const ok = G.tries[i] <= 2; if (ok) right++; Store.record(p, G.subject, sk, { key: `mem.${G.subject}|${AGE.band(p) === 'young' ? 1 : 2}|${x.code}`, lvl: AGE.band(p) === 'young' ? 1 : 2, seed: x.code }, ok); });
     p.extras = p.extras || {}; p.extras.memory = p.extras.memory || {}; const k = G.subject + G.ps.length, prev = p.extras.memory[k]; G.newBest = !prev || G.flips < prev; if (G.newBest) p.extras.memory[k] = G.flips;
     Store.logSession(p, { subject: G.subject, topic: 'memory', mode: 'memory', n: G.ps.length, right, ms: Date.now() - G.t0 });
     recap(main);

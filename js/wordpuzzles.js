@@ -559,7 +559,7 @@
   // ---------- the game ----------
   const IDS = { young: ['wp.crossword', 'wp.search', 'wp.unscramble', 'wp.jigsaw', 'wp.missing', 'wp.compound'], older: ['wp.crossword', 'wp.search', 'wp.unscramble', 'wp.ladder', 'wp.jigsaw', 'wp.missing', 'wp.compound'] };
   const game = { title: 'wp.title', blurb: 'wp.blurb', icon: 'i-puzzle', start(p) {
-    const ids = IDS[p.band] || IDS.older;
+    const ids = IDS[AGE.band(p)] || IDS.older;
     const due = Store.due(p, S).filter(x => x.skill?.startsWith('wp.') && ids.includes(x.skill)).slice(0, 1).map(x => ({ skill: x.skill, lvl: x.lvl, seed: x.seed }));
     const pick = []; while (due.length + pick.length < 5) { const last = (pick.at(-1) || due.at(-1))?.skill; pick.push(...Engine.weighted(p, ids.filter(id => id !== last), 1)); }
     Engine.start({ items: [...due, ...pick], title: t('wp.title'), subject: S, topic: 'wordpuzzles', mode: 'wordpuzzles', back: '#/s/english', again: () => game.start(p) });

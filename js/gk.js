@@ -131,7 +131,7 @@
   const TOPICS = IDS.map(id => ({ id, subject: W, title: `gk.topic.${id}.title`, blurb: `gk.topic.${id}.blurb`, icon: ICON[id], skills: ['gk.' + id], page }));
 
   // ---------- rounds ----------
-  const forBand = (tp, p) => window.App?.forBand ? App.forBand(tp, p) : (!tp.bands || tp.bands.includes(p.band));
+  const forBand = (tp, p) => window.App?.forBand ? App.forBand(tp, p) : (!tp.bands || tp.bands.includes(AGE.band(p)));
   function dedupe(items) {
     const seen = new Set();
     return items.map(it => { let x = it; for (let k = 0; k < 24 && seen.has(itemKey(x)); k++) x = { ...x, seed: Engine.newSeed() }; seen.add(itemKey(x)); return x; });
@@ -154,7 +154,7 @@
     const ids = r.shuffle(TOPICS.filter(tp => forBand(tp, p)).flatMap(tp => tp.skills));
     const out = [];
     for (let i = 0; i < n; i++) {
-      const skill = ids[i % ids.length], lvl = Engine.SK[skill].max(p.band);
+      const skill = ids[i % ids.length], lvl = Engine.SK[skill].max(AGE.band(p));
       let seed = hash(date + '|' + i) % 2147483647, x = { skill, lvl, seed };
       for (let k = 1; k < 24 && out.some(o => itemKey(o) === itemKey(x)); k++) x = { skill, lvl, seed: hash(date + '|' + i + '|' + k) % 2147483647 };
       out.push(x);

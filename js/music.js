@@ -717,7 +717,7 @@
     english: { icon: 'i-sound', ids: { young: ['mu.syll', 'mu.rhyme'], older: ['mu.syll', 'mu.rhyme'] } },
   };
   function run(subject, p) {
-    p = p || Store.current(); if (!p) return; const m = MODES[subject], ids = m.ids[p.band] || m.ids.older;
+    p = p || Store.current(); if (!p) return; const m = MODES[subject], ids = m.ids[AGE.band(p)] || m.ids.older;
     const due = Store.due(p, subject).filter(x => x.skill.startsWith('mu.')).slice(0, 1).map(x => ({ skill: x.skill, lvl: x.lvl, seed: x.seed }));
     const need = 5 - due.length, base = ids.slice(0, need).map(id => Engine.itemFor(p, id)); // every task type once, then weighted to low mastery
     const mix = [...base, ...Engine.weighted(p, ids, need - base.length)];

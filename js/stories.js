@@ -65,7 +65,9 @@
   function seedFor(idx, n) { for (let s = 1 + ((idx * 7919) % 50000), k = 0; k < 200000; s++, k++) if (Math.floor(Engine.rng(s)() * n) === idx) return s; return 1; }
 
   // ---------- helpers ----------
-  const pic = w => (w && window.PICS?.[w]) || null;
+  const pic = w => (w && (window.PICS?.[w] || window.PHOTOS?.[w])) || null;
+  // setting photos for pages that only had a rendered scene
+  const SCENE_PHOTO = { plates: 'laddu', pot: 'pongal', train: 'train', sprout: 'greengram', gauge: 'monsoon', palm: 'coconut', money: 'coin10', kite: 'kite', cup: 'rain', mat: 'market', bars: 'laddu' };
   const credit = w => { const p = pic(w); return p ? { src: p.src, credit: p.credit || 'Wikimedia Commons', href: p.page, alt: w } : null; };
   const L = o => (o ? (I18N.lang === 'ta' ? o.ta : o.en) : '');
   const enSpan = s => `<span lang="en">${esc(s)}</span>`;
@@ -184,6 +186,7 @@
   };
   const scene = sc => { try { return SC[sc.k] ? SC[sc.k](sc) : ''; } catch (e) { console.warn('scene', sc.k, e); return ''; } };
   function art(page, small) {
+    if (!page.pic && page.scene && pic(SCENE_PHOTO[page.scene.k]) && !small) page = { ...page, pic: SCENE_PHOTO[page.scene.k] };
     if (page.pic && pic(page.pic)) {
       const p = pic(page.pic), alt = I18N.lang === 'ta' ? (EN.WORDS[page.pic]?.ta || page.pic) : (EN.WORDS[page.pic]?.label || page.pic);
       return `<figure class="st-art photo ${small ? 'small' : ''}"><img src="${p.src}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('figure').classList.add('noimg')">${small ? '' : `<figcaption>${t('common.credit')}: <a href="${p.page}" target="_blank" rel="noopener">${esc(p.credit || 'Wikimedia Commons')}</a></figcaption>`}</figure>`;
@@ -195,7 +198,7 @@
   // ---------- progress: p.extras.stories = { r: { id: { pg, done, q:[right,n] } }, w: [tapped words], size } ----------
   function ex(p) { p.extras ??= {}; const e = (p.extras.stories ??= { r: {}, w: [] }); e.r ??= {}; e.w ??= []; return e; }
   const doneIn = (p, lvl) => STORIES.filter(s => s.lvl === lvl && ex(p).r[s.id]?.done).length;
-  const older = p => p.band !== 'young';
+  const older = p => AGE.band(p) !== 'young';
   function need(p, lvl) { // stories still to finish before level lvl opens
     if (lvl === 1 || (lvl === 2 && older(p))) return 0;
     const want = lvl === 3 && older(p) ? 1 : 2;

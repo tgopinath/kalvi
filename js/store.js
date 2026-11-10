@@ -34,15 +34,16 @@
     return s[id] ??= { lvl: null, m: 0, n: 0, ok: 0, run: 0, miss: 0, last: null };
   }
   // exact age fine-tunes the start inside the band: 9+ starts one level up where the band allows
-  function startLvl(p, sk) { const b = p.band, lo = sk.start(b), hi = sk.max(b); return p.age >= 9 ? Math.min(hi, lo + 1) : lo; }
+  function startLvl(p, sk) { return window.AGE ? AGE.startLevel(p, sk) : sk.start(p.band); }
+  const rng = (p, sk) => window.AGE ? AGE.range(p, sk) : [sk.min(p.band), sk.max(p.band)];
   function record(p, subject, sk, item, correct, meta = {}) {
     const st = skill(p, subject, sk.id);
     if (st.lvl == null) st.lvl = startLvl(p, sk);
     st.n++; if (correct) st.ok++;
     const w = 0.25 + 0.1 * (st.lvl - 1);           // harder levels move mastery further
     st.m = Math.min(1, Math.max(0, st.m + w * ((correct ? 1 : 0) - st.m)));
-    if (correct) { st.run++; st.miss = 0; if (st.run >= 3 && st.lvl < sk.max(p.band)) { st.lvl++; st.run = 0; } }
-    else { st.miss++; st.run = 0; if (st.miss >= 2 && st.lvl > sk.min(p.band)) { st.lvl--; st.miss = 0; } }
+    if (correct) { st.run++; st.miss = 0; if (st.run >= 3 && st.lvl < Math.max(rng(p, sk)[1], st.lvl >= rng(p, sk)[1] && st.m >= .9 ? st.lvl + 1 : 0) && st.lvl < Math.max(sk.max('young'), sk.max('older'))) { st.lvl++; st.run = 0; } }
+    else { st.miss++; st.run = 0; if (st.miss >= 2 && st.lvl > Math.min(sk.min('young'), sk.min('older'))) { st.lvl--; st.miss = 0; } }
     st.last = today();
     // Leitner
     const rq = p.subjects[subject].review, k = item.key;

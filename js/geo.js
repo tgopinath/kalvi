@@ -30,6 +30,8 @@
     himalaya: ['The Himalayas have the highest mountains on Earth.', 'இமயமலையில் உலகின் மிக உயரமான மலைகள் உள்ளன.'], thar: ['The Thar desert in Rajasthan gets very little rain.', 'இராஜஸ்தானில் உள்ள தார் பாலைவனத்தில் மிகக் குறைவாக மழை பெய்யும்.'], deccan: ['A plateau is high, mostly flat land. The Deccan covers much of south India.', 'பீடபூமி என்பது உயரமான, பெரும்பாலும் சமதளமான நிலம். தக்காணம் தென்னிந்தியாவின் பெரும் பகுதி.'], ghats: ['The Western Ghats catch monsoon rain and are full of forests.', 'மேற்குத் தொடர்ச்சி மலை பருவமழையைத் தடுத்துப் பெறுகிறது; காடுகள் நிறைந்தது.'], bay: ['Chennai’s coast faces the Bay of Bengal.', 'சென்னைக் கடற்கரை வங்காள விரிகுடாவை நோக்கியுள்ளது.'], arabian: ['The Arabian Sea lies to the west of India.', 'அரபிக் கடல் இந்தியாவின் மேற்கே உள்ளது.'], indian: ['India is a peninsula: water on three sides.', 'இந்தியா ஒரு தீபகற்பம்: மூன்று பக்கமும் நீர்.'],
   };
   const fact = k => FACT[k] ? L(FACT[k]) : '';
+  const GEOPH = { 'Chennai': 'chennai', 'Madurai': 'madurai', 'The Nilgiris': 'nilgiris', 'Kanniyakumari': 'kanyakumari', 'Thanjavur': 'thanjavur', kaveri: 'kaveri', vaigai: 'vaigai', thamirabarani: 'thamirabarani', ganga: 'ganga', himalaya: 'mountain', thar: 'desert', deccan: 'plateau', ghats: 'westernghats', 'Tamil Nadu': 'shoretemple', 'Rajasthan': 'desert', 'Uttar Pradesh': 'tajmahal', 'Maharashtra': 'gateway', 'Ladakh': 'mountain', 'cap:New Delhi': 'indiagate' };
+  const geoPhoto = k => { const q = window.PHOTOS?.[GEOPH[k]]; return q ? { src: q.src, credit: q.credit, href: q.page, alt: k } : null; };
   const CAP = { 'Tamil Nadu': ['Chennai', 'சென்னை'], 'Kerala': ['Thiruvananthapuram', 'திருவனந்தபுரம்'], 'Karnataka': ['Bengaluru', 'பெங்களூரு'], 'Maharashtra': ['Mumbai', 'மும்பை'], 'West Bengal': ['Kolkata', 'கொல்கத்தா'], 'Rajasthan': ['Jaipur', 'ஜெய்ப்பூர்'], 'Gujarat': ['Gandhinagar', 'காந்திநகர்'], 'Telangana': ['Hyderabad', 'ஹைதராபாத்'], 'Odisha': ['Bhubaneswar', 'புவனேஸ்வர்'], 'Bihar': ['Patna', 'பாட்னா'], 'Uttar Pradesh': ['Lucknow', 'லக்னோ'], 'Madhya Pradesh': ['Bhopal', 'போபால்'], 'Assam': ['Dispur', 'திஸ்பூர்'], 'Punjab': ['Chandigarh', 'சண்டிகர்'], 'Goa': ['Panaji', 'பனாஜி'] };
 
   // ---------- data ----------
@@ -83,8 +85,8 @@
         el.innerHTML = loadingHtml();
       },
       check() { return { correct: picked === target, given: picked ? name(picked) : '' }; },
-      why: { steps: [{ text: why || (t('geo.y.isHere', { p: esc(name(target)) }) + ' ' + esc(fact(factKey || target))), vis: '' }] } };
-    q.whyFor = () => ({ ...q.why, steps: [{ text: q.why.steps[0].text, vis: window.d3 ? draw(kind, { ...opt, answer: choices ? undefined : target, zoom: choices ? undefined : target, outline: choices ? undefined : target }) : '' }] });
+      why: { photo: geoPhoto(target), steps: [{ text: why || (t('geo.y.isHere', { p: esc(name(target)) }) + ' ' + esc(fact(factKey || target))), vis: '' }] } };
+    q.whyFor = () => ({ ...q.why, photo: geoPhoto(target), steps: [{ text: q.why.steps[0].text, vis: window.d3 ? draw(kind, { ...opt, answer: choices ? undefined : target, zoom: choices ? undefined : target, outline: choices ? undefined : target }) : '' }] });
     return q;
   }
 
@@ -148,7 +150,7 @@
   Engine.skill({ id: 'geo.land', subject: S, topic: 'geo', name: 'geo.mode.land.0', bands: { young: [1, 1], older: [1, 2] }, gen(l, r) {
     const G = tx('geo.land');
     if (l === 2 && r() < 0.5) { const c = r.pick(G.climate), idx = r.shuffle([0, 1, 2]); return { kind: 'choice', prompt: esc(c.q), choices: idx.map(i => ({ v: i, html: esc(c.o[i]) })), answer: 0, hints: [{ text: t('geo.h.zoom') }, { text: esc(c.why) }, { text: esc(c.o[0]) }], hintRevealsAnswer: true, why: { steps: [{ text: esc(c.why) }] } }; }
-    const [def, k] = r.pick(G.q), others = r.shuffle(Object.keys(G.names).filter(x => x !== k)).slice(0, 2), ph = window.PHOTOS?.[k];
+    const [def, k] = r.pick(G.q), others = r.shuffle(Object.keys(G.names).filter(x => x !== k)).slice(0, 2), ph = window.PHOTOS?.[k] || window.PHOTOS?.[{ peninsula: 'island', plain: 'farm' }[k]];
     return { kind: 'choice', prompt: esc(def), choices: r.shuffle([k, ...others]).map(x => ({ v: x, html: esc(G.names[x]) })), answer: k, answerText: esc(G.names[k]), hints: [{ text: esc(G.eg[k]) }, { text: esc(G.names[k][0]) + '…' }, { text: esc(G.names[k]) }], hintRevealsAnswer: true,
       why: { photo: ph ? { src: ph.src, credit: ph.credit, href: ph.page, alt: k } : null, steps: [{ text: `${esc(G.names[k])}: ${esc(def)}.` }, { text: esc(G.eg[k]) }] } };
   } });

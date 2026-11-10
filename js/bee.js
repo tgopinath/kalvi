@@ -160,14 +160,14 @@
   function start(p) {
     p = p || Store.current(); if (!p) return;
     const N = 10, items = [], seen = new Set();
-    const wordOf = it => wordFor(it.lvl, p.band, Engine.rng(it.seed));
+    const wordOf = it => wordFor(it.lvl, AGE.band(p), Engine.rng(it.seed));
     for (const r of Store.due(p, S).filter(r => r.skill === 'e.bee').slice(0, 4)) {
       const it = { skill: 'e.bee', lvl: r.lvl, seed: r.seed }, w = wordOf(it);
       if (!seen.has(w)) { seen.add(w); items.push(it); }
     }
     let guard = 0;
     while (items.length < N && guard++ < 200) { const it = Engine.itemFor(p, 'e.bee'), w = wordOf(it); if (!seen.has(w)) { seen.add(w); items.push(it); } }
-    round = { lives: bandOf(p.band) === 'older' ? 3 : null, streak: 0, best: 0, active: true };
+    round = { lives: bandOf(AGE.band(p)) === 'older' ? 3 : null, streak: 0, best: 0, active: true };
     const again = () => start(p);
     Engine.start({ items, title: t('bee.title'), mode: 'bee', subject: S, topic: 'spell', back: '#/s/english', again });
   }

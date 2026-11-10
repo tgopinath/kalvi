@@ -311,8 +311,8 @@
   function pool(p, topicId) {
     const tps = (window.App?.SUBJ?.maths?.topics || MATHS.TOPICS).filter(tp => (window.App?.forBand ? App.forBand(tp, p) : true) && (!topicId || tp.id === topicId));
     let ids = [...new Set(tps.flatMap(tp => MAP[tp.id] || []))];
-    if (p.band === 'young') ids = ids.filter(id => YOUNG.includes(id));
-    if (!ids.length) ids = topicId ? pool(p) : (p.band === 'young' ? YOUNG : IDS);
+    if (AGE.band(p) === 'young') ids = ids.filter(id => YOUNG.includes(id));
+    if (!ids.length) ids = topicId ? pool(p) : (AGE.band(p) === 'young' ? YOUNG : IDS);
     return ids.filter(id => Engine.SK[id]);
   }
   function items(p, ids, n = 10) {
@@ -354,7 +354,7 @@
       back: topicId ? `#/t/maths/${topicId}` : '#/s/maths', again: () => run(Store.current() || p, mode, topicId) });
   }
   function choose(p) {
-    if (p.band === 'young' || !window.App?.dialog) return run(p, QUICK);
+    if (AGE.band(p) === 'young' || !window.App?.dialog) return run(p, QUICK);
     const b = ex(p).best;
     App.dialog(`<h2 class="k-dialog-title">${t('mq.title')}</h2><p class="muted">${t('mq.ui.choose')}</p>
       <div class="mq-modes">

@@ -202,7 +202,7 @@
     { id: 'ta2', lay: 'ta', make: r => pickN(r, ['க', 'ப', 'ம', 'த', 'ந', 'ய'], 10).join(' ') },
     ...['ta3', 'ta4', 'ta5', 'ta6'].map(id => ({ id, lay: 'ta', make: r => some(r, TAW[id], 5).join(' ') })),
   ];
-  const lessonsFor = (p, lay) => LESSONS.filter(L => L.lay === lay && (p.band === 'older' || !L.older));
+  const lessonsFor = (p, lay) => LESSONS.filter(L => L.lay === lay && (AGE.band(p) === 'older' || !L.older));
 
   // ---------- state ----------
   let G = null;
@@ -210,9 +210,9 @@
   const coarse = () => matchMedia('(pointer: coarse)').matches;
   const X = p => { p.extras = p.extras || {}; return p.extras.typing ??= { done: {}, best: {}, lay: 'en' }; };
   function go() { if (location.hash.startsWith('#/typing')) App.route(); else location.hash = '#/typing'; }
-  function open(p) { G = { view: 'path', lay: p.band === 'older' ? X(p).lay || 'en' : 'en' }; go(); }
+  function open(p) { G = { view: 'path', lay: AGE.band(p) === 'older' ? X(p).lay || 'en' : 'en' }; go(); }
   function startLesson(id) {
-    const p = Store.current(), L = LESSONS.find(x => x.id === id), seed = Engine.newSeed(), r = Engine.rng(seed), young = p.band === 'young';
+    const p = Store.current(), L = LESSONS.find(x => x.id === id), seed = Engine.newSeed(), r = Engine.rng(seed), young = AGE.band(p) === 'young';
     const target = L.make(r, young), steps = L.lay === 'ta' ? taSteps(target) : enSteps(target);
     G = { ...G, view: 'drill', lesson: id, lay: L.lay, target, steps, i: 0, missAt: new Set(), miss: {}, t0: 0, young };
     draw();
@@ -222,7 +222,7 @@
   let main = null;
   function render(m) {
     main = m; const p = Store.current();
-    if (!G) G = { view: 'path', lay: p.band === 'older' ? X(p).lay || 'en' : 'en' };
+    if (!G) G = { view: 'path', lay: AGE.band(p) === 'older' ? X(p).lay || 'en' : 'en' };
     m.innerHTML = `<section class="page typing" data-subject="english">
       <a class="backlink" href="#/s/english"><svg class="k-icon"><use href="#i-back"/></svg>${t('subj.english.title')}</a>
       <p class="eyebrow">${t('games.title')}</p><div class="lesson-head"><h1 id="tyH">${t('typing.title')}</h1>${Engine.listenBtn('tylisten')}</div>
@@ -239,7 +239,7 @@
   }
   function listenSegs() {
     const L = G.lesson && LESSONS.find(x => x.id === G.lesson), segs = [];
-    if (G.view === 'path') segs.push({ text: t('typing.blurb') + (Store.current().band === 'older' ? ' ' + t('typing.rainBlurb') : ''), lang: I18N.lang });
+    if (G.view === 'path') segs.push({ text: t('typing.blurb') + (AGE.band(Store.current()) === 'older' ? ' ' + t('typing.rainBlurb') : ''), lang: I18N.lang });
     else if (G.view === 'rain') segs.push({ text: t('typing.rainBlurb'), lang: I18N.lang });
     else if (L) {
       segs.push({ text: t('typing.l.' + L.id) + '. ' + t('typing.tip.' + L.id), lang: I18N.lang });
@@ -251,7 +251,7 @@
   function setH(txt) { const h = main?.querySelector('#tyH'); if (h) h.textContent = txt; }
 
   function drawPath(el) {
-    const p = Store.current(), x = X(p), older = p.band === 'older', list = lessonsFor(p, G.lay);
+    const p = Store.current(), x = X(p), older = AGE.band(p) === 'older', list = lessonsFor(p, G.lay);
     setH(t('typing.title'));
     el.innerHTML = `<p class="ty-lead">${t('typing.blurb')}</p>
       ${older ? `<div class="ty-lay"><span class="eyebrow">${t('typing.layout')}</span><div class="seg" role="group" aria-label="${t('typing.layout')}">${['en', 'ta'].map(l => `<button type="button" data-lay="${l}" aria-pressed="${G.lay === l}">${t('typing.' + l)}</button>`).join('')}</div></div>` : ''}
