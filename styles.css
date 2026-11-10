@@ -479,3 +479,4 @@ body.no-profile .shell { display: block; }
 .credit-list li { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; font-size: 13px; line-height: 1.35; }
 .credit-list img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; background: var(--surface-sunken); }
 .credit-list span { display: grid; gap: 2px; overflow-wrap: anywhere; }
+main:focus, main:focus-visible { outline: none; }

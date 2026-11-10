@@ -31,7 +31,7 @@
 })();
 
 I18N.add({
-  app: { name: ['Kalvi', 'கல்வி'], tag: ['Maths, English and Science for ages 4 to 10', '4 முதல் 10 வயது வரை: கணக்கு, ஆங்கிலம், அறிவியல்'] },
+  app: { name: ['Kalvi', 'கல்வி'], tag: ['Maths, English, Science and World for ages 4 to 10', '4 முதல் 10 வயது வரை: கணக்கு, ஆங்கிலம், அறிவியல்'] },
   nav: { today: ['Today', 'இன்று'], maths: ['Maths', 'கணக்கு'], english: ['English', 'ஆங்கிலம்'], science: ['Science', 'அறிவியல்'], progress: ['Progress', 'முன்னேற்றம்'], grownups: ['Grown-ups', 'பெற்றோர்'], main: ['Main', 'முதன்மை'] },
   lang: { label: ['Language', 'மொழி'], en: ['EN', 'EN'], ta: ['தமிழ்', 'தமிழ்'], switch: ['Switch language', 'மொழியை மாற்று'], noTamilVoice: ['This device has no Tamil voice, so only English lines are read aloud. You can add a Tamil voice in the phone’s speech settings.', 'இந்தச் சாதனத்தில் தமிழ்க் குரல் இல்லை. அதனால் ஆங்கில வரிகள் மட்டும் படிக்கப்படும். தொலைபேசியின் பேச்சு அமைப்புகளில் தமிழ்க் குரலைச் சேர்க்கலாம்.'] },
   common: {
@@ -49,7 +49,7 @@ I18N.add({
   home: {
     eyebrow: ['Today', 'இன்று'], streak: ['Day streak', 'தொடர் நாட்கள்'], streakNone: ['Start a streak today', 'இன்று ஒரு தொடரைத் தொடங்கு'],
     answered: ['Answered today', 'இன்று பதில் அளித்தவை'], dueLabel: ['To review', 'மீண்டும் பார்க்க'],
-    warmTitle: ['Daily warm-up', 'தினசரிப் பயிற்சி'], warmBody: ['Six quick questions from Maths, English and Science. About three minutes.', 'கணக்கு, ஆங்கிலம், அறிவியலில் இருந்து ஆறு சிறு கேள்விகள். சுமார் மூன்று நிமிடம்.'],
+    warmTitle: ['Daily warm-up', 'தினசரிப் பயிற்சி'], warmBody: ['Eight quick questions from all four subjects. About four minutes.', 'நான்கு பாடங்களிலிருந்தும் எட்டு சிறு கேள்விகள். சுமார் நான்கு நிமிடம்.'],
     warmDone: ['Warm-up done for today. Come back tomorrow for a new one.', 'இன்றைய பயிற்சி முடிந்தது. நாளை புதியது வரும்.'], warmAgain: ['Do it again', 'மீண்டும் செய்'],
     reviewTitle: ['Review', 'மீள்பார்வை'], reviewBody: ['Tricky questions ready to try again: {n}.', 'மீண்டும் முயல தயாராக உள்ள கடினமான கேள்விகள்: {n}.'], reviewNone: ['Nothing to review today.', 'இன்று மீள்பார்க்க எதுவும் இல்லை.'],
     quizTitle: ['Science quiz', 'அறிவியல் வினாடி வினா'], quizBody: ['A short round of questions about the world around you, from magnets to monsoon.', 'காந்தம் முதல் பருவமழை வரை, உன்னைச் சுற்றியுள்ள உலகம் பற்றிய ஒரு சிறிய சுற்று.'],
