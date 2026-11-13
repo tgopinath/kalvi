@@ -14,14 +14,16 @@
   };
 
   // ======================= COUNTING =======================
+  // counters for counting: one whole object each on a clear background (Fluent 3D, MIT). Photos of several fruits or cut halves miscount.
+  const COUNTERS = ['mango', 'apple', 'orange', 'banana', 'lemon'];
   skill({ id: 'm.count', subject: S, topic: 'count', name: 'm.skill.count', bands: { young: [1, 3], older: [2, 4] }, gen(l, r) {
     const n = l === 1 ? r.int(1, 5) : l === 2 ? r.int(4, 10) : r.int(11, 20);
     const steps = [];
     if (n <= 10) { const a = Math.min(5, n), b = n - a; steps.push({ text: t('m.y.rows', { a, b }) }, { text: t('m.y.rowsSum', { a, b, n }) }); }
     else { steps.push({ text: t('m.y.frames', { r: n - 10 }) }, { text: t('m.y.framesSum', { r: n - 10, n }) }); }
     steps.push({ text: t('m.y.word', { n, en: I18N.numWord(n, 'en'), ta: I18N.numWord(n, 'ta') }) });
-    const fruit = n <= 10 && r() < 0.6 ? r.pick(['mango', 'apple', 'orange', 'banana', 'coconut', 'lemon'].filter(k => window.PICS?.[k])) : null;
-    if (fruit) { const src = PICS[fruit].src, nm = t('m.fruit.' + fruit); steps.unshift({ text: t('m.y.fruitRow', { n, f: nm }), vis: V.tenFrame({ n, frames: 1 }) });
+    const fruit = n <= 10 && r() < 0.6 ? r.pick(COUNTERS) : null;
+    if (fruit) { const src = `img/counters/${fruit}.webp`, nm = t('m.fruit.' + fruit); steps.unshift({ text: t('m.y.fruitRow', { n, f: nm }), vis: V.tenFrame({ n, frames: 1 }) });
       return { kind: 'num', prompt: t('m.q.countFruit', { f: nm }), visual: `<div class="fruitrow" aria-label="${n}">${Array.from({ length: n }, () => `<img src="${src}" alt="">`).join('')}</div>`, boardClass: 'light', answer: n, hints: [t('m.h.countTouch'), t('m.h.count')], why: { steps, photo: { src, credit: PICS[fruit].credit, href: PICS[fruit].page, alt: fruit } } }; }
     return { kind: 'num', prompt: t('m.q.count'), visual: V.tenFrame({ n, frames: n > 10 ? 2 : 1, label: t('m.ui.counters', { n: '?' }) }), answer: n, hints: [t('m.h.count'), t('m.h.count2')], why: { steps } };
   } });

@@ -24,11 +24,11 @@
   const numChoices = (vals, young) => vals.map(v => ({ v, html: big(v), ...(young ? { say: sayNum(v) } : {}) }));
 
   // ---------- real photos (vetted, from PICS) ----------
-  const FRUITS = ['mango', 'apple', 'banana', 'orange', 'lemon', 'tomato', 'coconut', 'carrot'];
-  const fruits = () => FRUITS.filter(w => window.PICS?.[w]);
+  const FRUITS = ['mango', 'apple', 'banana', 'orange', 'lemon', 'tomato', 'carrot'];   // img/counters: one whole object per picture
+  const fruits = () => FRUITS;
   const things = f => t('mq.things.' + f);
   function picGrid(f, n, small) {
-    const src = window.PICS?.[f]?.src; if (!src) return V.tenFrame({ n, frames: Math.max(1, Math.ceil(n / 10)) });
+    const src = `img/counters/${f}.webp`; if (!f) return V.tenFrame({ n, frames: Math.max(1, Math.ceil(n / 10)) });
     let rows = ''; for (let i = 0; i < n; i += 5) rows += `<span class="mq-row">${`<img src="${src}" alt="" draggable="false">`.repeat(Math.min(5, n - i))}</span>`;
     return `<div class="mq-pics ${small ? 'sm' : ''}" role="img" aria-label="${t('mq.ui.picsOf', { things: things(f) })}">${rows}</div>`;
   }
@@ -61,7 +61,7 @@
     const young = c.band === 'young', asChoice = young || n <= 10;
     const q = { prompt: t('mq.q.howMany', { things: things(f) }), visual: picGrid(f, n), answer: n,
       hints: ladder(t('mq.h.pics1'), { text: n > 5 ? t('mq.h.pics2') : t('mq.h.pics2s'), vis: frame(Math.min(n, 5)) }, { text: t('mq.h.ans', { a: n }), vis: frame(n) }),
-      why: { steps: [fivesStep(n), wordStep(n)], photo: photo(f) } };
+      why: { steps: [fivesStep(n), wordStep(n)] } };
     if (asChoice) Object.assign(q, { kind: 'choice', choices: numChoices(near(r, n, l === 1 ? 2 : 3, 1, 10, 2), young), answerText: String(n) });
     else q.kind = 'num';
     return q;
@@ -77,7 +77,7 @@
         choices: [['a', a, 1], ['b', b, 2]].map(([v, n, i]) => ({ v, vis: picGrid(f, n, true), html: t('mq.ui.plate', { n: i }), say: [{ text: t('mq.ui.groupOf', { n, things: things(f) }), lang: I18N.lang }] })),
         answer: ans, answerText: t('mq.ui.groupOf', { n: more ? hi : lo, things: things(f) }),
         hints: ladder(t('mq.h.cmp1'), { text: t('mq.h.cmp2', { a, b }), vis: V.towers([a, b]) }, t('mq.h.pickPlate', { n: ans === 'a' ? 1 : 2 })),
-        why: { steps: [{ text: t('mq.y.tower', { big: hi, small: lo }), vis: V.towers([a, b]) }, { text: more ? t('mq.y.moreIs', { big: hi, small: lo }) : t('mq.y.fewerIs', { big: hi, small: lo }) }], photo: photo(f) } };
+        why: { steps: [{ text: t('mq.y.tower', { big: hi, small: lo }), vis: V.towers([a, b]) }, { text: more ? t('mq.y.moreIs', { big: hi, small: lo }) : t('mq.y.fewerIs', { big: hi, small: lo }) }] } };
     }
     const max = [0, 20, 99, 999][l - 1], min = l === 2 ? 1 : l === 3 ? 10 : 100;
     let a = r.int(min, max), b = r() < 0.15 ? a : r.int(min, max);
@@ -99,7 +99,7 @@
       return { kind: 'choice', prompt: t('mq.q.inAll', { a, b, things: things(f) }), visual: `<div class="mq-plus">${picGrid(f, a)}<b aria-hidden="true">+</b>${picGrid(f, b)}</div>`,
         choices: numChoices(near(r, s, 3, 1, 10, 2), c.band === 'young'), answer: s, answerText: String(s),
         hints: ladder(t('mq.h.add1'), { text: t('mq.y.countOn', { a: Math.max(a, b), b: Math.min(a, b), s: '…' }), vis: V.numberLine({ from: 0, to: 10, mark: Math.max(a, b), highlight: [Math.max(a, b)] }) }, { text: t('mq.h.ans', { a: s }), vis: V.tenFrame({ n: a, n2: b }) }),
-        why: { steps: [{ text: t('mq.y.sumFrame', { a, b, s }), vis: V.tenFrame({ n: a, n2: b }) }, { text: t('mq.y.countOn', { a: Math.max(a, b), b: Math.min(a, b), s }), vis: V.numberLine({ from: 0, to: 10, hops: [[Math.max(a, b), s]], mark: s, highlight: [Math.max(a, b), s] }) }], photo: photo(f) } };
+        why: { steps: [{ text: t('mq.y.sumFrame', { a, b, s }), vis: V.tenFrame({ n: a, n2: b }) }, { text: t('mq.y.countOn', { a: Math.max(a, b), b: Math.min(a, b), s }), vis: V.numberLine({ from: 0, to: 10, hops: [[Math.max(a, b), s]], mark: s, highlight: [Math.max(a, b), s] }) }] } };
     }
     const add = l === 2 || r() < 0.55;
     if (l <= 3) {
@@ -155,7 +155,7 @@
         choices: [{ v: true, html: icon('i-check', 'mq.ui.yes'), say: [{ text: t('mq.ui.yes'), lang: I18N.lang }] }, { v: false, html: icon('i-close', 'mq.ui.no'), say: [{ text: t('mq.ui.no'), lang: I18N.lang }] }],
         answer: right, answerText: t(right ? 'mq.ui.yes' : 'mq.ui.no'),
         hints: ladder(t('mq.h.tfPic1'), fivesStep(n), t('mq.h.ans', { a: t(right ? 'mq.ui.yes' : 'mq.ui.no') })),
-        why: { steps: [fivesStep(n), { text: right ? t('mq.y.picTrue', { n, things: things(f) }) : t('mq.y.picFalse', { n, c: cl, things: things(f) }) }], photo: photo(f) } };
+        why: { steps: [fivesStep(n), { text: right ? t('mq.y.picTrue', { n, things: things(f) }) : t('mq.y.picFalse', { n, c: cl, things: things(f) }) }] } };
     }
     let e, res, vis;
     if (l === 2) { const a = r.int(3, 9), b = r.int(2, 9); e = `${a} + ${b}`; res = a + b; vis = V.tenFrame({ n: a, n2: b, frames: 2 }); }
