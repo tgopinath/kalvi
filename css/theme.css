@@ -247,3 +247,4 @@ html.k-ios .sbanner h1 .sbanner-name { display: none; }   /* the subject name is
 html.k-ios .sbanner h1 .stk { position: static; margin-left: 0; }
 html.k-ios main:focus { outline: none; }   /* main takes focus after each route; it is not a control */
 html.k-ios .speechcard { bottom: calc(96px + env(safe-area-inset-bottom)); border-radius: 22px; }   /* above the floating tab bar */
+html.k-ios .agefirst > h1.big { display: none; }   /* first-run question is the large title */
