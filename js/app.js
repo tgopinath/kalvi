@@ -44,7 +44,7 @@
   }
   $('#whoBtn').onclick = () => {
     const db = Store.db;
-    dialog(`<h2 class="k-dialog-title">${t('prof.whoIs')}</h2><ul class="who-list">${db.profiles.map(p => `<li><button type="button" class="who-item" data-id="${p.id}" ${p.id === db.current ? 'aria-current="true"' : ''}>${avatar(p, 40)}<span><b>${esc(p.name)}</b><small>${t('prof.ageIs', { n: p.age })}</small></span>${p.id === db.current ? `<span class="k-badge k-badge-pill">${t('prof.current')}</span>` : ''}</button></li>`).join('')}</ul><p class="muted small">${t('prof.manage')}</p><div class="k-dialog-actions"><a class="k-btn k-btn-ghost" href="#/parent" data-close>${t('nav.grownups')}</a><button class="k-btn k-btn-outline" data-close>${t('common.close')}</button></div>`,
+    dialog(`<h2 class="k-dialog-title">${t('prof.whoIs')}</h2><ul class="who-list">${db.profiles.map(p => `<li><button type="button" class="who-item" data-id="${p.id}" ${p.id === db.current ? 'aria-current="true"' : ''}>${avatar(p, 40)}<span><b>${esc(p.name)}</b><small>${t('prof.ageIs', { n: p.age })}</small></span>${p.id === db.current ? `<span class="k-badge k-badge-pill">${t('prof.current')}</span>` : ''}</button></li>`).join('')}</ul><p class="muted small">${t('prof.manage')}</p><div class="k-dialog-actions"><a class="k-btn k-btn-ghost k-android-only" href="#/progress" data-close>${t('nav.progress')}</a><a class="k-btn k-btn-ghost" href="#/parent" data-close>${t('nav.grownups')}</a><button class="k-btn k-btn-outline" data-close>${t('common.close')}</button></div>`,
       d => $$('.who-item', d).forEach(b => b.onclick = () => { Store.select(b.dataset.id); closeDialog(); Voice.stop(); applyLang(); location.hash = '#/'; route(); }));
   };
   function dialog(html, bind) {
@@ -341,6 +341,55 @@
     else notFound();
     if (!['', undefined, 's', 't'].includes(r)) document.getElementById('guide')?.remove();
     if (r !== 'round') { main.focus({ preventScroll: true }); scrollTo(0, 0); }
+    m3Sync(r, parts);
+  }
+
+  // ---------- Android app mode (Material Design 3, from the shared Kolam M3 kit) ----------
+  // Only inside the Android app (or ?app=android); in a browser KolamM3.init returns a stub and nothing changes.
+  const M3_SUBJ = ['maths', 'english', 'science', 'world'];
+  const M3_TITLES = { stories: 'stories.title', lab: 'lab.title', geo: 'geo.title', videos: 'videos.title', coding: 'coding.title', typing: 'typing.title', progress: 'nav.progress', parent: 'nav.grownups' };
+  let m3Subj = null;
+  const m3Actions = () => {
+    const p = Store.current(), ta = I18N.lang === 'ta';
+    return [
+      { id: 'm3Sound', icon: PLAY.soundOn ? 'volume_up' : 'volume_off', label: PLAY.soundOn ? t('play.soundOn') : t('play.soundOff'), onClick: () => { PLAY.setSound(!PLAY.soundOn); m3.setActions(m3Actions()); } },
+      { id: 'm3Lang', text: ta ? 'EN' : 'த', lang: ta ? 'en' : 'ta', label: t('lang.switch'), onClick: () => $(`#langToggle button[data-l="${ta ? 'en' : 'ta'}"]`).click() },
+      ...(p ? [{ id: 'm3Who', icon: 'account_circle', label: `${t('prof.switchTo')}: ${p.name}`, onClick: () => $('#whoBtn').click() }] : []),
+    ];
+  };
+  const m3 = window.KolamM3 ? KolamM3.init({
+    primary: '#5a4ae0', title: 'Kalvi',
+    destinations: [
+      { id: 'home', label: t('nav.today'), icon: 'home', href: '#/' },
+      { id: 'maths', label: t('nav.maths'), icon: 'calculate', href: '#/s/maths' },
+      { id: 'english', label: t('nav.english'), icon: 'menu_book', href: '#/s/english' },
+      { id: 'science', label: t('nav.science'), icon: 'science', href: '#/s/science' },
+      { id: 'world', label: t('nav.world'), icon: 'public', href: '#/s/world' },
+    ],
+    actions: m3Actions(), icons: ['volume_up', 'volume_off', 'account_circle', 'insights', 'lock'],
+    hide: ['.topbar', '#nav'],
+    // the child switcher and other Kalvi dialogs are not <dialog>s: Back closes them first
+    onBack: () => { if ($('#dialogs').innerHTML.trim()) { closeDialog(); return true; } },
+  }) : { enabled: false };
+  function m3Sync(r, parts) {
+    if (!m3.enabled) return;
+    if (r === 's' || r === 't') m3Subj = M3_SUBJ.includes(parts[1]) ? parts[1] : m3Subj;
+    const h1 = main.querySelector('h1')?.textContent.trim();
+    const title = !r ? t('app.name') : r === 's' ? t('nav.' + parts[1]) : (h1 && h1.length < 40 ? h1 : M3_TITLES[r] ? t(M3_TITLES[r]) : t('app.name'));
+    m3.setTitle(title);
+    // Tamil nav labels follow the language; full names stay as accessible names
+    document.querySelectorAll('.md-nav-item').forEach(el => { const l = el.querySelector('.md-nav-label'), k = el.dataset.dest === 'home' ? 'nav.today' : 'nav.' + el.dataset.dest;
+      l.textContent = t(k); l.lang = I18N.lang; el.setAttribute('aria-label', t(k)); });
+    document.querySelector('.md-navigation-bar')?.setAttribute('aria-label', t('nav.main'));
+    m3.setActions(m3Actions());
+    // the kit resets its overrides on each route change (its listener runs after ours), so set them just after
+    setTimeout(() => {
+      if (!r) return;
+      const up = main.querySelector('.backlink, .dr-backlink')?.getAttribute('href');   // the page's own "back to …" link (hidden in the app)
+      if (r === 't') { m3.setActive(parts[1]); m3.setBack('#/s/' + parts[1]); }
+      else if (r !== 's' && m3Subj && !['progress', 'parent', 'profile', 'credits'].includes(r)) { m3.setActive(m3Subj); m3.setBack(up || '#/s/' + m3Subj); }
+      else if (r !== 's') { m3.setActive(null); if (up) m3.setBack(up); }
+    });
   }
   addEventListener('hashchange', route);
   addEventListener('keydown', e => { const v = document.body.dataset.view; if (v === 'round') Engine.keys(e); else window.ROUTES[v]?.keys?.(e); });

@@ -211,3 +211,16 @@ body:has(#guide) .hero .mani { display: none; }
 body[class*="age-"] .choice, body[class*="age-"] .numpad button, body[class*="age-"] .agetile, body[class*="age-"] .stop .playbtn { min-height: var(--tgt, 48px); }
 body.age-3 .qprompt, body.age-4 .qprompt { font-size: calc(30px * var(--age-scale, 1)); }
 body.age-3 .choice, body.age-4 .choice { font-size: 26px; }
+
+/* ---------- Android app mode (Material Design 3) ----------
+   kolam/m3/kolam-m3.css (loaded after this file) builds the app bar and navigation bar and maps the Kolam tokens
+   onto M3 colour roles. Kalvi keeps its subject colours and toy-like cards; here only the app chrome and shared
+   pieces get M3 shapes. Only html.k-android (inside the Android app) is touched; the website is unchanged. */
+html.k-android .md-top-app-bar__title { font: var(--md-sys-typescale-title-large); font-family: var(--font-sans); text-transform: none; letter-spacing: 0; }
+html.k-android body.lang-ta .md-top-app-bar__title { font-size: 20px; }
+html.k-android .md-nav-label:lang(ta) { font-weight: 400; padding: 0; letter-spacing: 0; }   /* Tamil labels fit the 5-item bar without clipping */
+html.k-android .backlink, html.k-android .dr-backlink { display: none; }                      /* the app bar's arrow and the phone's Back replace them */
+html.k-android body { background: var(--md-sys-color-surface); }
+html.k-android .k-dialog { border-radius: var(--md-sys-shape-corner-extra-large); background: var(--md-sys-color-surface-container-high); box-shadow: var(--md-sys-elevation-level3); border: 0; }
+html.k-android .k-dialog-title { font: var(--md-sys-typescale-headline-small); font-family: var(--font-sans); text-transform: none; }
+html.k-android .k-btn { border-radius: var(--md-sys-shape-corner-full); }
