@@ -14,6 +14,7 @@ node tools/check-i18n.mjs       # every string has English and Tamil
 node tools/shots.mjs verify     # screenshots in .work/shots (needs the server)
 ```
 Module contract for contributors: `docs/MODULES.md`.
+Architecture: see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Sources and credits
 Vocabulary photos: Wikipedia and Wikimedia Commons (credited per picture in the app). Body pictures: CC-licensed Sketchfab models via Udambu. Weather: Open-Meteo. Fonts: Lato and Noto Sans Tamil (SIL OFL), bundled.
