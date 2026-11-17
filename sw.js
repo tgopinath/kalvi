@@ -1,6 +1,6 @@
 // Kalvi offline shell: app files are cached as they are fetched (network first, cache fallback);
 // Wikimedia pictures are cached on first view.
-const SHELL = 'kalvi-shell-v1', IMG = 'kalvi-img-v1';
+const SHELL = 'kalvi-shell-v2-ios', IMG = 'kalvi-img-v1';
 const CORE = ['./', 'index.html', 'styles.css', 'kolam/tokens.css', 'kolam/kolam.css', 'manifest.json', 'icon.svg', 'icon-192.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(CORE))); self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL && k !== IMG).map(k => caches.delete(k)))).then(() => self.clients.claim())));

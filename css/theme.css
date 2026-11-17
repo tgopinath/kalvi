@@ -224,3 +224,26 @@ html.k-android body { background: var(--md-sys-color-surface); }
 html.k-android .k-dialog { border-radius: var(--md-sys-shape-corner-extra-large); background: var(--md-sys-color-surface-container-high); box-shadow: var(--md-sys-elevation-level3); border: 0; }
 html.k-android .k-dialog-title { font: var(--md-sys-typescale-headline-small); font-family: var(--font-sans); text-transform: none; }
 html.k-android .k-btn { border-radius: var(--md-sys-shape-corner-full); }
+
+/* ---------- iPhone app mode (Apple HIG) ----------
+   kolam/ios/kolam-ios.css (loaded after this file) builds the navigation bar and the Liquid Glass tab bar and maps the
+   Kolam tokens onto iOS system colours (Kalvi stays light). Kalvi keeps its subject colours and toy-like cards; here the
+   app chrome and shared pieces get iOS shapes. Only html.k-ios (inside the iPhone app, or ?app=ios) is touched. */
+html.k-ios .topbar, html.k-ios #nav, html.k-ios .backlink, html.k-ios .dr-backlink { display: none !important; }   /* nav bar, tab bar and edge swipe replace them */
+html.k-ios .app-progress { display: inline-flex !important; }
+html.k-ios body { background: var(--ios-grouped); padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+html.k-ios body[data-view="round"] .ios-tabbar, html.k-ios body[data-view="memory"] .ios-tabbar, html.k-ios body.no-profile .ios-tabbar { display: none; }
+html.k-ios .shell main { padding-top: 4px; }
+html.k-ios main > .page > h1:first-child, html.k-ios main > section > h1:first-child { font-family: var(--ios-font-display); }
+html.k-ios body.lang-ta :is(.ios-navbar-title, .ios-largetitle) { font-family: "Noto Sans Tamil", var(--ios-font); }
+html.k-ios body.lang-ta .ios-largetitle { font-size: 28px; line-height: 1.4; }
+html.k-ios .ios-tab span:lang(ta) { font-size: 9px; letter-spacing: 0; }
+html.k-ios .k-dialog { border-radius: 26px; border: 0; background: var(--ios-elevated); box-shadow: 0 16px 48px rgba(0,0,0,.18); }
+html.k-ios .k-dialog-title { font: 600 17px/22px var(--ios-font); text-transform: none; letter-spacing: -.02em; text-align: center; }
+html.k-ios .k-btn { border-radius: 999px; font-family: var(--ios-font); }
+html.k-ios .k-btn:active { opacity: .6; }
+html.k-ios :is(.ios-navbar-title, .ios-largetitle) { text-transform: none; }   /* Kalvi's display headings are uppercase; iOS titles are not */
+html.k-ios .sbanner h1 .sbanner-name { display: none; }   /* the subject name is the navigation bar's large title */
+html.k-ios .sbanner h1 .stk { position: static; margin-left: 0; }
+html.k-ios main:focus { outline: none; }   /* main takes focus after each route; it is not a control */
+html.k-ios .speechcard { bottom: calc(96px + env(safe-area-inset-bottom)); border-radius: 22px; }   /* above the floating tab bar */

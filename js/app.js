@@ -44,7 +44,7 @@
   }
   $('#whoBtn').onclick = () => {
     const db = Store.db;
-    dialog(`<h2 class="k-dialog-title">${t('prof.whoIs')}</h2><ul class="who-list">${db.profiles.map(p => `<li><button type="button" class="who-item" data-id="${p.id}" ${p.id === db.current ? 'aria-current="true"' : ''}>${avatar(p, 40)}<span><b>${esc(p.name)}</b><small>${t('prof.ageIs', { n: p.age })}</small></span>${p.id === db.current ? `<span class="k-badge k-badge-pill">${t('prof.current')}</span>` : ''}</button></li>`).join('')}</ul><p class="muted small">${t('prof.manage')}</p><div class="k-dialog-actions"><a class="k-btn k-btn-ghost k-android-only" href="#/progress" data-close>${t('nav.progress')}</a><a class="k-btn k-btn-ghost" href="#/parent" data-close>${t('nav.grownups')}</a><button class="k-btn k-btn-outline" data-close>${t('common.close')}</button></div>`,
+    dialog(`<h2 class="k-dialog-title">${t('prof.whoIs')}</h2><ul class="who-list">${db.profiles.map(p => `<li><button type="button" class="who-item" data-id="${p.id}" ${p.id === db.current ? 'aria-current="true"' : ''}>${avatar(p, 40)}<span><b>${esc(p.name)}</b><small>${t('prof.ageIs', { n: p.age })}</small></span>${p.id === db.current ? `<span class="k-badge k-badge-pill">${t('prof.current')}</span>` : ''}</button></li>`).join('')}</ul><p class="muted small">${t('prof.manage')}</p><div class="k-dialog-actions"><a class="k-btn k-btn-ghost k-android-only app-progress" href="#/progress" data-close>${t('nav.progress')}</a><a class="k-btn k-btn-ghost" href="#/parent" data-close>${t('nav.grownups')}</a><button class="k-btn k-btn-outline" data-close>${t('common.close')}</button></div>`,
       d => $$('.who-item', d).forEach(b => b.onclick = () => { Store.select(b.dataset.id); closeDialog(); Voice.stop(); applyLang(); location.hash = '#/'; route(); }));
   };
   function dialog(html, bind) {
@@ -162,7 +162,7 @@
     const p = Store.current(), S = SUBJ[s]; if (!S) return notFound();
     const tps = S.topics, next = nextTopic(p, s), stars = tps.reduce((a, tp) => a + PLAY.starsFor(p, tp), 0);
     main.innerHTML = `<section class="page subject" data-subject="${s}">
-      <div class="hero sbanner">${deco()}<p class="eyebrow">${t('subj.path')}</p><h1>${t('subj.' + s + '.title')} <span class="stk ${STK[Store.SUBJECTS.indexOf(s)]}">${t('play.starsOf', { a: stars, b: tps.length * 3 })}</span></h1><p class="lede">${t('subj.' + s + '.blurb')}</p>${Engine.listenBtn('slisten')}</div>
+      <div class="hero sbanner">${deco()}<p class="eyebrow">${t('subj.path')}</p><h1><span class="sbanner-name">${t('subj.' + s + '.title')}</span> <span class="stk ${STK[Store.SUBJECTS.indexOf(s)]}">${t('play.starsOf', { a: stars, b: tps.length * 3 })}</span></h1><p class="lede">${t('subj.' + s + '.blurb')}</p>${Engine.listenBtn('slisten')}</div>
       <div class="journey">${tps.map((tp, i) => { const st = PLAY.starsFor(p, tp), isNext = tp === next, later = !forBand(tp, p); return `<a class="stop ${isNext ? 'next' : ''} ${later ? 'later' : ''}" ${later ? `data-locked="${s}:${tp.id}" data-min="${AGE.topicMin(s, tp.id)}"` : ''} href="#/t/${s}/${tp.id}" title="${esc(t(tp.blurb))}" aria-label="${esc(t(tp.title))}. ${t('play.starsOf', { a: st, b: 3 })}"><span class="num">${String(i + 1).padStart(2, '0')}</span><div class="blobart">${icon(ICON['t:' + s]?.[tp.id] || ICON[s])}</div><h3 class="stop-title stop-name">${t(tp.title)}</h3>${later ? `<span class="stk mint" style="--r:-3deg">${t('age.older', { n: AGE.topicMin(s, tp.id) })}</span>` : PLAY.starRow(st)}${isNext ? `<span class="k-btn k-btn-primary playbtn">${t('play.play')}</span>` : ''}</a>`; }).join('')}</div>
       <h2 class="section">${t('play.shelf')}</h2><div class="games">${gameCards(p, [s])}</div>
     </section>`;
@@ -342,6 +342,7 @@
     if (!['', undefined, 's', 't'].includes(r)) document.getElementById('guide')?.remove();
     if (r !== 'round') { main.focus({ preventScroll: true }); scrollTo(0, 0); }
     m3Sync(r, parts);
+    iosSync(r, parts);
   }
 
   // ---------- Android app mode (Material Design 3, from the shared Kolam M3 kit) ----------
@@ -390,6 +391,46 @@
       else if (r !== 's' && m3Subj && !['progress', 'parent', 'profile', 'credits'].includes(r)) { m3.setActive(m3Subj); m3.setBack(up || '#/s/' + m3Subj); }
       else if (r !== 's') { m3.setActive(null); if (up) m3.setBack(up); }
     });
+  }
+
+  // ---------- iPhone app mode (Apple HIG, from the shared Kolam iOS kit; local copy in kolam/ios) ----------
+  // Only inside the Kalvi-iOS shell (or ?app=ios); KolamIOS.init returns null in a browser and nothing changes.
+  // If both kits match, iOS wins (the M3 classes are removed).
+  const svgUse = id => `<svg class="ios-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
+  const IOS_TABS = [['home', '#/', 'i-home', 'nav.today'], ['maths', '#/s/maths', 'i-maths', 'nav.maths'], ['english', '#/s/english', 'i-english', 'nav.english'], ['science', '#/s/science', 'i-science', 'nav.science'], ['world', '#/s/world', 'i-globe', 'nav.world']];
+  const ios = window.KolamIOS && (KolamIOS.isIOS || KolamIOS.detect(['Kalvi-iOS'])) ? KolamIOS.init({
+    appName: 'Kalvi', uaTokens: ['Kalvi-iOS'], tint: '#4a3bcc',
+    tabs: IOS_TABS.map(([id, href, ic, k]) => ({ id, label: t(k), icon: svgUse(ic), href })), currentTab: 'home', content: '#main',
+  }) : null;
+  if (ios) document.documentElement.classList.remove('k-android', 'k-app');
+  let iosSubj = null;
+  const iosActions = () => {
+    const p = Store.current(), ta = I18N.lang === 'ta';
+    return [
+      { id: 'iosSound', icon: svgUse(PLAY.soundOn ? 'i-sound' : 'i-mute'), label: PLAY.soundOn ? t('play.soundOn') : t('play.soundOff'), onClick: () => { PLAY.setSound(!PLAY.soundOn); iosSync(document.body.dataset.view === 'home' ? '' : location.hash.split('/')[1], location.hash.replace(/^#/, '').split('/').filter(Boolean)); } },
+      { id: 'iosLang', text: ta ? 'EN' : 'த', label: t('lang.switch'), onClick: () => $(`#langToggle button[data-l="${ta ? 'en' : 'ta'}"]`).click() },
+      ...(p ? [{ id: 'iosWho', icon: svgUse('i-user'), label: `${t('prof.switchTo')}: ${p.name}`, onClick: () => $('#whoBtn').click() }] : []),
+    ];
+  };
+  function iosSync(r, parts) {
+    if (!ios) return;
+    const ta = I18N.lang === 'ta';
+    if (r === 's' || r === 't') iosSubj = M3_SUBJ.includes(parts[1]) ? parts[1] : iosSubj;
+    const h1 = main.querySelector('h1')?.textContent.trim();
+    const root = !r || r === 's';
+    const title = !r ? t('nav.today') : r === 's' ? t('nav.' + parts[1]) : (h1 && h1.length < 40 ? h1 : M3_TITLES[r] ? t(M3_TITLES[r]) : t('app.name'));
+    // tab labels follow the language; full names stay as accessible names
+    document.querySelectorAll('.ios-tab').forEach((el, i) => { const s = el.querySelector('span'); s.textContent = t(IOS_TABS[i][3]); s.lang = I18N.lang; el.setAttribute('aria-label', t(IOS_TABS[i][3])); });
+    document.querySelector('.ios-tabbar')?.setAttribute('aria-label', t('nav.main'));
+    const tab = !r ? 'home' : (r === 's' || r === 't') ? parts[1] : (iosSubj && !['progress', 'parent', 'profile', 'credits'].includes(r)) ? iosSubj : null;
+    KolamIOS.tabBar.select(tab);
+    const upHref = main.querySelector('.backlink, .dr-backlink')?.getAttribute('href') || (r === 't' ? '#/s/' + parts[1] : tab && tab !== 'home' && !root ? '#/s/' + tab : null);
+    const upLabel = upHref === '#/parent' ? t('nav.grownups') : /^#\/s\//.test(upHref || '') ? t('nav.' + upHref.slice(4)) : t('nav.today');
+    if (root || r === 'profile' && !upHref) KolamIOS.navBar.set({ title, large: true, actions: iosActions(), keepTitle: true });
+    else KolamIOS.navBar.set({ title, back: { label: upLabel, onClick: () => (history.length > 1 ? history.back() : (location.hash = upHref || '#/')) }, actions: iosActions(), keepTitle: true });
+    document.querySelectorAll('.ios-navbar-title, .ios-largetitle').forEach(e => (ta ? e.setAttribute('lang', 'ta') : e.removeAttribute('lang')));
+    document.querySelector('.ios-navbar #iosLang')?.setAttribute('lang', ta ? 'en' : 'ta');
+    KolamIOS.enhance(main);
   }
   addEventListener('hashchange', route);
   addEventListener('keydown', e => { const v = document.body.dataset.view; if (v === 'round') Engine.keys(e); else window.ROUTES[v]?.keys?.(e); });
