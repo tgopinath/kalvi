@@ -1,6 +1,6 @@
 // Age matrix: for ages 3–10 in EN and Tamil, start every unlocked game and assert round size, choice counts and unlocks
 // match the AGE table. node tools/age-matrix.mjs
-import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const { chromium } = require('playwright');
 const B = process.env.KALVI_URL || 'http://localhost:5330/';
 const prof = age => JSON.stringify({ profiles: [{ id: 'ca', name: 'Anu', age, color: '#0c7777', created: 1, updated: 1, subjects: { maths: { skills: {}, review: {}, lessons: {} }, english: { skills: {}, review: {}, lessons: {} }, science: { skills: {}, review: {}, lessons: {} }, world: { skills: {}, review: {}, lessons: {} } }, days: {}, sessions: [], settings: { rate: .9 } }], current: 'ca', updated: 1 });
 const br = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' }); const fails = []; let runs = 0;

@@ -2,7 +2,7 @@
 //   node tools/shots.mjs verify   → .work/shots/core-*.png (phone, EN + Tamil)
 //   node tools/shots.mjs card     → prototype/shots/*.jpg (600-wide phone JPEGs) + prototype/shots/web-desktop.jpg (1440×900)
 import { createRequire } from 'node:module'; import fs from 'node:fs'; import path from 'node:path';
-const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const { chromium } = require('playwright');
 const ROOT = path.resolve(import.meta.dirname, '..'), BASE = process.env.KALVI_URL || 'http://localhost:5330/';
 const mode = process.argv[2] || 'verify';
 const profile = (lang, band = 'young', extra = {}) => JSON.stringify({ profiles: [{ id: 'cshot', name: lang === 'ta' ? 'அனு' : 'Anu', band, avatar: 'cone', color: '#16a39c', lang, created: 1, updated: 1,

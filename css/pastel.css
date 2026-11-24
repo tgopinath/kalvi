@@ -1,0 +1,139 @@
+/* Kalvi Pastel: a softer, richer pastel palette over the Kalvi Play layout (same screens, Mani, cards, path and games).
+   Loaded after theme.css. Scoped to html:not(.k-ios) so the iPhone app keeps its Apple HIG look; the website and the
+   Android app's content get it. All readable text is the deep ink or a deep shade of a hue: never pastel on pastel.
+   Contrast pairs are checked by tools/contrast.mjs (tokens) and tools/pastel-contrast.mjs (real screens). */
+html[data-theme]:not(.k-ios) {
+  /* base */
+  --lav: #eee9ff; --lav-2: #e3dcff; --cream: #fff9ef; --butter: #fff6cc;
+  --ink: #2e2a4f; --ink-2: #4a4568; --ink-muted: #524c6e; --plum: #2e2a4f;
+  --line: #2e2a4f26; --line-strong: #2e2a4f; --grid: #2e2a4f0f;
+  /* sticker pastels: pink, lemon, mint, sky, lilac (+ peach) */
+  --pink: #ffc9e3; --yellow: #ffe69a; --mint: #bdebd3; --sky: #cbe3ff; --lilac: #ddd4ff; --peach: #ffd4bc;
+  /* primary: a deeper pastel violet with white text (4.95:1) */
+  --purple: #6c5ce0; --primary: #6c5ce0; --primary-hover: #5d4dd4; --on-primary: #fff; --primary-soft: #ece8ff; --primary-text: #4f40c2;
+  /* subject worlds: light tint (page), mid pastel (cards), deep shade (text and buttons, white on it ≥ 6:1) */
+  --maths-soft: #ddf5ea; --maths: #a8e6cf; --maths-deep: #1e6b4e;
+  --english-soft: #ffe8d6; --english: #ffc9a3; --english-deep: #8f4515;
+  --science-soft: #e3ecff; --science: #b9ccff; --science-deep: #33479c;
+  --world-soft: #ffe3ec; --world: #ffb8cf; --world-deep: #9b2c5b;
+  --on-maths: var(--ink); --on-english: var(--ink); --on-science: var(--ink); --on-world: var(--ink);
+  --success: #1e6b4e; --success-soft: #ddf5ea; --warning: #8f4515; --warning-soft: #ffe8d6;
+  /* surfaces */
+  --surface: #ffffff; --surface-sunken: #f6f1fb; --surface-raised: #fff;
+  /* demo boards stay dark so the 3D visuals read, softened from near-black to deep plum */
+  --board: #34305a; --board-line: #2e2a4f; --board-ink: #f4f1ff;
+  /* softer outlines and tinted, smaller offset shadows */
+  --shadow-hard: 3px 3px 0 #2e2a4f2e; --shadow-hard-sm: 2px 2px 0 #2e2a4f2e;
+}
+html:not(.k-ios) [data-subject="maths"] { --acc: var(--maths); --acc-soft: var(--maths-soft); --acc-deep: var(--maths-deep); }
+html:not(.k-ios) [data-subject="english"] { --acc: var(--english); --acc-soft: var(--english-soft); --acc-deep: var(--english-deep); }
+html:not(.k-ios) [data-subject="science"] { --acc: var(--science); --acc-soft: var(--science-soft); --acc-deep: var(--science-deep); }
+html:not(.k-ios) [data-subject="world"] { --acc: var(--world); --acc-soft: var(--world-soft); --acc-deep: var(--world-deep); }
+
+/* page grounds: lilac base, butter Today, each subject its own light tint */
+html:not(.k-ios) body { background: var(--lav); color: var(--ink); }
+html:not(.k-ios) .topbar { background: var(--lav); border-bottom-color: #2e2a4f33; }
+html:not(.k-ios) body[data-view="home"], html:not(.k-ios) body[data-view="home"] .topbar { background: var(--butter); }
+html:not(.k-ios) body:has(main > [data-subject="maths"]), html:not(.k-ios) body:has(main > [data-subject="maths"]) .topbar { background: var(--maths-soft); }
+html:not(.k-ios) body:has(main > [data-subject="english"]), html:not(.k-ios) body:has(main > [data-subject="english"]) .topbar { background: var(--english-soft); }
+html:not(.k-ios) body:has(main > [data-subject="science"]), html:not(.k-ios) body:has(main > [data-subject="science"]) .topbar { background: var(--science-soft); }
+html:not(.k-ios) body:has(main > [data-subject="world"]), html:not(.k-ios) body:has(main > [data-subject="world"]) .topbar { background: var(--world-soft); }
+html:not(.k-ios) .grid-paper, html:not(.k-ios) main .page > .band-cream, html:not(.k-ios) .qcard, html:not(.k-ios) .lesson-panel {
+  background-color: var(--cream); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 22px 22px; }
+
+/* outlines: deep plum at 2px everywhere the theme drew ink */
+html:not(.k-ios) :is(.k-card, .qcard, .lessoncard, .lesson-panel, .path-item a, .skills li, .subjcard, .gamecard, .wonder button, details.why, .who-item, .stats .k-stat, .kid, .practice-card) { border-color: var(--plum) !important; }
+
+/* buttons: violet primary, white pill secondary with a tinted border; inside a subject the primary takes the deep hue */
+html:not(.k-ios) .k-btn { border-color: var(--plum) !important; }
+html:not(.k-ios) .k-btn-primary { background: var(--purple) !important; color: #fff !important; }
+html:not(.k-ios) [data-subject] .k-btn-primary { background: var(--acc-deep, var(--purple)) !important; color: #fff !important; }
+html:not(.k-ios) .k-btn-outline { background: #fff !important; color: var(--ink) !important; border-color: #8f84d6 !important; }
+html:not(.k-ios) [data-subject] .k-btn-outline { border-color: color-mix(in srgb, var(--acc-deep) 55%, #fff) !important; }
+html:not(.k-ios) .k-btn:active, html:not(.k-ios) .pressing { box-shadow: 1px 1px 0 #2e2a4f2e; }
+html:not(.k-ios) .k-btn[disabled] { background: #ece8f6 !important; color: #5b5675 !important; border-color: #b7b0d6 !important; }
+html:not(.k-ios) .k-iconbtn, html:not(.k-ios) .langtoggle { border-color: var(--plum); background: #fff; }
+html:not(.k-ios) .langtoggle button[aria-pressed="true"], html:not(.k-ios) .seg button[aria-pressed="true"], html:not(.k-ios) [aria-pressed="true"].k-btn-outline { background: var(--purple) !important; color: #fff !important; border-color: var(--purple) !important; }
+
+/* answer tiles: cream, selected lilac, correct mint, try again peach (never red) */
+html:not(.k-ios) .choice, html:not(.k-ios) .choices .choice:nth-child(n) { background: var(--cream); border-color: var(--plum) !important; }
+html:not(.k-ios) .choice[aria-checked="true"] { background: var(--lilac) !important; box-shadow: 0 0 0 3px var(--purple), var(--shadow-hard-sm) !important; }
+html:not(.k-ios) .choice.is-right { background: var(--mint) !important; box-shadow: 0 0 0 3px var(--maths-deep), var(--shadow-hard-sm) !important; }
+html:not(.k-ios) .choice.is-wrong { background: var(--peach) !important; }
+html:not(.k-ios) :is(.numpad button, .pz-pad button, .kb button) { background: #fff; border-color: var(--plum); }
+html:not(.k-ios) .tile { border-color: var(--plum); }
+
+/* lesson cards and the guide */
+html:not(.k-ios) .lessoncard.ok { background: var(--maths-soft); } html:not(.k-ios) .lessoncard.miss { background: var(--english-soft); }
+html:not(.k-ios) .lc-mark { border-color: var(--plum); }
+html:not(.k-ios) .speechcard { background: var(--cream); border-color: var(--plum); }
+html:not(.k-ios) .speechbubble, html:not(.k-ios) .emptystate { background: #fff; border-color: var(--plum); }
+html:not(.k-ios) .k-dialog { background: var(--cream); border: 2px solid var(--plum); }
+html:not(.k-ios) .sticker-card { background: var(--cream); border-color: var(--plum); box-shadow: 4px 4px 0 #2e2a4f2e; }
+html:not(.k-ios) .sticker-scrim { background: #2e2a4f66; }
+html:not(.k-ios) .k-toast { background: var(--plum); border-color: var(--plum); }
+
+/* progress bits */
+html:not(.k-ios) .mbar { border-color: var(--plum); } html:not(.k-ios) .mbar i { background: var(--acc-deep, var(--purple)); }
+html:not(.k-ios) .round-meter i { border-color: var(--plum); } html:not(.k-ios) .round-meter i.ok { background: var(--mint); } html:not(.k-ios) .round-meter i.miss { background: var(--peach); } html:not(.k-ios) .round-meter i.now { background: var(--purple); }
+html:not(.k-ios) .star { stroke: var(--plum); } html:not(.k-ios) .star.on { fill: #ffd45c; }
+html:not(.k-ios) .dots i { border-color: var(--plum); } html:not(.k-ios) .dots i.on { background: var(--plum); }
+
+/* stickers, stat tiles, marquee, pills */
+html:not(.k-ios) .stk { border-color: var(--plum); box-shadow: 2px 2px 0 #2e2a4f2e; }
+html:not(.k-ios) .stk.purple { background: var(--lilac); color: var(--ink); }
+html:not(.k-ios) .stattile { border-color: var(--plum); }
+html:not(.k-ios) .stattile.pink { background: var(--pink); } html:not(.k-ios) .stattile.yellow { background: var(--yellow); } html:not(.k-ios) .stattile.mint { background: var(--mint); }
+html:not(.k-ios) .marquee { background: var(--cream); border-color: #2e2a4f33; }
+html:not(.k-ios) .marquee-track .stk:nth-child(5n+1) { background: var(--pink); } html:not(.k-ios) .marquee-track .stk:nth-child(5n+2) { background: var(--yellow); }
+html:not(.k-ios) .marquee-track .stk:nth-child(5n+3) { background: var(--mint); } html:not(.k-ios) .marquee-track .stk:nth-child(5n+4) { background: var(--sky); } html:not(.k-ios) .marquee-track .stk:nth-child(5n) { background: var(--lilac); }
+html:not(.k-ios) .agetile { border-color: var(--plum); box-shadow: var(--shadow-hard); }
+html:not(.k-ios) .agetile:nth-child(4n+1) { background: var(--pink); } html:not(.k-ios) .agetile:nth-child(4n+2) { background: var(--yellow); }
+html:not(.k-ios) .agetile:nth-child(4n+3) { background: var(--mint); } html:not(.k-ios) .agetile:nth-child(4n) { background: var(--sky); }
+html:not(.k-ios) .classline li::before { color: var(--world-deep); }
+
+/* Today: butter play card, pastel subject cards in the carousel */
+html:not(.k-ios) .playcard { background: var(--lilac); border-color: var(--plum); }   /* lilac so it stands out on the butter Today ground */
+html:not(.k-ios) .continuecard { background: #fff; border-color: var(--plum); }
+html:not(.k-ios) .subjcard2 { border-color: var(--plum); background: #fff; }
+html:not(.k-ios) .subjcard2[data-subject], html:not(.k-ios) [data-subject] > .subjcard2 { background: var(--acc-soft); }
+html:not(.k-ios) .subjcard2:hover, html:not(.k-ios) .subjcard2:focus-visible { box-shadow: 4px 5px 0 #2e2a4f33; }
+html:not(.k-ios) .blobart::before { background: var(--acc, var(--lilac)); border-color: var(--plum); }
+html:not(.k-ios) .blobart img, html:not(.k-ios) .gamecard .gico { filter: drop-shadow(0 6px 8px #2e2a4f2e); }
+
+/* subject path: mid-pastel stops on the light tint, the next stop ringed in the deep hue */
+html:not(.k-ios) .stop { background: #fff; border-color: var(--plum); }
+html:not(.k-ios) .stop .blobart::before { background: var(--acc-soft); }
+html:not(.k-ios) .stop.next { background: var(--acc, #fff); box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--acc-deep, var(--purple)), 4px 5px 0 #2e2a4f2e; }
+html:not(.k-ios) .stop.next .blobart::before { background: #fff; }
+@keyframes pastelglow { 50% { box-shadow: 0 0 0 6px #fff, 0 0 0 10px var(--acc-deep, var(--purple)), 4px 5px 0 #2e2a4f2e; } }
+html:not(.k-ios) .stop.next { animation-name: pastelglow; }
+html:not(.k-ios) .gamecard { background: #fff; border-color: var(--plum); }
+html:not(.k-ios) .subj-ic { border-color: var(--plum); }
+
+/* bottom tab bar (and the desktop rail): cream, the active tab in its subject tint */
+html:not(.k-ios) .nav { background: var(--cream); border-color: #2e2a4f33; }
+html:not(.k-ios) .nav a[aria-current="page"] .k-icon { border-color: var(--plum); background: var(--butter); }
+html:not(.k-ios) .nav a:nth-child(2)[aria-current="page"] .k-icon { background: var(--maths); } html:not(.k-ios) .nav a:nth-child(3)[aria-current="page"] .k-icon { background: var(--english); }
+html:not(.k-ios) .nav a:nth-child(4)[aria-current="page"] .k-icon { background: var(--science); } html:not(.k-ios) .nav a:nth-child(5)[aria-current="page"] .k-icon { background: var(--world); }
+html:not(.k-ios) .nav a:nth-child(6)[aria-current="page"] .k-icon { background: var(--lilac); }
+@media (min-width: 900px) {
+  html:not(.k-ios) .nav { background: transparent; border-right-color: #2e2a4f33; }
+  html:not(.k-ios) .nav a[aria-current="page"] { background: #fff; border-color: var(--plum); box-shadow: var(--shadow-hard-sm); }
+  html:not(.k-ios) .nav a:nth-child(2) .k-icon { color: var(--maths-deep); } html:not(.k-ios) .nav a:nth-child(3) .k-icon { color: var(--english-deep); }
+  html:not(.k-ios) .nav a:nth-child(4) .k-icon { color: var(--science-deep); } html:not(.k-ios) .nav a:nth-child(5) .k-icon { color: var(--world-deep); }
+}
+
+/* grown-ups, gate, forms */
+html:not(.k-ios) .gatecard { background: var(--butter) !important; }
+html:not(.k-ios) .k-input { border-color: var(--plum); background: #fff; }
+html:not(.k-ios) .ptable th, html:not(.k-ios) .ptable td { border-bottom-color: #2e2a4f26; }
+html:not(.k-ios) .who, html:not(.k-ios) .hello .avatar { border-color: var(--plum); }
+
+/* games: memory card backs in lilac with a dot pattern instead of the dark board */
+html:not(.k-ios) .mem-card .back { background-color: var(--lilac); border: 2px solid var(--plum); background-image: radial-gradient(#2e2a4f2e 2px, transparent 2.5px); background-size: 16px 16px; }
+html:not(.k-ios) .mem-card .front { border: 2px solid var(--plum); background: var(--cream); }
+html:not(.k-ios) .mem-card.done .front, html:not(.k-ios) .mem-card.matched .front { background: var(--mint); }
+
+/* labels drawn on the demo boards: the softer board needs lighter label grey (music tala group labels and beat numbers) */
+html:not(.k-ios) :is(.mu-gl, .mu-bn) { color: #c3c6d8; }

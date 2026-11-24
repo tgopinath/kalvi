@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const { chromium } = require('playwright');
 const prof = JSON.stringify({ profiles: [{ id: 'cs', name: 'Anu', age: 8, color: '#0c7777', created: 1, updated: 1, subjects: { maths: { skills: {}, review: {}, lessons: {} }, english: { skills: {}, review: {}, lessons: {} }, science: { skills: {}, review: {}, lessons: {} }, world: { skills: {}, review: {}, lessons: {} } }, days: {}, sessions: [], settings: { rate: .9 } }], current: 'cs', updated: 1 });
 const b = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
 for (const w of [375, 1440]) { const p = await (await b.newContext({ viewport: { width: w, height: w > 1000 ? 900 : 812 } })).newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));

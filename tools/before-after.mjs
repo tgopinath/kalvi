@@ -1,5 +1,5 @@
 // node tools/before-after.mjs before|after → .work/shots/ba-<state>-{memory,lab,count}.png (390x844, young, EN)
-import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const { chromium } = require('playwright');
 const st = process.argv[2] || 'before', B = process.env.KALVI_URL || 'http://localhost:5330/';
 const prof = JSON.stringify({ profiles: [{ id: 'cs', name: 'Anu', band: 'young', avatar: 'cube', color: '#16a39c', lang: 'en', created: 1, updated: 1, subjects: { maths: { skills: {}, review: {}, lessons: {} }, english: { skills: {}, review: {}, lessons: {} }, science: { skills: {}, review: {}, lessons: {} }, world: { skills: {}, review: {}, lessons: {} } }, days: {}, sessions: [], settings: { rate: .9 } }], current: 'cs', updated: 1 });
 const b = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });

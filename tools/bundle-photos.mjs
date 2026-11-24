@@ -2,7 +2,7 @@
 //   node tools/bundle-photos.mjs pics     → img/pics/<word>.webp from js/pics.js (remote URLs), rewrites js/pics.js to local paths
 //   node tools/bundle-photos.mjs photos   → img/photos/<key>.webp from .work/photo-picks.json, writes js/photos.js
 import fs from 'node:fs'; import path from 'node:path'; import vm from 'node:vm'; import { createRequire } from 'node:module';
-const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const sharp = require('sharp');
+const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const sharp = require('sharp');
 const ROOT = path.resolve(import.meta.dirname, '..'), sleep = ms => new Promise(r => setTimeout(r, ms));
 const UA = { 'User-Agent': 'Mozilla/5.0 (Macintosh) KalviBuild/0.1 (gopinath.t portfolio; github.com/tgopinath)' };
 async function grab(url, out) {

@@ -1,5 +1,5 @@
 // node tools/age-shots.mjs → .work/shots/age-*.png, pf-*.png, today-*.png
-import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+import { createRequire } from 'node:module'; const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const { chromium } = require('playwright');
 const B = process.env.KALVI_URL || 'http://localhost:5330/', O = '.work/shots/';
 const sub = () => ({ skills: {}, review: {}, lessons: {} });
 const db = age => JSON.stringify({ profiles: [{ id: 'a' + age, name: 'Anu', age, color: '#0c7777', created: 1, updated: 1, subjects: { maths: sub(), english: sub(), science: sub(), world: sub() }, days: {}, sessions: [], settings: { rate: .9 } }], current: 'a' + age, updated: 1 });

@@ -1,6 +1,6 @@
 // Smoke test: start every game in EN and Tamil, both bands, at 375px; report page errors; save screenshots to .work/shots/smoke-*.png
 import { createRequire } from 'node:module'; import fs from 'node:fs';
-const require = createRequire('/Users/gopi-4423/Documents/kanal/package.json'); const { chromium } = require('playwright');
+const require = createRequire('/Users/gopi-4423/Documents/All pets/kanal/package.json'); const { chromium } = require('playwright');
 const B = process.env.KALVI_URL || 'http://localhost:5330/', out = '.work/shots'; fs.mkdirSync(out, { recursive: true });
 const prof = (lang, band) => JSON.stringify({ profiles: [{ id: 'cs', name: 'Anu', band, age: band === 'young' ? 3 : 8, color: '#0c7777', lang, created: 1, updated: 1, subjects: { maths: { skills: {}, review: {}, lessons: {} }, english: { skills: {}, review: {}, lessons: {} }, science: { skills: {}, review: {}, lessons: {} }, world: { skills: {}, review: {}, lessons: {} } }, days: {}, sessions: [], settings: { rate: .9 } }], current: 'cs', updated: 1 });
 const games = (process.argv[2] || 'DRAW.game("maths"),DRAW.game("english"),DRAW.game("science"),MUSIC.game("maths"),MUSIC.game("science"),MUSIC.game("english"),STORIES.game,WORDPZ.game,BEE.game,PUZZLES.game,SCIENCE.quizGame,MEMORY.game("science")').split(',');
