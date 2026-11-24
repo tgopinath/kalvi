@@ -1,8 +1,8 @@
 // Drives the Kalvi APK's WebView over raw CDP and screenshots with adb (so native pickers show).
 // Setup: adb forward tcp:9333 localabstract:webview_devtools_remote_<pid>
 import { execSync } from 'child_process';
-const ADB = process.env.HOME + '/Library/Android/sdk/platform-tools/adb', OUT = '/Users/gopi-4423/Documents/kalvi/.work/shots/emu/';
-const shot = n => { execSync(`${ADB} exec-out screencap -p > ${OUT}${n}.png`); console.log('shot', n); };
+const ADB = process.env.HOME + '/Library/Android/sdk/platform-tools/adb', OUT = '/Users/gopi-4423/Documents/All pets/kalvi/.work/shots/emu/';
+const shot = n => { execSync(`${ADB} exec-out screencap -p > "${OUT}${n}.png"`); console.log('shot', n); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const [pg] = await (await fetch('http://localhost:9333/json')).json();
 const ws = new WebSocket(pg.webSocketDebuggerUrl); await new Promise(r => ws.onopen = r);
