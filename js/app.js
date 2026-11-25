@@ -318,7 +318,7 @@
     };
     draw();
   }
-  function notFound() { main.innerHTML = `<section class="page"><h1>404</h1><a href="#/">${t('nav.today')}</a></section>`; }
+  function notFound() { if (!window.KALVI_LATE) { main.innerHTML = '<section class="page" aria-busy="true"></section>'; return; } main.innerHTML = `<section class="page"><h1>404</h1><a href="#/">${t('nav.today')}</a></section>`; }
 
   // ---------- router ----------
   function route() {

@@ -43,7 +43,9 @@
     const fc = (t) => topojson.feature(t, Object.values(t.objects)[0]);
     D.india = fc(ind); D.tn = fc(tn); D.world = fc(w); D.rivers = fc(riv);
   })(); }
-  load().catch(() => {});
+  // the maps (d3 + 150 KB of shapes) download once the page has loaded, not alongside the first screen
+  const warm = () => setTimeout(() => load().catch(() => {}), 1500);
+  if (document.readyState === 'complete') warm(); else addEventListener('load', warm, { once: true });
 
   // ---------- map drawing ----------
   const COL = { land: '#3f4a5e', land2: '#4a566c', line: '#20262f', sea: '#152234', on: '#e2a336', hit: '#16a39c', river: '#5fb3e6' };

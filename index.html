@@ -136,25 +136,35 @@
   <script src="js/sims.js"></script>
   <script src="js/science.js"></script>
   <script src="js/play.js"></script>
-  <script src="js/memory.js"></script>
   <script src="js/stories-data.js"></script>
   <script src="js/stories.js"></script>
   <script src="js/music.js"></script>
   <script src="js/wordpuzzles.js"></script>
   <script src="js/draw.js"></script>
-  <script src="js/lab.js"></script>
   <script src="js/geo.js"></script>
   <script src="js/gk-data.js"></script>
   <script src="js/gk.js"></script>
-  <script src="js/typing.js"></script>
-  <script src="js/videos-data.js"></script>
-  <script src="js/videos.js"></script>
-  <script src="js/coding.js"></script>
   <script src="js/app.js"></script>
   <script src="js/mathsquiz.js"></script>
   <script src="js/englishquiz.js"></script>
   <script src="js/sciencepuzzles.js"></script>
   <script src="js/photo-wire.js"></script>
+  <script>
+  /* Activities the first screen never shows (Memory, Lab, Typing, Videos, Coding) load just after it, in order,
+     so the home page arrives sooner. Their games and routes appear as soon as they are in. */
+  (function () {
+    var LATE = ['js/memory.js', 'js/lab.js', 'js/typing.js', 'js/videos-data.js', 'js/videos.js', 'js/coding.js'], LATE_SKILL = /^(mem|lab|ty|vid|cd)\./, LATE_VIEWS = ['s', 't', 'parent', 'credits', 'progress', 'memory', 'lab', 'typing', 'videos', 'coding'];
+    var left = LATE.length;
+    function done() {
+      if (--left > 0) return;
+      window.KALVI_LATE = true;
+      var v = document.body.dataset.view, p = window.Store && Store.db.profiles.length && Store.current();
+      var due = v === 'home' && p && Store.SUBJECTS.some(function (s) { return Store.due(p, s).some(function (r) { return LATE_SKILL.test(r.skill); }); });
+      if (window.App && (LATE_VIEWS.indexOf(v) >= 0 || due || document.querySelector('#main > [aria-busy]'))) App.route();
+    }
+    LATE.forEach(function (src) { var e = document.createElement('script'); e.src = src; e.async = false; e.onload = e.onerror = done; document.body.appendChild(e); });
+  })();
+  </script>
   <script type="module" src="js/backup.js"></script>
 </body>
 </html>
